@@ -123,14 +123,14 @@ namespace NumericalMethods.Approximation.Interpolations.InterpolationFuncitons.Q
                             break;
                         }
                     case 2:
-                        {
+{
                             matrix.Last().Add(quadraticEquation.quadraticFunction.A);
                             matrix.Last().Add(quadraticEquation.y);
                             matrix.Last().Add(quadraticEquation.quadraticFunction.C);
                             break;
                         }
                     case 3:
-                        {
+    {
                             matrix.Last().Add(quadraticEquation.quadraticFunction.A);
                             matrix.Last().Add(quadraticEquation.quadraticFunction.B);
                             matrix.Last().Add(quadraticEquation.y);
