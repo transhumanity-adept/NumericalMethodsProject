@@ -12,7 +12,7 @@ internal class LinearInterpolationFunction : IInterpolationFunction
     }
 
     /// <summary>
-    /// Создание функций участков интерполирования ввв
+    /// Создание функций участков интерполирования
     /// </summary>
     private List<LinearFunction> CreateFunctionsOfInterpolationIntervals()
     {
