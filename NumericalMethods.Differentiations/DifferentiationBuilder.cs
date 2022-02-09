@@ -4,7 +4,7 @@ using NumericalMethods.Differentiations.Interfaces;
 namespace NumericalMethods.Differentiations;
 public static class DifferentiationBuilder
 {
-    public static IDifferentiationFunction? Build(IEnumerable<IInterpolationNode> interpolation_nodes, DifferentiationFunctionType function_type, double step)
+    public static IDifferentiationFunction? Build(IEnumerable<IDifferentiationNode> interpolation_nodes, DifferentiationFunctionType function_type, double step)
     {
         return function_type switch
         {

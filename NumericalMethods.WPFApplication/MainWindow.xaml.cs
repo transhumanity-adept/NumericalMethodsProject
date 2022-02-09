@@ -1,5 +1,7 @@
 ﻿using NumericalMethods.Approximation.Interpolations;
 using NumericalMethods.Approximation.Interpolations.Interfaces;
+using NumericalMethods.Differentiations;
+using NumericalMethods.Differentiations.Interfaces;
 
 using org.mariuszgromada.math.mxparser;
 
@@ -12,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -20,6 +23,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using Expression = org.mariuszgromada.math.mxparser.Expression;
+
 namespace NumericalMethods.WPFApplication
 {
     /// <summary>
@@ -27,52 +32,106 @@ namespace NumericalMethods.WPFApplication
     /// </summary>
     public partial class MainWindow : Window
     {
-        private List<InterpolationNode> nodes;
-        private const double StartX = -4 * Math.PI;
-        private const double EndX = 4 * Math.PI;
-        private const double Step = Math.PI / 4;
+        private List<Point> _points = new List<Point>();
         public MainWindow()
         {
             InitializeComponent();
-            Function function = new Function("f(x) = cos(x)");
-            nodes = new List<InterpolationNode>();
-
-            for (double x = StartX; x <= EndX; x += Step)
-            {
-                nodes.Add(new InterpolationNode(x, function.calculate(x)));
-            }
 
             foreach (var item in Enum.GetValues(typeof(InterpolationFunctionType)))
             {
-                Selector.Items.Add(item.ToString());
+                InterpolationFunctionTypeComboBox.Items.Add(item.ToString());
             }
+
+            InterpolationFunctionTypeComboBox.SelectedItem = InterpolationFunctionTypeComboBox.Items[0];
+
+            foreach (var item in Enum.GetValues(typeof(DifferentiationFunctionType)))
+            {
+                DifferentiationFunctionTypeComboBox.Items.Add(item.ToString());
+            }
+
+            DifferentiationFunctionTypeComboBox.SelectedItem = InterpolationFunctionTypeComboBox.Items[0];
 
             Width = 1300;
             Height = 750;
+
+            FunctionTextBox.Text = "sin(x)";
+            StartXTextBox.Text = "-4 * pi";
+            EndXTextBox.Text = "4 * pi";
+            StepTextBox.Text = "pi / 4";
+
+            MainChart.Plot.Legend(enable: true);
         }
 
-        private void UpdateButton_Click(object sender, RoutedEventArgs e)
+        private void AddNodesOnChart_Click(object sender, RoutedEventArgs e)
         {
-            MainChart.Plot.Clear();
+            _points.Clear();
+            Function function = new Function("f(x) = " + FunctionTextBox.Text.Trim());
+            double start_x = new Expression(StartXTextBox.Text.Trim()).calculate();
+            double end_x = new Expression(EndXTextBox.Text.Trim()).calculate();
+            double step = new Expression(StepTextBox.Text.Trim()).calculate();
+
+            for (double x = start_x; x <= end_x; x += step)
+            {
+                double y = function.calculate(x);
+                _points.Add(new Point(x, y));
+            }
+
+            double[] xs = _points.Select(node => node.X).ToArray();
+            double[] ys = _points.Select(node => node.Y).ToArray();
+            MainChart.Plot.AddScatter(xs, ys, lineWidth: 0, markerShape: MarkerShape.filledCircle, color: System.Drawing.Color.Red, markerSize: 7, label: "nodes");
             MainChart.Refresh();
-            IInterpolationFunction? interpolation_function = InterpolationBuilder.Build(nodes, (InterpolationFunctionType)Enum.Parse(typeof(InterpolationFunctionType), Selector.SelectedValue.ToString()));
+        }
+
+        private void AddOnChartInterpolationButton_Click(object sender, RoutedEventArgs e)
+        {
+            string function_type_string = InterpolationFunctionTypeComboBox.SelectedValue.ToString();
+            InterpolationFunctionType interpolation_type = (InterpolationFunctionType)Enum.Parse(typeof(InterpolationFunctionType), function_type_string);
+            IInterpolationFunction? interpolation_function = InterpolationBuilder.Build(_points, interpolation_type);
             if (interpolation_function is null) return;
-            var interpolation_xs = new List<double>();
-            var interpolation_ys = new List<double>();
-            for (double x = StartX; x <= EndX; x += 0.1)
+            var xs = new List<double>();
+            var ys = new List<double>();
+            double start_x = new Expression(StartXTextBox.Text.Trim()).calculate();
+            double end_x = new Expression(EndXTextBox.Text.Trim()).calculate();
+            for (double x = start_x; x <= end_x; x += 0.05)
             {
                 var y = interpolation_function.Calculate(x);
                 if (y is null) continue;
 
-                interpolation_xs.Add(x);
-                interpolation_ys.Add((double)y);
+                xs.Add(x);
+                ys.Add((double)y);
             }
 
-            MainChart.Plot.AddScatter(interpolation_xs.ToArray(), interpolation_ys.ToArray(), lineWidth: 3, markerSize: 4, label: "interpolation");
-            var xs = nodes.Select(node => node.X).ToArray();
-            var ys = nodes.Select(node => node.Y).ToArray();
-            MainChart.Plot.AddScatter(xs, ys, lineWidth: 0, markerSize: 5, label: "data");
-            MainChart.Plot.Legend();
+            MainChart.Plot.AddScatter(xs.ToArray(), ys.ToArray(), lineWidth: 4, markerSize: 0, label: "interpolation");
+            MainChart.Refresh();
+        }
+
+        private void AddOnChartDifferentiationButton_Click(object sender, RoutedEventArgs e)
+        {
+            string function_type_string = DifferentiationFunctionTypeComboBox.SelectedValue.ToString();
+            DifferentiationFunctionType interpolation_type = (DifferentiationFunctionType)Enum.Parse(typeof(DifferentiationFunctionType), function_type_string);
+            IDifferentiationFunction? interpolation_function = DifferentiationBuilder.Build(_points, interpolation_type, 0.05);
+            if (interpolation_function is null) return;
+            var xs = new List<double>();
+            var ys = new List<double>();
+            double start_x = new Expression(StartXTextBox.Text.Trim()).calculate();
+            double end_x = new Expression(EndXTextBox.Text.Trim()).calculate();
+            for (double x = start_x; x <= end_x; x += 0.05)
+            {
+                int derivative_degree = int.Parse(DerivativeDegreeTextBox.Text.Trim());
+                var y = interpolation_function.Calculate(x, derivative_degree);
+                if (y is null) continue;
+
+                xs.Add(x);
+                ys.Add((double)y);
+            }
+
+            MainChart.Plot.AddScatter(xs.ToArray(), ys.ToArray(), lineWidth: 4, markerSize: 0, label: "differentiation");
+            MainChart.Refresh();
+        }
+
+        private void ClearChartButton_Click(object sender, RoutedEventArgs e)
+        {
+            MainChart.Plot.Clear();
             MainChart.Refresh();
         }
     }

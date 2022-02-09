@@ -2,21 +2,18 @@
 using NumericalMethods.Approximation.Interpolations.Interfaces;
 using NumericalMethods.Differentiations.Interfaces;
 
-using IInterpolationNodeDifferentiation = NumericalMethods.Differentiations.Interfaces.IInterpolationNode;
-using IInterpolationNodeInterpolation = NumericalMethods.Approximation.Interpolations.Interfaces.IInterpolationNode;
-
 namespace NumericalMethods.Differentiations.DifferentiationFunctions.Linear
 {
     public class LinearDifferentiationFunction : IDifferentiationFunction
     {
-        private readonly IEnumerable<IInterpolationNodeDifferentiation> _interpolation_nodes;
+        private readonly IEnumerable<IDifferentiationNode> _interpolation_nodes;
         private readonly double _step;
         private readonly IInterpolationFunction _interpolation_function;
-        public LinearDifferentiationFunction(IEnumerable<IInterpolationNodeDifferentiation> interpolation_nodes, double step)
+        public LinearDifferentiationFunction(IEnumerable<IDifferentiationNode> interpolation_nodes, double step)
         {
             _interpolation_nodes = interpolation_nodes;
             _step = step;
-            IEnumerable<IInterpolationNodeInterpolation> mapped_nodes = interpolation_nodes.Select(node => new InterpolationNode(node.X, node.Y));
+            IEnumerable<IInterpolationNode> mapped_nodes = interpolation_nodes.Select(node => new InterpolationNode(node.X, node.Y));
             _interpolation_function = InterpolationBuilder.Build(mapped_nodes, InterpolationFunctionType.Linear);
         }
         public double? Calculate(double argument, int derivative_degree)
