@@ -17,8 +17,8 @@ internal class LinearInterpolationFunction : IInterpolationFunction
     private List<LinearFunction> CreateFunctionsOfInterpolationIntervals()
     {
         List<LinearFunction> result = new List<LinearFunction>();
-
-        for (int i = 1; i < _interpolation_nodes.Count(); i++)
+        int count_nodes = _interpolation_nodes.Count();
+        for (int i = 1; i < count_nodes; i++)
         {
             IInterpolationNode range_starting_point = _interpolation_nodes.ElementAt(i - 1);
             IInterpolationNode range_endpoint = _interpolation_nodes.ElementAt(i);
@@ -37,7 +37,7 @@ internal class LinearInterpolationFunction : IInterpolationFunction
 
     public double? Calculate(double argument)
     {
-        var count_nodes = _interpolation_nodes.Count();
+        int count_nodes = _interpolation_nodes.Count();
         LinearFunction? function_in_the_range_of_the_argument = null;
         for (int i = 0; i < count_nodes - 1; i++)
         {
