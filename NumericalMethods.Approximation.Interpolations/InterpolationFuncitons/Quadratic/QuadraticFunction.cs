@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace NumericalMethods.Approximation.Interpolations.InterpolationFuncitons.Quadratic
+﻿namespace NumericalMethods.Approximation.Interpolations.InterpolationFuncitons.Quadratic
 {
     internal record class QuadraticFunction(double A,double B, double C)
     {

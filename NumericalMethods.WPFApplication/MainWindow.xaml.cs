@@ -30,11 +30,11 @@ namespace NumericalMethods.WPFApplication
         private List<InterpolationNode> nodes;
         private const double StartX = -4 * Math.PI;
         private const double EndX = 4 * Math.PI;
-        private const double Step = Math.PI / 2;
+        private const double Step = Math.PI / 4;
         public MainWindow()
         {
             InitializeComponent();
-            Function function = new Function("f(x) = sin(x)");
+            Function function = new Function("f(x) = cos(x)");
             nodes = new List<InterpolationNode>();
 
             for (double x = StartX; x <= EndX; x += Step)

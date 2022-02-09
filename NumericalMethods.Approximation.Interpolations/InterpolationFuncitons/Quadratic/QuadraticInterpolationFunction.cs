@@ -32,8 +32,16 @@ namespace NumericalMethods.Approximation.Interpolations.InterpolationFuncitons.Q
         public double? Calculate(double argument)
         {
             QuadraticFunction? quadraticFunction = null;
-            for (int i = 0; i < _functions_of_interpolation_intervals.Count-1; i++)
+            for (int i = 0; i < _functions_of_interpolation_intervals.Count; i++)
             {
+                if (argument > _interpolation_nodes.Last().X || argument < _interpolation_nodes.First().X)
+                    break;
+                
+                if(i == _functions_of_interpolation_intervals.Count-1)
+                {
+                    quadraticFunction = _functions_of_interpolation_intervals[i].quadraticFunction;
+                    break;
+                }
                 if(argument<= _functions_of_interpolation_intervals[i+1].startArgument && argument >= _functions_of_interpolation_intervals[i].startArgument)
                 {
                     quadraticFunction = _functions_of_interpolation_intervals[i].quadraticFunction;
