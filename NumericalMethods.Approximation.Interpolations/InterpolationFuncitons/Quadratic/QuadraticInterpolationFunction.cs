@@ -36,7 +36,6 @@ namespace NumericalMethods.Approximation.Interpolations.InterpolationFuncitons.Q
             {
                 if (argument > _interpolation_nodes.Last().X || argument < _interpolation_nodes.First().X)
                     break;
-                
                 if(i == _functions_of_interpolation_intervals.Count-1)
                 {
                     quadraticFunction = _functions_of_interpolation_intervals[i].quadraticFunction;
