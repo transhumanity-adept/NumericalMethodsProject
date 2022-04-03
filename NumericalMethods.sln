@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NumericalMethods.SolvingCau
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NumericalMethods.SolvingSystemsOfNonlinearEquations", "NumericalMethods.SolvingSystemsOfNonlinearEquations\NumericalMethods.SolvingSystemsOfNonlinearEquations.csproj", "{1D28975B-81FC-4131-A969-E4EEC7BA6152}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NumericalMethods.Integration", "NumericalMethods.Integration\NumericalMethods.Integration.csproj", "{B3DA46EC-1ABA-4336-B880-9D6CC36D502C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{1D28975B-81FC-4131-A969-E4EEC7BA6152}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D28975B-81FC-4131-A969-E4EEC7BA6152}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D28975B-81FC-4131-A969-E4EEC7BA6152}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3DA46EC-1ABA-4336-B880-9D6CC36D502C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3DA46EC-1ABA-4336-B880-9D6CC36D502C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3DA46EC-1ABA-4336-B880-9D6CC36D502C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3DA46EC-1ABA-4336-B880-9D6CC36D502C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

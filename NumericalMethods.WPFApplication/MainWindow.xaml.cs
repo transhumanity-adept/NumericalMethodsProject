@@ -129,6 +129,11 @@ namespace NumericalMethods.WPFApplication
             MainChart.Refresh();
         }
 
+        private void IntegrationCalculateButton_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Test");
+        }
+
         private void ClearChartButton_Click(object sender, RoutedEventArgs e)
         {
             MainChart.Plot.Clear();
