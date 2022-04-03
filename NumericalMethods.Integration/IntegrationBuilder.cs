@@ -5,17 +5,17 @@ using NumericalMethods.Integration.Methods.Rectangle;
 namespace NumericalMethods.Integration;
 public static class IntegrationBuilder
 {
-    public static IIntegratorWithConstantStep Build(IIntegrand function, IntergrationMethodsWithConstantStep method)
+    public static IIntegratorWithConstantStep Build(IIntegrand function, IntegrationMethodsWithConstantStep method)
     {
         return method switch
         {
-            IntergrationMethodsWithConstantStep.Rectangle => new IntegratorWithConstantStep(new RectangleIntegrationMethod(), function),
-            IntergrationMethodsWithConstantStep.Trapeze => throw new NotImplementedException(),
-            IntergrationMethodsWithConstantStep.Parabolic => throw new NotImplementedException(),
-            IntergrationMethodsWithConstantStep.Spline => throw new NotImplementedException(),
-            IntergrationMethodsWithConstantStep.MonteCarlo => throw new NotImplementedException(),
-            IntergrationMethodsWithConstantStep.Gauss => throw new NotImplementedException(),
-            IntergrationMethodsWithConstantStep.Chebyshev => throw new NotImplementedException()
+            IntegrationMethodsWithConstantStep.Rectangle => new IntegratorWithConstantStep(new RectangleIntegrationMethod(), function),
+            IntegrationMethodsWithConstantStep.Trapeze => throw new NotImplementedException(),
+            IntegrationMethodsWithConstantStep.Parabolic => throw new NotImplementedException(),
+            IntegrationMethodsWithConstantStep.Spline => throw new NotImplementedException(),
+            IntegrationMethodsWithConstantStep.MonteCarlo => throw new NotImplementedException(),
+            IntegrationMethodsWithConstantStep.Gauss => throw new NotImplementedException(),
+            IntegrationMethodsWithConstantStep.Chebyshev => throw new NotImplementedException()
         };
     }
 

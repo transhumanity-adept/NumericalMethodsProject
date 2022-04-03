@@ -1,5 +1,5 @@
 ﻿namespace NumericalMethods.Integration;
-public enum IntergrationMethodsWithConstantStep
+public enum IntegrationMethodsWithConstantStep
 {
     Rectangle = 0,
     Trapeze = 1,
