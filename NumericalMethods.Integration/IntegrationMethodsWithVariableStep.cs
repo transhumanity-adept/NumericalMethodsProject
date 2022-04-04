@@ -2,5 +2,6 @@
 public enum IntegrationMethodsWithVariableStep
 {
     Gauss = 0,
-    Chebyshev = 1
+    Chebyshev = 1,
+    MonteCarlo = 2
 }
