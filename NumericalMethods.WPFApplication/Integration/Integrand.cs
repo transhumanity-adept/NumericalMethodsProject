@@ -2,7 +2,7 @@
 
 using org.mariuszgromada.math.mxparser;
 
-namespace NumericalMethods.WPFApplication;
+namespace NumericalMethods.WPFApplication.Integration;
 public class Integrand : IIntegrand
 {
     private Function _fucntion;
