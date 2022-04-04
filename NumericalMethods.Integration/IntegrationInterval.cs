@@ -1,10 +1,9 @@
 ﻿namespace NumericalMethods.Integration;
-public struct IntegrationIntervalWithStep
+public struct IntegrationInterval
 {
     public double Start { get; init; }
     public double End { get; init; }
-    public double Step { get; init; }
-    public IntegrationIntervalWithStep(double start, double end, double step)
+    public IntegrationInterval(double start, double end)
     {
         if (start > end)
         {
@@ -13,6 +12,5 @@ public struct IntegrationIntervalWithStep
 
         Start = start;
         End = end;
-        Step = step;
     }
 }

@@ -3,12 +3,12 @@
 namespace NumericalMethods.Integration.Methods.Rectangle;
 internal class RectangleIntegrationMethod : IIntegrationMethodWithConstantStep
 {
-    public double Intergrate(IIntegrand function, IntegrationIntervalWithStep interval)
+    public double Intergrate(IIntegrand function, double start, double end, double step)
     {
         double resulted_sum = 0;
-        for (double xi = interval.Start + (interval.Step / 2); xi < interval.End; xi += interval.Step)
+        for (double xi = start + (step / 2); xi < end; xi += step)
         {
-            resulted_sum += (interval.Step * function.Calculate(xi));
+            resulted_sum += (step * function.Calculate(xi));
         }
 
         return resulted_sum;

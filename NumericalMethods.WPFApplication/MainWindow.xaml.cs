@@ -183,7 +183,7 @@ namespace NumericalMethods.WPFApplication
             string function_type_string = Integration_MethodComboBox.SelectedValue.ToString();
             IntegrationMethodsWithConstantStep method = (IntegrationMethodsWithConstantStep)Enum.Parse(typeof(IntegrationMethodsWithConstantStep), function_type_string);
             IIntegratorWithConstantStep integrator = IntegrationBuilder.Build(new Integrand(function), method);
-            double integration_result = integrator.Integrate(new IntegrationIntervalWithStep(start_x, end_x, step));
+            double integration_result = integrator.Integrate(start_x, end_x, step);
             MessageBox.Show($"Integration result: {integration_result}");
         }
         #endregion
