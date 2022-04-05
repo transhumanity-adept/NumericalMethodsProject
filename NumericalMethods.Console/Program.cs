@@ -3,7 +3,7 @@
 Function function = new Function("f(x) = x^2");
 double a = -5;
 double b = 5;
-int n = 3;
+int n = 9;
 
 Console.WriteLine($"S = {GaussIntegration(function, a, b, n)}");
 
@@ -13,7 +13,7 @@ double GaussIntegration(Function function, double a, double b, int n)
     double[] x = new double[n];
     for (int i = 1; i <= n; i++)
     {
-        double ti = T(n, i, n);
+        double ti = T(n - 1, i, n);
         double pd = PD(n, ti);
         double diva = (1 - ti * ti) * pd * pd;
         acoef[i - 1] = 2 / diva;
@@ -40,14 +40,14 @@ double T(int k, int i, int n)
     return tprev - P(n, tprev) / PD(n, tprev); 
 }
 
-double P(double k, double t)
+double P(double n, double t)
 {
-    return k switch
+    return n switch
     {
         0 => 1,
         1 => t,
-        _ => (2 * k + 1) / (k + 1) * t * P(k - 1, t) 
-             - k / (k + 1) * P(k - 2, t)
+        _ => (2 * (n - 1) + 1) / ((n - 1) + 1) * t * P(n - 1, t) 
+             - (n - 1) / ((n - 1) + 1) * P(n - 2, t)
     };
 }
 
