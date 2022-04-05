@@ -1,6 +1,7 @@
 ﻿using NumericalMethods.Integration.Interfaces;
 using NumericalMethods.Integration.Methods;
 using NumericalMethods.Integration.Methods.Rectangle;
+using NumericalMethods.Integration.Methods.Trapezoid;
 
 namespace NumericalMethods.Integration;
 public static class IntegrationBuilder
@@ -10,12 +11,12 @@ public static class IntegrationBuilder
         return method switch
         {
             IntegrationMethodsWithConstantStep.Rectangle => new IntegratorWithConstantStep(new RectangleIntegrationMethod(), function),
-            IntegrationMethodsWithConstantStep.Trapeze => throw new NotImplementedException(),
+            IntegrationMethodsWithConstantStep.Trapeze => new IntegratorWithConstantStep(new TrapezoidIntegrationMethod(),function),
             IntegrationMethodsWithConstantStep.Parabolic => throw new NotImplementedException(),
-            IntegrationMethodsWithConstantStep.Spline => throw new NotImplementedException(),
-            IntegrationMethodsWithConstantStep.MonteCarlo => throw new NotImplementedException(),
-            IntegrationMethodsWithConstantStep.Gauss => throw new NotImplementedException(),
-            IntegrationMethodsWithConstantStep.Chebyshev => throw new NotImplementedException()
+            IntegrationMethodsWithConstantStep.Spline => throw new NotImplementedException()
+            //IntegrationMethodsWithConstantStep.MonteCarlo => throw new NotImplementedException(),
+            //IntegrationMethodsWithConstantStep.Gauss => throw new NotImplementedException(),
+            //IntegrationMethodsWithConstantStep.Chebyshev => throw new NotImplementedException()
         };
     }
 
