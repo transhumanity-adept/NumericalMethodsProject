@@ -12,10 +12,7 @@ public static class IntegrationBuilder
             IntegrationMethodsWithConstantStep.Rectangle => new IntegratorWithConstantStep(new RectangleIntegrationMethod(), function),
             IntegrationMethodsWithConstantStep.Trapeze => throw new NotImplementedException(),
             IntegrationMethodsWithConstantStep.Parabolic => throw new NotImplementedException(),
-            IntegrationMethodsWithConstantStep.Spline => throw new NotImplementedException(),
-            IntegrationMethodsWithConstantStep.MonteCarlo => throw new NotImplementedException(),
-            IntegrationMethodsWithConstantStep.Gauss => throw new NotImplementedException(),
-            IntegrationMethodsWithConstantStep.Chebyshev => throw new NotImplementedException()
+            IntegrationMethodsWithConstantStep.Spline => throw new NotImplementedException()
         };
     }
 
