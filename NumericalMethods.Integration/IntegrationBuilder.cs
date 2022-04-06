@@ -2,6 +2,7 @@
 using NumericalMethods.Integration.Methods;
 using NumericalMethods.Integration.Methods.Rectangle;
 using NumericalMethods.Integration.Methods.Trapezoid;
+using NumericalMethods.Integration.Methods.Parabolic;
 
 namespace NumericalMethods.Integration;
 public static class IntegrationBuilder
@@ -12,7 +13,7 @@ public static class IntegrationBuilder
         {
             IntegrationMethodsWithConstantStep.Rectangle => new IntegratorWithConstantStep(new RectangleIntegrationMethod(), function),
             IntegrationMethodsWithConstantStep.Trapeze => new IntegratorWithConstantStep(new TrapezoidIntegrationMethod(),function),
-            IntegrationMethodsWithConstantStep.Parabolic => throw new NotImplementedException(),
+            IntegrationMethodsWithConstantStep.Parabolic => new IntegratorWithConstantStep(new ParabolicIntegrationMethod(),function),
             IntegrationMethodsWithConstantStep.Spline => throw new NotImplementedException()
             //IntegrationMethodsWithConstantStep.MonteCarlo => throw new NotImplementedException(),
             //IntegrationMethodsWithConstantStep.Gauss => throw new NotImplementedException(),
