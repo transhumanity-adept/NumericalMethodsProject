@@ -2,22 +2,23 @@
 using NumericalMethods.Core.Integration.Methods.Rectangle;
 using NumericalMethods.Core.Integration.Methods.Parabolic;
 using NumericalMethods.Core.Integration.Methods.Trapezoid;
+using NumericalMethods.Core.Integration.Methods.Splyne;
 
 namespace NumericalMethods.Core.Integration;
-public static class IntegrationBuilder
+public record class IntegrationBuilder (IDerivativesFinder Finder)
 {
-    public static IIntegratorWithConstantStep Build(IIntegrand function, IntegrationMethodsWithConstantStep method)
+    public IIntegratorWithConstantStep Build(IIntegrand function, IntegrationMethodsWithConstantStep method)
     {
         return method switch
         {
             IntegrationMethodsWithConstantStep.Rectangle => new IntegratorWithConstantStep(new RectangleIntegrationMethod(), function),
             IntegrationMethodsWithConstantStep.Trapeze => new IntegratorWithConstantStep(new TrapezoidIntegrationMethod(), function),
             IntegrationMethodsWithConstantStep.Parabolic => new IntegratorWithConstantStep(new ParabolicIntegrationMethod(), function),
-            IntegrationMethodsWithConstantStep.Spline => throw new NotImplementedException()
+            IntegrationMethodsWithConstantStep.Spline =>  new IntegratorWithConstantStep(new SplyneIntegrationMethod(Finder), function)
         };
     }
 
-    public static IIntegratorWithVariableStep Build(IIntegrand function, IntegrationMethodsWithVariableStep method)
+    public IIntegratorWithVariableStep Build(IIntegrand function, IntegrationMethodsWithVariableStep method)
     {
         var test = function;
         return method switch
