@@ -93,23 +93,20 @@ public class SquareMatrix
         }
     }
 
-    SquareMatrix GetInverse()
+    public SquareMatrix GetInverse()
     {
         double det = GetDeterminant();
         SquareMatrix algebraicadd = GetAlgebraicAddition();
         SquareMatrix trans = GetTranspose();
 
-        SquareMatrix result = new SquareMatrix(_data.GetLength(0));
-
-
-        for (int i = 0; i < result.Size; i++)
+        for (int i = 0; i < _data.GetLength(0); i++)
         {
-            for (int j = 0; j < result.Size; j++)
+            for (int j = 0; j < _data.GetLength(1); j++)
             {
-                result[i, j] = trans[i, j] / det;
+                this[i, j] = trans[i, j] / det;
             }
         }
-        return result;
+        return this;
     }
 
     private SquareMatrix GetAlgebraicAddition()
