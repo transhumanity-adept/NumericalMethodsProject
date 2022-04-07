@@ -1,4 +1,4 @@
-﻿using NumericalMethods.Integration.Interfaces;
+﻿using NumericalMethods.Core.Integration.Interfaces;
 
 using org.mariuszgromada.math.mxparser;
 

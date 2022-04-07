@@ -13,11 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NumericalMethods.Approximation.Interpolations\NumericalMethods.Approximation.Interpolations.csproj" />
-    <ProjectReference Include="..\NumericalMethods.Differentiations\NumericalMethods.Differentiations.csproj" />
-    <ProjectReference Include="..\NumericalMethods.Integration\NumericalMethods.Integration.csproj" />
-    <ProjectReference Include="..\NumericalMethods.SolvingCauchyProblems\NumericalMethods.SolvingCauchyProblems.csproj" />
-    <ProjectReference Include="..\NumericalMethods.SolvingSystemsOfNonlinearEquations\NumericalMethods.SolvingSystemsOfNonlinearEquations.csproj" />
+    <ProjectReference Include="..\NumericalMethods.Core\NumericalMethods.Core.csproj" />
   </ItemGroup>
 
 </Project>

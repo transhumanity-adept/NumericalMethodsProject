@@ -5,21 +5,17 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NumericalMethods.WPFApplication", "NumericalMethods.WPFApplication\NumericalMethods.WPFApplication.csproj", "{D9CF7C8A-51F4-49A1-979B-8C5B280A495F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NumericalMethods.Approximation.Interpolations", "NumericalMethods.Approximation.Interpolations\NumericalMethods.Approximation.Interpolations.csproj", "{B73F293E-550D-4F7D-A841-0E87A7B73103}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NumericalMethods.Differentiations", "NumericalMethods.Differentiations\NumericalMethods.Differentiations.csproj", "{A605FA8B-525B-4D17-B062-A1B8425C67C3}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7E0166B1-8566-4F03-A046-80BB94E89C96}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NumericalMethods.SolvingCauchyProblems", "NumericalMethods.SolvingCauchyProblems\NumericalMethods.SolvingCauchyProblems.csproj", "{4B8C064B-28A6-4244-94C8-DB9072242DBC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NumericalMethods.Console", "NumericalMethods.Console\NumericalMethods.Console.csproj", "{CC1B944A-CC00-4DCF-BFBE-5BE815AF3271}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NumericalMethods.SolvingSystemsOfNonlinearEquations", "NumericalMethods.SolvingSystemsOfNonlinearEquations\NumericalMethods.SolvingSystemsOfNonlinearEquations.csproj", "{1D28975B-81FC-4131-A969-E4EEC7BA6152}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NumericalMethods.Core", "NumericalMethods.Core\NumericalMethods.Core.csproj", "{66D89C98-FAA2-43A8-8623-333D5C9071F6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NumericalMethods.Integration", "NumericalMethods.Integration\NumericalMethods.Integration.csproj", "{B3DA46EC-1ABA-4336-B880-9D6CC36D502C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NumericalMethods.Infrastructure", "NumericalMethods.Infrastructure\NumericalMethods.Infrastructure.csproj", "{7EBCA932-CF75-4FB8-88CA-D27196EDAED3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,26 +27,18 @@ Global
 		{D9CF7C8A-51F4-49A1-979B-8C5B280A495F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D9CF7C8A-51F4-49A1-979B-8C5B280A495F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D9CF7C8A-51F4-49A1-979B-8C5B280A495F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B73F293E-550D-4F7D-A841-0E87A7B73103}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B73F293E-550D-4F7D-A841-0E87A7B73103}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B73F293E-550D-4F7D-A841-0E87A7B73103}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B73F293E-550D-4F7D-A841-0E87A7B73103}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A605FA8B-525B-4D17-B062-A1B8425C67C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A605FA8B-525B-4D17-B062-A1B8425C67C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A605FA8B-525B-4D17-B062-A1B8425C67C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A605FA8B-525B-4D17-B062-A1B8425C67C3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4B8C064B-28A6-4244-94C8-DB9072242DBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4B8C064B-28A6-4244-94C8-DB9072242DBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4B8C064B-28A6-4244-94C8-DB9072242DBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4B8C064B-28A6-4244-94C8-DB9072242DBC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1D28975B-81FC-4131-A969-E4EEC7BA6152}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1D28975B-81FC-4131-A969-E4EEC7BA6152}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1D28975B-81FC-4131-A969-E4EEC7BA6152}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1D28975B-81FC-4131-A969-E4EEC7BA6152}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B3DA46EC-1ABA-4336-B880-9D6CC36D502C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B3DA46EC-1ABA-4336-B880-9D6CC36D502C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B3DA46EC-1ABA-4336-B880-9D6CC36D502C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B3DA46EC-1ABA-4336-B880-9D6CC36D502C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC1B944A-CC00-4DCF-BFBE-5BE815AF3271}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC1B944A-CC00-4DCF-BFBE-5BE815AF3271}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC1B944A-CC00-4DCF-BFBE-5BE815AF3271}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC1B944A-CC00-4DCF-BFBE-5BE815AF3271}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66D89C98-FAA2-43A8-8623-333D5C9071F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66D89C98-FAA2-43A8-8623-333D5C9071F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66D89C98-FAA2-43A8-8623-333D5C9071F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66D89C98-FAA2-43A8-8623-333D5C9071F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EBCA932-CF75-4FB8-88CA-D27196EDAED3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EBCA932-CF75-4FB8-88CA-D27196EDAED3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EBCA932-CF75-4FB8-88CA-D27196EDAED3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EBCA932-CF75-4FB8-88CA-D27196EDAED3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

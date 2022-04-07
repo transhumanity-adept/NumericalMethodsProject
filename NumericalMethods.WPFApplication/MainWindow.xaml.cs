@@ -1,9 +1,9 @@
-﻿using NumericalMethods.Approximation.Interpolations;
-using NumericalMethods.Approximation.Interpolations.Interfaces;
-using NumericalMethods.Differentiations;
-using NumericalMethods.Differentiations.Interfaces;
-using NumericalMethods.Integration;
-using NumericalMethods.Integration.Interfaces;
+﻿using NumericalMethods.Core.Approximation;
+using NumericalMethods.Core.Approximation.Interfaces;
+using NumericalMethods.Core.Differentiations;
+using NumericalMethods.Core.Differentiations.Interfaces;
+using NumericalMethods.Core.Integration;
+using NumericalMethods.Core.Integration.Interfaces;
 using NumericalMethods.WPFApplication.Integration;
 using NumericalMethods.WPFApplication.Differentiation;
 
