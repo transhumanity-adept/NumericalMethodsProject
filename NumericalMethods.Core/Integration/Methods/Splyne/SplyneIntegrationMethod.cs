@@ -4,7 +4,7 @@ using NumericalMethods.Core.Integration.Methods.Trapezoid;
 namespace NumericalMethods.Core.Integration.Methods.Splyne
 {
     public record class SplyneIntegrationMethod(IDerivativesFinder Finder) : IIntegrationMethodWithConstantStep
-    {        
+    {
         TrapezoidIntegrationMethod trapezoid = new TrapezoidIntegrationMethod();
         
         public double Intergrate(IIntegrand function, double start, double end, double step)
