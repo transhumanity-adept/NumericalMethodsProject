@@ -2,8 +2,8 @@
 using NumericalMethods.Core.Approximation.Interfaces;
 using NumericalMethods.Core.Differentiations;
 using NumericalMethods.Core.Differentiations.Interfaces;
-using NumericalMethods.Core.Integration;
-using NumericalMethods.Core.Integration.Interfaces;
+using NumericalMethods.Infrastructure.Integration;
+using NumericalMethods.Infrastructure.Integration.Interfaces;
 using NumericalMethods.WPFApplication.Integration;
 using NumericalMethods.WPFApplication.Differentiation;
 
@@ -26,7 +26,7 @@ namespace NumericalMethods.WPFApplication
     /// </summary>
     public partial class MainWindow : Window
     {
-        private List<Point> _points = new List<Point>();
+        private readonly List<Point> _points = new List<Point>();
         public MainWindow()
         {
             InitializeComponent();
@@ -227,6 +227,7 @@ namespace NumericalMethods.WPFApplication
                 xs[i] = x;
                 ys[i] = function.calculate(x);
             }
+
             return (xs, ys);
         }
         #endregion

@@ -13,7 +13,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NumericalMethods.Core\NumericalMethods.Core.csproj" />
+    <ProjectReference Include="..\NumericalMethods.Core\NumericalMethods.Core.Approximation\NumericalMethods.Core.Approximation.csproj" />
+    <ProjectReference Include="..\NumericalMethods.Core\NumericalMethods.Core.Differentiation\NumericalMethods.Core.Differentiation.csproj" />
+    <ProjectReference Include="..\NumericalMethods.Infrastructure\NumericalMethods.Infrastructure.Integration\NumericalMethods.Infrastructure.Integration.csproj" />
+    <ProjectReference Include="..\NumericalMethods.Infrastructure\NumericalMethods.Infrastructure.NonLinearEquationsSystems\NumericalMethods.Infrastructure.NonLinearEquationsSystems.csproj" />
   </ItemGroup>
 
 </Project>

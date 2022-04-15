@@ -1,11 +1,11 @@
-﻿using NumericalMethods.Core.Integration.Interfaces;
+﻿using NumericalMethods.Infrastructure.Integration.Interfaces;
 
 using org.mariuszgromada.math.mxparser;
 
 namespace NumericalMethods.WPFApplication.Integration;
 public class Integrand : IIntegrand
 {
-    private Function _fucntion;
+    private readonly Function _fucntion;
     public Integrand(Function function)
     {
         _fucntion = function;

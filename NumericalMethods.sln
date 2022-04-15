@@ -13,9 +13,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NumericalMethods.Console", "NumericalMethods.Console\NumericalMethods.Console.csproj", "{CC1B944A-CC00-4DCF-BFBE-5BE815AF3271}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NumericalMethods.Core", "NumericalMethods.Core\NumericalMethods.Core.csproj", "{66D89C98-FAA2-43A8-8623-333D5C9071F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NumericalMethods.Core.Approximation", "NumericalMethods.Core\NumericalMethods.Core.Approximation\NumericalMethods.Core.Approximation.csproj", "{B5DB8685-D7D2-4438-A0AB-2E05CC693797}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NumericalMethods.Infrastructure", "NumericalMethods.Infrastructure\NumericalMethods.Infrastructure.csproj", "{7EBCA932-CF75-4FB8-88CA-D27196EDAED3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NumericalMethods.Core.Differentiation", "NumericalMethods.Core\NumericalMethods.Core.Differentiation\NumericalMethods.Core.Differentiation.csproj", "{D450C834-6912-428A-B0F2-FF2A8748CEDB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NumericalMethods.Core", "NumericalMethods.Core", "{0C247404-3A5A-4765-8A70-01BCBC80B11E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NumericalMethods.Infrastructure.Approximation", "NumericalMethods.Infrastructure\NumericalMethods.Infrastructure.Approximation\NumericalMethods.Infrastructure.Approximation.csproj", "{E01D2B1B-023C-4F74-8736-6FA9EB16294E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NumericalMethods.Infrastructure.Differentiation", "NumericalMethods.Infrastructure\NumericalMethods.Infrastructure.Differentiation\NumericalMethods.Infrastructure.Differentiation.csproj", "{F15A7B24-BCCC-40B8-83F0-9997546E2A8A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NumericalMethods.Infrastructure.Integration", "NumericalMethods.Infrastructure\NumericalMethods.Infrastructure.Integration\NumericalMethods.Infrastructure.Integration.csproj", "{92CC49B2-8589-45B4-AA37-F0E05C628CF1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NumericalMethods.Infrastructure.NonLinearEquationsSystems", "NumericalMethods.Infrastructure\NumericalMethods.Infrastructure.NonLinearEquationsSystems\NumericalMethods.Infrastructure.NonLinearEquationsSystems.csproj", "{B29063A7-D95C-42DE-8829-E7C229FB7F87}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NumericalMethods.Infrastructure", "NumericalMethods.Infrastructure", "{A05F0BBB-418B-460D-850D-46090462975B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,17 +43,41 @@ Global
 		{CC1B944A-CC00-4DCF-BFBE-5BE815AF3271}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC1B944A-CC00-4DCF-BFBE-5BE815AF3271}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC1B944A-CC00-4DCF-BFBE-5BE815AF3271}.Release|Any CPU.Build.0 = Release|Any CPU
-		{66D89C98-FAA2-43A8-8623-333D5C9071F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{66D89C98-FAA2-43A8-8623-333D5C9071F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{66D89C98-FAA2-43A8-8623-333D5C9071F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{66D89C98-FAA2-43A8-8623-333D5C9071F6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7EBCA932-CF75-4FB8-88CA-D27196EDAED3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7EBCA932-CF75-4FB8-88CA-D27196EDAED3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7EBCA932-CF75-4FB8-88CA-D27196EDAED3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7EBCA932-CF75-4FB8-88CA-D27196EDAED3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5DB8685-D7D2-4438-A0AB-2E05CC693797}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5DB8685-D7D2-4438-A0AB-2E05CC693797}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5DB8685-D7D2-4438-A0AB-2E05CC693797}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5DB8685-D7D2-4438-A0AB-2E05CC693797}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D450C834-6912-428A-B0F2-FF2A8748CEDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D450C834-6912-428A-B0F2-FF2A8748CEDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D450C834-6912-428A-B0F2-FF2A8748CEDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D450C834-6912-428A-B0F2-FF2A8748CEDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E01D2B1B-023C-4F74-8736-6FA9EB16294E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E01D2B1B-023C-4F74-8736-6FA9EB16294E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E01D2B1B-023C-4F74-8736-6FA9EB16294E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E01D2B1B-023C-4F74-8736-6FA9EB16294E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F15A7B24-BCCC-40B8-83F0-9997546E2A8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F15A7B24-BCCC-40B8-83F0-9997546E2A8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F15A7B24-BCCC-40B8-83F0-9997546E2A8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F15A7B24-BCCC-40B8-83F0-9997546E2A8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92CC49B2-8589-45B4-AA37-F0E05C628CF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92CC49B2-8589-45B4-AA37-F0E05C628CF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92CC49B2-8589-45B4-AA37-F0E05C628CF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92CC49B2-8589-45B4-AA37-F0E05C628CF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B29063A7-D95C-42DE-8829-E7C229FB7F87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B29063A7-D95C-42DE-8829-E7C229FB7F87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B29063A7-D95C-42DE-8829-E7C229FB7F87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B29063A7-D95C-42DE-8829-E7C229FB7F87}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B5DB8685-D7D2-4438-A0AB-2E05CC693797} = {0C247404-3A5A-4765-8A70-01BCBC80B11E}
+		{D450C834-6912-428A-B0F2-FF2A8748CEDB} = {0C247404-3A5A-4765-8A70-01BCBC80B11E}
+		{E01D2B1B-023C-4F74-8736-6FA9EB16294E} = {A05F0BBB-418B-460D-850D-46090462975B}
+		{F15A7B24-BCCC-40B8-83F0-9997546E2A8A} = {A05F0BBB-418B-460D-850D-46090462975B}
+		{92CC49B2-8589-45B4-AA37-F0E05C628CF1} = {A05F0BBB-418B-460D-850D-46090462975B}
+		{B29063A7-D95C-42DE-8829-E7C229FB7F87} = {A05F0BBB-418B-460D-850D-46090462975B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {85768CA4-0E30-4F4D-A022-F87FAAFD4D2F}
