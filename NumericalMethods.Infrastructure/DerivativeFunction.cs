@@ -1,6 +1,4 @@
-﻿using NumericalMethods.Core.Integration.Interfaces;
-
-namespace NumericalMethods.Infrastructure
+﻿namespace NumericalMethods.Infrastructure
 {
     public  class DerivativeFunction
     {

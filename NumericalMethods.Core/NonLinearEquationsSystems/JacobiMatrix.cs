@@ -8,7 +8,7 @@ namespace NumericalMethods.Core.NonLinearEquationsSystems
 {
     public class JacobiMatrix : SquareMatrix
     {
-        public JacobiMatrix() : base(size)
+        public JacobiMatrix(int size) : base(size)
         {
         }
     }

@@ -3,7 +3,7 @@ using NumericalMethods.Core.Integration.Methods.Trapezoid;
 
 namespace NumericalMethods.Core.Integration.Methods.Splyne
 {
-    public record class SplyneIntegrationMethod(IDerivativesFinder Finder) : IIntegrationMethodWithConstantStep
+    public record class SplyneIntegrationMethod : IIntegrationMethodWithConstantStep
     {
         TrapezoidIntegrationMethod trapezoid = new TrapezoidIntegrationMethod();
         
@@ -13,8 +13,7 @@ namespace NumericalMethods.Core.Integration.Methods.Splyne
             double trapezoidIntegral = trapezoid.Intergrate(function, start, end, step); // Первая часть функции Сплайна
             for (double x = start + step; x < end; x += step)
             {
-                var derivative = Finder.CalculateDerivative(new AdapterFunction(function), 2);
-                result += Math.Pow(step, 3) ; // Второе слагаемое - производная
+                result += Math.Pow(step, 3); // Второе слагаемое - производная
             }
             return trapezoidIntegral - result/12;
         }
