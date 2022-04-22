@@ -14,7 +14,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-
+using System.Windows.Controls;
+using System.Windows.Input;
 using Expression = org.mariuszgromada.math.mxparser.Expression;
 using Point = NumericalMethods.WPFApplication.Differentiation.Point;
 
@@ -230,6 +231,21 @@ namespace NumericalMethods.WPFApplication
 
 			return (xs, ys);
 		}
-		#endregion
-	}
+        #endregion
+
+        private void textBoxLinearEquations_KeyDown(object sender, KeyEventArgs e)
+        {
+			if (e.Key == Key.Enter)
+            {
+				RowDefinition rowDefinition = new RowDefinition();
+				TextBox tbx1 = new TextBox();
+				tbx1.Text = "fad";
+				gridSystemLinearEquations.RowDefinitions.Add(rowDefinition);
+				Grid.SetRow(tbx1, gridSystemLinearEquations.RowDefinitions.Count - 1);
+				gridSystemLinearEquations.Children.Add(tbx1);
+                tbx1.KeyDown += textBoxLinearEquations_KeyDown;
+			}
+        }
+      
+    }
 }
