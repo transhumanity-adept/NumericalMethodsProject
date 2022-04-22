@@ -8,7 +8,7 @@ public class TrapezoidIntegrationMethod : IIntegrationMethodWithConstantStep
 	{
 		SymbolicExpression func = SymbolicExpression.Parse(function);
 		double sumElement = 0;
-		for (double x = start + step; x <= end; x += step)
+		for (double x = start + step; x < end; x += step)
 			sumElement += step * (func.EvaluateX(x - step) + func.EvaluateX(x));
 		return sumElement / 2;
 	}

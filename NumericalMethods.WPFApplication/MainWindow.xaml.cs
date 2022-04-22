@@ -184,7 +184,6 @@ namespace NumericalMethods.WPFApplication
 			IntegrationMethodsWithConstantStep method = (IntegrationMethodsWithConstantStep)Enum.Parse(typeof(IntegrationMethodsWithConstantStep), function_type_string);
 			IIntegratorWithConstantStep integrator = new IntegrationBuilder()
 																			.Build(Integration_FunctionTextBox.Text.Trim(), method);
-			//IIntegratorWithVariableStep integrator = new IntegrationBuilder().Build(Integration_FunctionTextBox.Text.Trim(), IntegrationMethodsWithVariableStep.Gauss);
 			double integration_result = integrator.Integrate(start_x, end_x, step);
 			MessageBox.Show($"Integration result: {integration_result}");
 		}
