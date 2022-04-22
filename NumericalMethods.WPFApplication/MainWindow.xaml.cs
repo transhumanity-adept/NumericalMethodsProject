@@ -4,7 +4,6 @@ using NumericalMethods.Core.Differentiations;
 using NumericalMethods.Core.Differentiations.Interfaces;
 using NumericalMethods.Infrastructure.Integration;
 using NumericalMethods.Infrastructure.Integration.Interfaces;
-using NumericalMethods.WPFApplication.Integration;
 
 using org.mariuszgromada.math.mxparser;
 
@@ -190,32 +189,6 @@ namespace NumericalMethods.WPFApplication
 		#endregion
 
 		#region Tools
-		private static double[] DataGenerate(Function function, double start, double end, double step, FunctionAxis axis)
-		{
-			int size = (int)Math.Ceiling((end - start) / step);
-			double[] result = new double[size + 1];
-			int i = 0;
-			switch (axis)
-			{
-				case FunctionAxis.Xs:
-					for (double x = start; x <= end; x += step, i++)
-					{
-						result[i] = x;
-					}
-
-					break;
-				case FunctionAxis.Ys:
-					for (double x = start; x <= end; x += step, i++)
-					{
-						result[i] = function.calculate(x);
-					}
-
-					break;
-			}
-
-			return result;
-		}
-
 		private static (double[] xs, double[] ys) DataGenerate(Function function, double start, double end, double step)
 		{
 			int size = (int)Math.Ceiling((end - start) / step);
