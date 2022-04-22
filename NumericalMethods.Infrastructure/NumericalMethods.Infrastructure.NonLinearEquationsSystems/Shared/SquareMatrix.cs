@@ -1,4 +1,8 @@
-﻿namespace NumericalMethods.Infrastructure.NonLinearEquationsSystems;
+﻿using MathNet.Symbolics;
+
+using NumericalMethods.Infrastructure.NonLinearEquationsSystems.Shared;
+
+namespace NumericalMethods.Infrastructure.NonLinearEquationsSystems;
 public class SquareMatrix
 {
 	private readonly double[,] _data;
@@ -121,6 +125,7 @@ public class SquareMatrix
 
 		return this;
 	}
+
 	SquareMatrix GetTranspose()
 	{
 		SquareMatrix transpose = new SquareMatrix((double[,])_data.Clone());
@@ -133,5 +138,40 @@ public class SquareMatrix
 		}
 
 		return this;
+	}
+
+	public static VectorColumn operator * (SquareMatrix matrix, VectorColumn vector)
+	{
+		VectorColumn result = new VectorColumn(vector.Size);
+		for (int i = 0; i < matrix.Size; i++)
+		{
+			double row_sum = 0;
+			for (int j = 0; j < matrix.Size; j++)
+			{
+				row_sum += matrix[i, j] * vector[j];
+			}
+			result[i] = row_sum;
+		}
+
+		return result;
+	}
+
+	public static SquareMatrix CreateJacobiMatrix(IEnumerable<SymbolicExpression> functions, Dictionary<string, FloatingPoint> values)
+	{
+		var variables = functions.First().CollectVariables();
+		int count_params = variables.Count();
+		SquareMatrix resultMatrix = new SquareMatrix(count_params);
+		for (int i = 0; i < resultMatrix.Size; i++)
+		{
+			for (int j = 0; j < resultMatrix.Size; j++)
+			{
+				string currentVariableName = variables.ElementAt(j).ToString();
+				resultMatrix[i, j] = functions.ElementAt(i)
+					.Differentiate(variables.ElementAt(j))
+					.EvaluateOfList(new() { (currentVariableName, values[currentVariableName].RealValue) });
+			}
+		}
+
+		return resultMatrix;
 	}
 }

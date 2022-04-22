@@ -84,8 +84,12 @@ Dictionary<string, FloatingPoint> dict = new Dictionary<string, FloatingPoint>()
 	{ "x1", 1 },
 	{ "x2", 5 }
 };
-
-var par = exps.First();
+var equation = SymbolicExpression.Parse("2*x1 + 3*x2^2 + 2*x2^2 + 3 - 5");
+var test = equation.CollectProducts();
+//foreach (var item in test)
+//{
+//	equation = equation.Subtract(item);
+//}
 
 Console.WriteLine();
 
