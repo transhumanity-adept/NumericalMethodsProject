@@ -3,11 +3,13 @@ using NumericalMethods.Infrastructure.Integration.Methods.Parabolic;
 using NumericalMethods.Infrastructure.Integration.Methods.Rectangle;
 using NumericalMethods.Infrastructure.Integration.Methods.Splyne;
 using NumericalMethods.Infrastructure.Integration.Methods.Trapezoid;
+using NumericalMethods.Infrastructure.Integration.Methods.MonteCarlo;
+using NumericalMethods.Infrastructure.Integration.Methods.Gauss;
 
 namespace NumericalMethods.Infrastructure.Integration;
 public record class IntegrationBuilder
 {
-	public IIntegratorWithConstantStep Build(IIntegrand function, IntegrationMethodsWithConstantStep method)
+	public IIntegratorWithConstantStep Build(string function, IntegrationMethodsWithConstantStep method)
 	{
 		return method switch
 		{
@@ -19,14 +21,14 @@ public record class IntegrationBuilder
 		};
 	}
 
-	public IIntegratorWithVariableStep Build(IIntegrand function, IntegrationMethodsWithVariableStep method)
+	public IIntegratorWithVariableStep Build(string function, IntegrationMethodsWithVariableStep method)
 	{
 		var test = function;
 		return method switch
 		{
-			IntegrationMethodsWithVariableStep.Gauss => throw new NotImplementedException(),
+			IntegrationMethodsWithVariableStep.Gauss => new IntegratorWithVariableStep(new GaussIntegrationMethod(),function),
 			IntegrationMethodsWithVariableStep.Chebyshev => throw new NotImplementedException(),
-			IntegrationMethodsWithVariableStep.MonteCarlo => throw new NotImplementedException(),
+			IntegrationMethodsWithVariableStep.MonteCarlo => new IntegratorWithVariableStep(new MonteCarloIntegrationMethod(),function),
 			_ => throw new NotImplementedException()
 		};
 	}

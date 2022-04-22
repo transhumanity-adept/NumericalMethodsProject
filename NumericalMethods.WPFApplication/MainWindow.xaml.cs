@@ -4,7 +4,6 @@ using NumericalMethods.Core.Differentiations;
 using NumericalMethods.Core.Differentiations.Interfaces;
 using NumericalMethods.Infrastructure.Integration;
 using NumericalMethods.Infrastructure.Integration.Interfaces;
-using NumericalMethods.WPFApplication.Integration;
 
 using org.mariuszgromada.math.mxparser;
 
@@ -183,39 +182,13 @@ namespace NumericalMethods.WPFApplication
 			string function_type_string = Integration_MethodComboBox.SelectedValue.ToString();
 			IntegrationMethodsWithConstantStep method = (IntegrationMethodsWithConstantStep)Enum.Parse(typeof(IntegrationMethodsWithConstantStep), function_type_string);
 			IIntegratorWithConstantStep integrator = new IntegrationBuilder()
-															.Build(new Integrand(function), method);
+																			.Build(Integration_FunctionTextBox.Text.Trim(), method);
 			double integration_result = integrator.Integrate(start_x, end_x, step);
 			MessageBox.Show($"Integration result: {integration_result}");
 		}
 		#endregion
 
 		#region Tools
-		private static double[] DataGenerate(Function function, double start, double end, double step, FunctionAxis axis)
-		{
-			int size = (int)Math.Ceiling((end - start) / step);
-			double[] result = new double[size + 1];
-			int i = 0;
-			switch (axis)
-			{
-				case FunctionAxis.Xs:
-					for (double x = start; x <= end; x += step, i++)
-					{
-						result[i] = x;
-					}
-
-					break;
-				case FunctionAxis.Ys:
-					for (double x = start; x <= end; x += step, i++)
-					{
-						result[i] = function.calculate(x);
-					}
-
-					break;
-			}
-
-			return result;
-		}
-
 		private static (double[] xs, double[] ys) DataGenerate(Function function, double start, double end, double step)
 		{
 			int size = (int)Math.Ceiling((end - start) / step);

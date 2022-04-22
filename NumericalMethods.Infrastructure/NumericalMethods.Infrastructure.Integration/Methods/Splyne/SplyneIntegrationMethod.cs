@@ -1,22 +1,19 @@
-﻿using NumericalMethods.Infrastructure.Integration.Interfaces;
-using NumericalMethods.Infrastructure.Integration.Methods.Trapezoid;
+﻿using NumericalMethods.Infrastructure.Integration.Methods.Trapezoid;
+using MathNet.Symbolics;
+using NumericalMethods.Infrastructure.Integration.Shared;
 
 namespace NumericalMethods.Infrastructure.Integration.Methods.Splyne
 {
 	public record class SplyneIntegrationMethod : IIntegrationMethodWithConstantStep
 	{
-		readonly TrapezoidIntegrationMethod trapezoid = new TrapezoidIntegrationMethod();
-
-		public double Intergrate(IIntegrand function, double start, double end, double step)
+		public double Integrate(string function, double start, double end, double step)
 		{
-			double result = 0;
-			double trapezoidIntegral = trapezoid.Intergrate(function, start, end, step); // Первая часть функции Сплайна
+			SymbolicExpression func = SymbolicExpression.Parse(function);
+			double inaccuracyTrapezoidMethod = 0;//Погрешность метода трапеции
+			double trapezoidIntegral = new TrapezoidIntegrationMethod().Integrate(function, start, end, step); // Первая часть функции Сплайна
 			for (double x = start + step; x < end; x += step)
-			{
-				result += Math.Pow(step, 3); // Второе слагаемое - производная
-			}
-
-			return trapezoidIntegral - (result / 12);
+				inaccuracyTrapezoidMethod += Math.Pow(step, 3) * func.Derivative(x, 2);
+			return trapezoidIntegral - (inaccuracyTrapezoidMethod / 12);
 		}
 	}
 }
