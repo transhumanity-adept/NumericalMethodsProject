@@ -5,8 +5,7 @@ public class NewtonMethod : ISolvingMethod
 {
 	IEnumerable<double> ISolvingMethod.Solve(NonLinearEquationsSystem system, double eps)
 	{
-		var variables = funtionExpressions.First().CollectVariables();
-		//double[] x = Enumerable.Repeat(1.0, variables.Count()).ToArray();
+		IEnumerable<SymbolicExpression>? variables = system.FunctionExpressions.First().CollectVariables();
 		double[] x = { 0, 1 };
 		double delta = double.MaxValue;
 		List<double[]> results = new List<double[]>() { x };

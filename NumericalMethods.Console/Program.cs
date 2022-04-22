@@ -85,9 +85,9 @@ Dictionary<string, FloatingPoint> dict = new Dictionary<string, FloatingPoint>()
 	{ "x2", 5 }
 };
 
-var res = Newton(exps, 0.001);
+var par = exps.First();
 
-var x = 0;
+Console.WriteLine();
 
 List<double[]> Newton(List<SymbolicExpression> functions, double eps)
 {
