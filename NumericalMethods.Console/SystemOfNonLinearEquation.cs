@@ -1,9 +1,7 @@
-﻿using System.Numerics;
-
-namespace NumericalMethods.Console
+﻿namespace NumericalMethods.Console
 {
-    public class SystemOfNonLinearEquation
-    {
+	public class SystemOfNonLinearEquation
+	{
 
-    }
+	}
 }

@@ -4,8 +4,8 @@ using NumericalMethods.Infrastructure.Integration.Methods;
 namespace NumericalMethods.Infrastructure.Integration;
 internal record class IntegratorWithVariableStep(IIntegrationMethodWithVariableStep IntegrationMethod, IIntegrand Function) : IIntegratorWithVariableStep
 {
-    public double Integrate(double start, double end, int count_nodes)
-    {
-        return IntegrationMethod.Intergrate(Function, start, end, count_nodes);
-    }
+	public double Integrate(double start, double end, int count_nodes)
+	{
+		return IntegrationMethod.Intergrate(Function, start, end, count_nodes);
+	}
 }

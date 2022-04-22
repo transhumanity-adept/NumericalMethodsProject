@@ -1,13 +1,5 @@
 ﻿using MathNet.Symbolics;
 
-using org.mariuszgromada.math.mxparser;
-
-using System.Data.Common;
-using System.Drawing;
-
-using FuctionMX = org.mariuszgromada.math.mxparser.Function;
-using FunctionS = MathNet.Symbolics.Function;
-
 //FuctionMX function = new FuctionMX("f(x) = x^2");
 //double a = -5;
 //double b = 5;
@@ -83,14 +75,14 @@ using FunctionS = MathNet.Symbolics.Function;
 #region SNU
 List<SymbolicExpression> exps = new List<SymbolicExpression>()
 {
-    SymbolicExpression.Parse("x1 + x2 - 3"),
-    SymbolicExpression.Parse("x1^2 + x2^2 - 9")
+	SymbolicExpression.Parse("x1 + x2 - 3"),
+	SymbolicExpression.Parse("x1^2 + x2^2 - 9")
 };
 
 Dictionary<string, FloatingPoint> dict = new Dictionary<string, FloatingPoint>()
 {
-    { "x1", 1 },
-    { "x2", 5 }
+	{ "x1", 1 },
+	{ "x2", 5 }
 };
 
 var res = Newton(exps, 0.001);
@@ -99,152 +91,152 @@ var x = 0;
 
 List<double[]> Newton(List<SymbolicExpression> functions, double eps)
 {
-    var variables = functions.First().CollectVariables();
-    //double[] x = Enumerable.Repeat(1.0, variables.Count()).ToArray();
-    double[] x = { 0, 1 };
-    double delta = double.MaxValue;
-    List<double[]> results = new List<double[]>() { x };
-    while (delta > eps)
-    {
-        Dictionary<string, FloatingPoint> values = new Dictionary<string, FloatingPoint>();
-        for (int i = 0; i < x.Length; i++)
-        {
-            values.Add(variables.ElementAt(i).ToString(), x[i]);
-        }
-        var ys = functions.Select(function => function.Evaluate(values)).Select(fp => fp.RealValue).ToArray();
-        var delta_x = Multiply(GetInverse(CalculateJacobi(functions, values)), GetNegativeVector(ys));
-        delta = GetNorm(delta_x);
-        x = GetSumVectors(x, delta_x);
-        results.Add(x);
-    }
-    return results;
+	var variables = functions.First().CollectVariables();
+	//double[] x = Enumerable.Repeat(1.0, variables.Count()).ToArray();
+	double[] x = { 0, 1 };
+	double delta = double.MaxValue;
+	List<double[]> results = new List<double[]>() { x };
+	while (delta > eps)
+	{
+		Dictionary<string, FloatingPoint> values = new Dictionary<string, FloatingPoint>();
+		for (int i = 0; i < x.Length; i++)
+		{
+			values.Add(variables.ElementAt(i).ToString(), x[i]);
+		}
+		var ys = functions.Select(function => function.Evaluate(values)).Select(fp => fp.RealValue).ToArray();
+		var delta_x = Multiply(GetInverse(CalculateJacobi(functions, values)), GetNegativeVector(ys));
+		delta = GetNorm(delta_x);
+		x = GetSumVectors(x, delta_x);
+		results.Add(x);
+	}
+	return results;
 }
 
 double GetNorm(double[] vector)
 {
-    return vector.Select(vector => Math.Abs(vector)).Max();
+	return vector.Select(vector => Math.Abs(vector)).Max();
 }
 
 double[] Multiply(double[,] matrix, double[] vector)
 {
-    double[] result = new double[vector.Length];
-    for (int i = 0; i < matrix.GetLength(0); i++)
-    {
-        double sum = 0;
-        for (int j = 0; j < matrix.GetLength(1); j++)
-        {
-            sum += matrix[i, j] * vector[j];
-        }
-        result[i] = sum;
-    }
-    return result;
+	double[] result = new double[vector.Length];
+	for (int i = 0; i < matrix.GetLength(0); i++)
+	{
+		double sum = 0;
+		for (int j = 0; j < matrix.GetLength(1); j++)
+		{
+			sum += matrix[i, j] * vector[j];
+		}
+		result[i] = sum;
+	}
+	return result;
 }
 
 double[] GetNegativeVector(double[] vector)
 {
-    return vector.Select(v => -v).ToArray();
+	return vector.Select(v => -v).ToArray();
 }
 
 double[] GetSumVectors(double[] v1, double[] v2)
 {
-    return v1.Zip(v2, (v1, v2) => v1 + v2).ToArray();
+	return v1.Zip(v2, (v1, v2) => v1 + v2).ToArray();
 }
 
 double[,] CalculateJacobi(List<SymbolicExpression> functions, Dictionary<string, FloatingPoint> values)
 {
-    var variables = functions.First().CollectVariables();
-    int count_params = variables.Count();
-    double[,] result = new double[count_params, count_params];
-    for (int i = 0; i < result.GetLength(0); i++)
-    {
-        for (int j = 0; j < result.GetLength(1); j++)
-        {
-            result[i, j] = functions[i].Differentiate(variables.ElementAt(j)).Evaluate(new Dictionary<string, FloatingPoint>() { { variables.ElementAt(j).ToString(), values[variables.ElementAt(j).ToString()] } }).RealValue;
-        }
-    }
+	var variables = functions.First().CollectVariables();
+	int count_params = variables.Count();
+	double[,] result = new double[count_params, count_params];
+	for (int i = 0; i < result.GetLength(0); i++)
+	{
+		for (int j = 0; j < result.GetLength(1); j++)
+		{
+			result[i, j] = functions[i].Differentiate(variables.ElementAt(j)).Evaluate(new Dictionary<string, FloatingPoint>() { { variables.ElementAt(j).ToString(), values[variables.ElementAt(j).ToString()] } }).RealValue;
+		}
+	}
 
-    return result;
+	return result;
 }
 
 double[,] GetMatrixWithout(double[,] matrix, int index_row, int index_column)
 {
-    double[,] new_matrix = new double[matrix.GetLength(0) - 1, matrix.GetLength(1) - 1];
-    for (int i = 0; i < new_matrix.GetLength(0); i++)
-    {
-        for (int j = 0; j < new_matrix.GetLength(1); j++)
-        {
-            if (i >= index_row && j >= index_column)
-                new_matrix[i, j] = matrix[i + 1, j + 1];
-            else if (i >= index_row)
-                new_matrix[i, j] = matrix[i + 1, j];
-            else if (j >= index_row)
-                new_matrix[i, j] = matrix[i, j + 1];
-            else
-                new_matrix[i, j] = matrix[i, j];
-        }
-    }
-    return new_matrix;
+	double[,] new_matrix = new double[matrix.GetLength(0) - 1, matrix.GetLength(1) - 1];
+	for (int i = 0; i < new_matrix.GetLength(0); i++)
+	{
+		for (int j = 0; j < new_matrix.GetLength(1); j++)
+		{
+			if (i >= index_row && j >= index_column)
+				new_matrix[i, j] = matrix[i + 1, j + 1];
+			else if (i >= index_row)
+				new_matrix[i, j] = matrix[i + 1, j];
+			else if (j >= index_row)
+				new_matrix[i, j] = matrix[i, j + 1];
+			else
+				new_matrix[i, j] = matrix[i, j];
+		}
+	}
+	return new_matrix;
 }
 
 double GetDeterminant(double[,] matrix)
 {
-    int size = matrix.GetLength(0);
+	int size = matrix.GetLength(0);
 
-    switch (size)
-    {
-        case 1: return matrix[0, 0];
-        case 2: return matrix[0, 0] * matrix[1, 1] - matrix[1, 0] * matrix[0, 1];
-        default:
-            double determinant = 0;
-            for (int column = 0; column < size; column++)
-            {
-                determinant += (column % 2 == 0 ? 1 : -1) * matrix[0, column] * GetDeterminant(GetMatrixWithout(matrix, 0, column));
-            }
-            return determinant;
-    }
+	switch (size)
+	{
+		case 1: return matrix[0, 0];
+		case 2: return matrix[0, 0] * matrix[1, 1] - matrix[1, 0] * matrix[0, 1];
+		default:
+			double determinant = 0;
+			for (int column = 0; column < size; column++)
+			{
+				determinant += (column % 2 == 0 ? 1 : -1) * matrix[0, column] * GetDeterminant(GetMatrixWithout(matrix, 0, column));
+			}
+			return determinant;
+	}
 }
 
 double[,] GetTranspose(double[,] matrix)
 {
-    double[,] transpose = new double[matrix.GetLength(1), matrix.GetLength(0)];
-    for (int i = 0; i < transpose.GetLength(0); i++)
-    {
-        for (int j = 0; j < transpose.GetLength(1); j++)
-        {
-            transpose[i, j] = matrix[j, i];
-        }
-    }
-    return transpose;
+	double[,] transpose = new double[matrix.GetLength(1), matrix.GetLength(0)];
+	for (int i = 0; i < transpose.GetLength(0); i++)
+	{
+		for (int j = 0; j < transpose.GetLength(1); j++)
+		{
+			transpose[i, j] = matrix[j, i];
+		}
+	}
+	return transpose;
 }
 
 double[,] GetAlgebraicAddition(double[,] matrix)
 {
-    double[,] result = new double[matrix.GetLength(0), matrix.GetLength(1)];
-    for (int i = 0; i < matrix.GetLength(0); i++)
-    {
-        for (int j = 0; j < matrix.GetLength(1); j++)
-        {
-            double[,] without = GetMatrixWithout(matrix, i, j);
-            result[i, j] = ((i + j) % 2 is 0 ? 1 : -1) * GetDeterminant(without);
-        }
-    }
-    return result;
+	double[,] result = new double[matrix.GetLength(0), matrix.GetLength(1)];
+	for (int i = 0; i < matrix.GetLength(0); i++)
+	{
+		for (int j = 0; j < matrix.GetLength(1); j++)
+		{
+			double[,] without = GetMatrixWithout(matrix, i, j);
+			result[i, j] = ((i + j) % 2 is 0 ? 1 : -1) * GetDeterminant(without);
+		}
+	}
+	return result;
 }
 
 double[,] GetInverse(double[,] matrix)
 {
-    double det = GetDeterminant(matrix);
-    double[,] algebraicadd = GetAlgebraicAddition(matrix);
-    double[,] trans = GetTranspose(algebraicadd);
-    double[,] result = new double[matrix.GetLength(0), matrix.GetLength(1)];
-    for (int i = 0; i < result.GetLength(0); i++)
-    {
-        for (int j = 0; j < result.GetLength(1); j++)
-        {
-            result[i, j] = trans[i, j] / det;
-        }
-    }
-    return result;
+	double det = GetDeterminant(matrix);
+	double[,] algebraicadd = GetAlgebraicAddition(matrix);
+	double[,] trans = GetTranspose(algebraicadd);
+	double[,] result = new double[matrix.GetLength(0), matrix.GetLength(1)];
+	for (int i = 0; i < result.GetLength(0); i++)
+	{
+		for (int j = 0; j < result.GetLength(1); j++)
+		{
+			result[i, j] = trans[i, j] / det;
+		}
+	}
+	return result;
 }
 
 //double[,] Multiply(double[,] matrix, double number)

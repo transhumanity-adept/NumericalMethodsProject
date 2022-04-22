@@ -4,5 +4,5 @@
 /// </summary>
 public interface IIntegrand
 {
-    public double Calculate(double argument);
+	public double Calculate(double argument);
 }

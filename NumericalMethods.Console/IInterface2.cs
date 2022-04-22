@@ -1,7 +1,7 @@
 ﻿namespace NumericalMethods.Console
 {
-    public interface IInterface2
-    {
-        public double Calculate(double x);
-    }
+	public interface IInterface2
+	{
+		public double Calculate(double x);
+	}
 }
