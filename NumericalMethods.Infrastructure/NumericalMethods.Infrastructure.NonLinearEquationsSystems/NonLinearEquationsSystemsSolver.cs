@@ -6,11 +6,11 @@ public record class NonLinearEquationsSystemsSolver(ISolvingMethod SolvingMethod
 {
 	public IEnumerable<double> Solve(NonLinearEquationsSystem system, double eps)
 	{
-		throw new NotImplementedException();
+		return SolvingMethod.Solve(system, eps);
 	}
 
 	public IEnumerable<IEnumerable<double>> SolveWithSteps(NonLinearEquationsSystem system, double eps)
 	{
-		throw new NotImplementedException();
+		return SolvingMethod.SolveWithSteps(system, eps);
 	}
 }
