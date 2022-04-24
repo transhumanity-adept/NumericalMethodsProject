@@ -181,10 +181,11 @@ namespace NumericalMethods.WPFApplication
 			Integration_MainChart.Refresh();
 
 			string function_type_string = Integration_MethodComboBox.SelectedValue.ToString();
-			IntegrationMethodsWithConstantStep method = (IntegrationMethodsWithConstantStep)Enum.Parse(typeof(IntegrationMethodsWithConstantStep), function_type_string);
-			IIntegratorWithConstantStep integrator = new IntegrationBuilder()
-																			.Build(Integration_FunctionTextBox.Text.Trim(), method);
-			double integration_result = integrator.Integrate(start_x, end_x, step);
+			//IntegrationMethodsWithConstantStep method = (IntegrationMethodsWithConstantStep)Enum.Parse(typeof(IntegrationMethodsWithConstantStep), function_type_string);
+			//IIntegratorWithConstantStep integrator = new IntegrationBuilder()
+			//																.Build(Integration_FunctionTextBox.Text.Trim(), method);
+			IIntegratorWithVariableStep integrator = new IntegrationBuilder().Build(Integration_FunctionTextBox.Text.Trim(), IntegrationMethodsWithVariableStep.Chebyshev);
+			double integration_result = integrator.Integrate(start_x, end_x, (int)step);
 			MessageBox.Show($"Integration result: {integration_result}");
 		}
 		#endregion
@@ -219,6 +220,5 @@ namespace NumericalMethods.WPFApplication
                 tbx1.KeyDown += textBoxLinearEquations_KeyDown;
 			}
         }
-      
     }
 }

@@ -27,9 +27,9 @@ public abstract class VectorBase
 		return _data.Select(vector => Math.Abs(vector)).Max();
 	}
 
-	public double[] ToArray()
+	public List<double> ToList()
 	{
-		return _data;
+		return _data.ToList();
 	}
 
 	public int Size { get => _data.Length;  }

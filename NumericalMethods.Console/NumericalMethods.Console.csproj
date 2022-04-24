@@ -12,4 +12,9 @@
     <PackageReference Include="MathParser.org-mXparser" Version="4.4.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\NumericalMethods.Infrastructure\NumericalMethods.Infrastructure.Integration\NumericalMethods.Infrastructure.Integration.csproj" />
+    <ProjectReference Include="..\NumericalMethods.Infrastructure\NumericalMethods.Infrastructure.NonLinearEquationsSystems\NumericalMethods.Infrastructure.NonLinearEquationsSystems.csproj" />
+  </ItemGroup>
+
 </Project>

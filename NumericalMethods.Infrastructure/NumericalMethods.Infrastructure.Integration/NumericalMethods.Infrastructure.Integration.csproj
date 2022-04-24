@@ -10,4 +10,8 @@
     <PackageReference Include="MathNet.Symbolics" Version="0.24.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\NumericalMethods.Infrastructure.NonLinearEquationsSystems\NumericalMethods.Infrastructure.NonLinearEquationsSystems.csproj" />
+  </ItemGroup>
+
 </Project>

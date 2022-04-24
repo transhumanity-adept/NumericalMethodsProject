@@ -8,7 +8,7 @@ namespace NumericalMethods.Infrastructure.NonLinearEquationsSystems
 {
 	public class NonLinearEquationsSystem
 	{
-		public NonLinearEquationsSystem(params string[] functions)
+		public NonLinearEquationsSystem(IEnumerable<string> functions)
 		{
 			Functions = functions;
 			FunctionExpressions = functions
@@ -16,6 +16,8 @@ namespace NumericalMethods.Infrastructure.NonLinearEquationsSystems
 				.ToList();
 			CheckInvariants();
 		}
+
+		// TODO: переработать проверку инвариантов для типа.
 
 		private void CheckInvariants()
 		{
@@ -40,7 +42,7 @@ namespace NumericalMethods.Infrastructure.NonLinearEquationsSystems
 
 		private bool CheckFunctionsHaveAnyEquation()
 		{
-			return Functions.Length == 0;
+			return !Functions.Any();
 		}
 
 		private bool CheckNumberVariablesInEquationsIsSame()
@@ -48,15 +50,15 @@ namespace NumericalMethods.Infrastructure.NonLinearEquationsSystems
 			int count_variables_in_first_equation = FunctionExpressions.First().CollectVariables().Count();
 			return FunctionExpressions
 				.Skip(1)
-				.All(functionExpression => functionExpression.CollectVariables().Count() == count_variables_in_first_equation);
+				.Any(functionExpression => functionExpression.CollectVariables().Count() != count_variables_in_first_equation);
 		}
 
 		private bool CheckNumberVariablesEqualsNumberEquations()
 		{
-			return FunctionExpressions.First().CollectVariables().Count() == FunctionExpressions.Count(); 
+			return FunctionExpressions.First().CollectVariables().Count() != FunctionExpressions.Count(); 
 		}
 
-		public string[] Functions { get; }
+		public IEnumerable<string> Functions { get; }
 		public IEnumerable<SymbolicExpression> FunctionExpressions { get; }
 	}
 }

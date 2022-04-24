@@ -1,9 +1,10 @@
-﻿using NumericalMethods.Infrastructure.NonLinearEquationsSystems.Methods.Newton;
+﻿using NumericalMethods.Infrastructure.NonLinearEquationsSystems.Interfaces;
+using NumericalMethods.Infrastructure.NonLinearEquationsSystems.Methods.Newton;
 
 namespace NumericalMethods.Infrastructure.NonLinearEquationsSystems;
 public record class NonLinearEquationsSolverBuilder()
 {
-	public static NonLinearEquationsSystemsSolver Build(SolvingMethods SolvingMethod)
+	public INonLinearEquationsSystemsSolver Build(SolvingMethods SolvingMethod)
 	{
 		return SolvingMethod switch
 		{

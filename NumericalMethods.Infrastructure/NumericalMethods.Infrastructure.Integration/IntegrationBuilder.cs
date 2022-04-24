@@ -5,6 +5,7 @@ using NumericalMethods.Infrastructure.Integration.Methods.Splyne;
 using NumericalMethods.Infrastructure.Integration.Methods.Trapezoid;
 using NumericalMethods.Infrastructure.Integration.Methods.MonteCarlo;
 using NumericalMethods.Infrastructure.Integration.Methods.Gauss;
+using NumericalMethods.Infrastructure.Integration.Methods.Chebyshev;
 
 namespace NumericalMethods.Infrastructure.Integration;
 public record class IntegrationBuilder
@@ -23,11 +24,10 @@ public record class IntegrationBuilder
 
 	public IIntegratorWithVariableStep Build(string function, IntegrationMethodsWithVariableStep method)
 	{
-		var test = function;
 		return method switch
 		{
 			IntegrationMethodsWithVariableStep.Gauss => new IntegratorWithVariableStep(new GaussIntegrationMethod(),function),
-			IntegrationMethodsWithVariableStep.Chebyshev => throw new NotImplementedException(),
+			IntegrationMethodsWithVariableStep.Chebyshev => new IntegratorWithVariableStep(new ChebyshevIntegrationMethod(), function),
 			IntegrationMethodsWithVariableStep.MonteCarlo => new IntegratorWithVariableStep(new MonteCarloIntegrationMethod(),function),
 			_ => throw new NotImplementedException()
 		};

@@ -51,5 +51,10 @@
 				return result;
 			}
 		}
+
+		public static VectorColumn operator -(VectorColumn vectorOne, VectorColumn vectorTwo)
+		{
+			return vectorOne + -vectorTwo;
+		}
 	}
 }

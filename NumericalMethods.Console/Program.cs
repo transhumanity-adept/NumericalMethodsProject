@@ -1,4 +1,10 @@
-﻿using MathNet.Symbolics;
+﻿using MathNet.Numerics.Integration;
+using MathNet.Symbolics;
+
+using NumericalMethods.Infrastructure.Integration;
+using NumericalMethods.Infrastructure.NonLinearEquationsSystems;
+
+using System.Runtime.Serialization;
 
 //FuctionMX function = new FuctionMX("f(x) = x^2");
 //double a = -5;
@@ -73,31 +79,107 @@
 //#endregion
 
 #region SNU
-List<SymbolicExpression> exps = new List<SymbolicExpression>()
-{
-	SymbolicExpression.Parse("x1 + x2 - 3"),
-	SymbolicExpression.Parse("x1^2 + x2^2 - 9")
-};
-
-Dictionary<string, FloatingPoint> dict = new Dictionary<string, FloatingPoint>()
-{
-	{ "x1", 1 },
-	{ "x2", 5 }
-};
-var equation = SymbolicExpression.Parse("2*x1 + 3*x2^2 + 2*x2^2 + 3 - 5");
-var test = equation.CollectProducts();
-//foreach (var item in test)
+//List<SymbolicExpression> exps = new List<SymbolicExpression>()
 //{
-//	equation = equation.Subtract(item);
-//}
+//	SymbolicExpression.Parse("t1 + t2 - 3"),
+//	SymbolicExpression.Parse("t1^2 + t2^2 - 9")
+//};
 
-Console.WriteLine();
+//Dictionary<string, FloatingPoint> dict = new Dictionary<string, FloatingPoint>()
+//{
+//	{ "x1", 1 },
+//	{ "x2", 5 }
+//};
+//var equation = SymbolicExpression.Parse("(2+2*t1 + 1*t2 + 1*t3 + 3 - 5)/15");
+//var denom = Structure.Su;
+//var b = equation[0];
+//var tests = equation.Coefficients(SymbolicExpression.Parse("t1"));
+//var variables = equation.CollectVariables();
+//var test = variables.Select(variable => $"{equation.Coefficients(variable)[1]}*{variable}");
 
-List<double[]> Newton(List<SymbolicExpression> functions, double eps)
+List<string> functions = new()
+{
+	"2*x1^2 - x1*x2 - 5*x1 + 1",
+	"x1 + 3*lg(x1) - x2^2"
+};
+
+List<SymbolicExpression> functionExpression = functions.Select(function => SymbolicExpression.Parse(function)).ToList();
+
+Dictionary<string, FloatingPoint> values = new()
+{
+	{ "x1", 0 },
+	{ "x2", 1}
+};
+
+var res = SymbolicExpression.Parse("2*x1^2 - x1*x2 - 5*x1 + 1 - x1 - 3*lg(x1) + x2^2");
+
+double eps = 0.001d;
+
+double step = 0.001;
+int countNodesGauss = 9;
+int countNodesChebyshev = 9;
+int countNodesMonteCarlo = 10000;
+
+string function = "x^2";
+double start = 1;
+double end = 2;
+
+var resultR = new IntegrationBuilder()
+	.Build(function, IntegrationMethodsWithConstantStep.Rectangle)
+	.Integrate(start, end, step);
+
+var resultT = new IntegrationBuilder()
+	.Build(function, IntegrationMethodsWithConstantStep.Trapeze)
+	.Integrate(start, end, step);
+
+var resultS = new IntegrationBuilder()
+	.Build(function, IntegrationMethodsWithConstantStep.Spline)
+	.Integrate(start, end, step);
+
+var resultP = new IntegrationBuilder()
+	.Build(function, IntegrationMethodsWithConstantStep.Parabolic)
+	.Integrate(start, end, step);
+
+var resultM = new IntegrationBuilder()
+	.Build(function, IntegrationMethodsWithVariableStep.MonteCarlo)
+	.Integrate(start, end, countNodesMonteCarlo);
+
+var resultG = new IntegrationBuilder()
+	.Build(function, IntegrationMethodsWithVariableStep.Gauss)
+	.Integrate(start, end, countNodesChebyshev);
+
+var resultC = new IntegrationBuilder()
+	.Build(function, IntegrationMethodsWithVariableStep.Chebyshev)
+	.Integrate(start, end, countNodesChebyshev);
+
+//NonLinearEquationsSystem snu = new NonLinearEquationsSystem(functions);
+//NonLinearEquationsSystemsSolver solver = new NonLinearEquationsSolverBuilder().Build(SolvingMethods.Newton);
+//double[] initial = new double[] { 3.5d, 2.2d };
+//var result = solver.Solve(snu, eps, initial);
+
+//var resultN = Newton(functions.Select(function => SymbolicExpression.Parse(function)).ToList(), eps, initial);
+
+Console.WriteLine($"Rectangle:  {resultR}");
+Console.WriteLine($"Trapeze:    {resultT}");
+Console.WriteLine($"Parabolic:  {resultP}");
+Console.WriteLine($"Spline:     {resultS}");
+Console.WriteLine($"MonteCarlo: {resultM}");
+Console.WriteLine($"Gauss:      {resultG}");
+Console.WriteLine($"Chebyshev:  {resultC}");
+
+List<double> xs = new List<double>();
+for (double x = 1; x < 2; x += 0.01)
+{
+	xs.Add(x);
+}
+
+Console.WriteLine($"Summa: {xs.Select(x => SymbolicExpression.Parse("x^3/3").Evaluate(new Dictionary<string, FloatingPoint>() { { "x", x } })).Select(fp => fp.RealValue).Sum()}");
+
+List<double[]> Newton(List<SymbolicExpression> functions, double eps, double[] initialGuess)
 {
 	var variables = functions.First().CollectVariables();
 	//double[] x = Enumerable.Repeat(1.0, variables.Count()).ToArray();
-	double[] x = { 0, 1 };
+	double[] x = initialGuess;
 	double delta = double.MaxValue;
 	List<double[]> results = new List<double[]>() { x };
 	while (delta > eps)
@@ -107,12 +189,14 @@ List<double[]> Newton(List<SymbolicExpression> functions, double eps)
 		{
 			values.Add(variables.ElementAt(i).ToString(), x[i]);
 		}
+
 		var ys = functions.Select(function => function.Evaluate(values)).Select(fp => fp.RealValue).ToArray();
 		var delta_x = Multiply(GetInverse(CalculateJacobi(functions, values)), GetNegativeVector(ys));
 		delta = GetNorm(delta_x);
 		x = GetSumVectors(x, delta_x);
 		results.Add(x);
 	}
+
 	return results;
 }
 

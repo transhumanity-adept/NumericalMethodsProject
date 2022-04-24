@@ -1,145 +1,50 @@
 ﻿using MathNet.Symbolics;
 
+using NumericalMethods.Infrastructure.NonLinearEquationsSystems.Exceptions;
 using NumericalMethods.Infrastructure.NonLinearEquationsSystems.Shared;
 
 namespace NumericalMethods.Infrastructure.NonLinearEquationsSystems;
 public class SquareMatrix
 {
 	private readonly double[,] _data;
+	public int Size { get; set; }
 	public SquareMatrix(int size)
 	{
+		InvariantException.ThrowIf(
+			isViolated: size < 1,
+			message: $"{nameof(size)} должен быть больше 1");
+
 		_data = new double[size, size];
 		Size = size;
 	}
-	public SquareMatrix(double[,] matrix)
+	public SquareMatrix(double[,] data) 
 	{
-		_data = matrix;
-		Size = matrix.GetLength(0);
+		InvariantException.ThrowIf(
+			isViolated: data is null,
+			message: $"{nameof(data)} не может быть null");
+		InvariantException.ThrowIf(
+			isViolated: data.GetLength(0) != data.GetLength(1),
+			message: $"Размерности {nameof(data)} должны совпадать");
+
+		Size = data.GetLength(0);
+		_data = new double[Size, Size];
+		FillDataFrom(_data);
 	}
-
-	public int Size { get; set; }
-
 	public double this[int row, int col]
 	{
 		get
 		{
-			return row >= 0 && row < _data.GetLength(0) && col >= 0 && col > _data.GetLength(1)
+			return row >= 0 && row < _data.GetLength(0) && col >= 0 && col < _data.GetLength(1)
 				? _data[row, col]
 				: throw new ArgumentOutOfRangeException("row or col invalid");
 		}
 		set
 		{
-			_data[row, col] = row >= 0 && row < _data.GetLength(0) && col >= 0 && col > _data.GetLength(1)
+			_data[row, col] = row >= 0 && row < _data.GetLength(0) && col >= 0 && col < _data.GetLength(1)
 				? value
 				: throw new ArgumentOutOfRangeException("row or col invalid");
 		}
 	}
-
-	public double GetNorm()
-	{
-		double max = 0;
-
-		for (int i = 0; i < _data.GetLength(0); i++)
-		{
-			double row_sum = 0;
-			for (int j = 0; j < _data.GetLength(1); j++)
-			{
-				row_sum += Math.Abs(_data[i, j]);
-			}
-
-			if (row_sum > max) max = row_sum;
-
-		}
-
-		return max;
-	}
-
-	SquareMatrix GetMatrixWithout(int index_row, int index_column)
-	{
-		SquareMatrix new_matrix = new SquareMatrix(_data.GetLength(0) - 1);
-
-		for (int i = 0; i < new_matrix.Size; i++)
-		{
-			for (int j = 0; j < new_matrix.Size; j++)
-			{
-				if (i >= index_row && j >= index_column)
-					new_matrix[i, j] = _data[i + 1, j + 1];
-				else if (i >= index_row)
-					new_matrix[i, j] = _data[i + 1, j];
-				else if (j >= index_row)
-					new_matrix[i, j] = _data[i, j + 1];
-				else
-					new_matrix[i, j] = _data[i, j];
-			}
-		}
-
-		return new_matrix;
-	}
-
-	double GetDeterminant()
-	{
-		int size = _data.GetLength(0);
-
-		switch (size)
-		{
-			case 1: return _data[0, 0];
-			case 2: return (_data[0, 0] * _data[1, 1]) - (_data[1, 0] * _data[0, 1]);
-			default:
-				double determinant = 0;
-				for (int column = 0; column < size; column++)
-				{
-					determinant += (column % 2 == 0 ? 1 : -1) * _data[0, column] * GetMatrixWithout(0, column).GetDeterminant();
-				}
-
-				return determinant;
-		}
-	}
-
-	public SquareMatrix GetInverse()
-	{
-		double det = GetDeterminant();
-		SquareMatrix algebraicadd = GetAlgebraicAddition();
-		SquareMatrix trans = GetTranspose();
-
-		for (int i = 0; i < _data.GetLength(0); i++)
-		{
-			for (int j = 0; j < _data.GetLength(1); j++)
-			{
-				this[i, j] = trans[i, j] / det;
-			}
-		}
-
-		return this;
-	}
-
-	private SquareMatrix GetAlgebraicAddition()
-	{
-		for (int i = 0; i < _data.GetLength(0); i++)
-		{
-			for (int j = 0; j < _data.GetLength(1); j++)
-			{
-				SquareMatrix without = GetMatrixWithout(i, j);
-				this[i, j] = ((i + j) % 2 is 0 ? 1 : -1) * GetDeterminant();
-			}
-		}
-
-		return this;
-	}
-
-	SquareMatrix GetTranspose()
-	{
-		SquareMatrix transpose = new SquareMatrix((double[,])_data.Clone());
-		for (int i = 0; i < Size; i++)
-		{
-			for (int j = 0; j < Size; j++)
-			{
-				_data[i, j] = transpose[i, j];
-			}
-		}
-
-		return this;
-	}
-
 	public static VectorColumn operator * (SquareMatrix matrix, VectorColumn vector)
 	{
 		VectorColumn result = new VectorColumn(vector.Size);
@@ -156,6 +61,144 @@ public class SquareMatrix
 		return result;
 	}
 
+	public static SquareMatrix operator - (SquareMatrix matrix)
+	{
+		for (int i = 0; i < matrix.Size; i++)
+		{
+			for (int j = 0; j < matrix.Size; j++)
+			{
+				matrix[i, j] = -matrix[i, j]; 
+			}
+		}
+
+		return matrix;
+	}
+
+	private void FillDataFrom(double[,] data)
+	{
+		for (int i = 0; i < Size; i++)
+		{
+			for (int j = 0; j < Size; j++)
+			{
+				this[i, j] = data[i, j];
+			}
+		}
+	}
+
+	/// <summary> Вычисляет норму матрицы </summary>
+	// TODO: Удалить при неиспользовании
+	public double GetNorm()
+	{
+		double max = 0;
+
+		for (int i = 0; i < Size; i++)
+		{
+			double row_sum = 0;
+			for (int j = 0; j < Size; j++)
+			{
+				row_sum += Math.Abs(this[i, j]);
+			}
+
+			if (row_sum > max) max = row_sum;
+		}
+
+		return max;
+	}
+	
+	/// <summary> Вычисляет определитель матрицы </summary>
+	public double GetDeterminant()
+	{
+		int size = _data.GetLength(0);
+
+		switch (size)
+		{
+			case 1: return _data[0, 0];
+			case 2: return (_data[0, 0] * _data[1, 1]) - (_data[1, 0] * _data[0, 1]);
+			default:
+				double determinant = 0;
+				for (int column = 0; column < size; column++)
+				{
+					determinant += (column % 2 == 0 ? 1 : -1) * _data[0, column] * CreateMatrixWithoutRowAndColumn(0, column).GetDeterminant();
+				}
+
+				return determinant;
+		}
+	}
+	
+	/// <summary> Создает урезанную матрицу </summary>
+	/// <param name="index_row">Удаляемая строка</param>
+	/// <param name="index_column">Удаляемый столбец</param>
+	/// <returns>Новая урезанная матрица</returns>
+	public SquareMatrix CreateMatrixWithoutRowAndColumn(int index_row, int index_column)
+	{
+		SquareMatrix new_matrix = new SquareMatrix(Size - 1);
+
+		for (int i = 0; i < new_matrix.Size; i++)
+		{
+			for (int j = 0; j < new_matrix.Size; j++)
+			{
+				if (i >= index_row && j >= index_column)
+					new_matrix[i, j] = this[i + 1, j + 1];
+				else if (i >= index_row)
+					new_matrix[i, j] = this[i + 1, j];
+				else if (j >= index_row)
+					new_matrix[i, j] = this[i, j + 1];
+				else
+					new_matrix[i, j] = this[i, j];
+			}
+		}
+
+		return new_matrix;
+	}
+	
+	/// <summary> Инвертирует текущую матрицу</summary>
+	public SquareMatrix Invert()
+	{
+		double determinant = this.GetDeterminant();
+		SquareMatrix transposed = this.CreateAlgebraicAddition().Transpose();
+		for (int i = 0; i < Size; i++)
+		{
+			for (int j = 0; j < Size; j++)
+			{
+				this[i, j] = transposed[i, j] / determinant;
+			}
+		}
+
+		return this;
+	}
+
+	/// <summary> Создает алгебраическое дополнение </summary>
+	/// <returns>Новая матрица - алгебраическое дополнение текущей</returns>
+	public SquareMatrix CreateAlgebraicAddition()
+	{
+		SquareMatrix algebraic_addition_matrix = new SquareMatrix(Size);
+		for (int i = 0; i < Size; i++)
+		{
+			for (int j = 0; j < Size; j++)
+			{
+				algebraic_addition_matrix[i, j] = ((i + j) % 2 is 0 ? 1 : -1) * CreateMatrixWithoutRowAndColumn(i, j).GetDeterminant();
+			}
+		}
+		return algebraic_addition_matrix;
+	}
+
+	/// <summary> Транспонирует текущую матрицу </summary>
+	public SquareMatrix Transpose()
+	{
+		double[,] new_data = new double[Size, Size];
+		for (int i = 0; i < Size; i++)
+		{
+			for (int j = 0; j < Size; j++)
+			{
+				new_data[i, j] = this[j, i];
+			}
+		}
+
+		FillDataFrom(new_data);
+		return this;
+	}
+
+	/// <summary> Создает матрицу Якоби </summary>
 	public static SquareMatrix CreateJacobiMatrix(IEnumerable<SymbolicExpression> functions, Dictionary<string, FloatingPoint> values)
 	{
 		var variables = functions.First().CollectVariables();
@@ -168,7 +211,7 @@ public class SquareMatrix
 				string currentVariableName = variables.ElementAt(j).ToString();
 				resultMatrix[i, j] = functions.ElementAt(i)
 					.Differentiate(variables.ElementAt(j))
-					.EvaluateOfList(new() { (currentVariableName, values[currentVariableName].RealValue) });
+					.Evaluate(values).RealValue;
 			}
 		}
 
