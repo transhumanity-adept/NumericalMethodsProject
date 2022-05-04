@@ -1,10 +1,13 @@
 ﻿using MathNet.Numerics.Integration;
 using MathNet.Symbolics;
-
+using NumericalMethods.Console;
 using NumericalMethods.Infrastructure.Integration;
 using NumericalMethods.Infrastructure.NonLinearEquationsSystems;
-
 using System.Runtime.Serialization;
+
+
+
+
 
 //FuctionMX function = new FuctionMX("f(x) = x^2");
 //double a = -5;
@@ -339,4 +342,99 @@ double[,] GetInverse(double[,] matrix)
 //    }
 //    return result;
 //}
+#endregion
+#region
+
+
+IEnumerable<(double x, double y)> EulerMethod(string fun, double a, double b, double h, (double x, double y) conditions)
+{
+	SymbolicExpression function = SymbolicExpression.Parse(fun);
+
+	List<(double x, double y)> value = new List<(double, double)>()
+			{
+				(conditions.x, conditions.y)
+			};
+
+	double y_next, y_current, x_current;
+
+	for (double i = a; i <= b; i += h)
+	{
+		y_current = value[value.Count - 1].y;
+		x_current = value[value.Count - 1].x;
+		y_next = value[value.Count - 1].y + h * (function.EvaluateXY(x_current, y_current));
+		x_current += h;
+		value.Add((x_current, y_next));
+	}
+
+	return value;
+}
+
+IEnumerable<(double x, double y)> EulerMethodRecalculation(string fun, double a, double b, double h, (double x, double y) conditions)
+{
+	SymbolicExpression function = SymbolicExpression.Parse(fun);
+
+	List<(double x, double y)> value = new List<(double, double)>()
+			{
+				(conditions.x, conditions.y)
+			};
+
+	double y_next_approximation, y_next, y_current, x_current;
+
+	for (double i = a; i <= b; i += h)
+	{
+		y_current = value[value.Count - 1].y;
+		x_current = value[value.Count - 1].x;
+		y_next_approximation = y_current + h * (function.EvaluateXY(x_current, y_current));
+		y_next = y_current + (h * (function.EvaluateXY(x_current, y_current) + function.EvaluateXY(x_current + h, y_next_approximation))) / 2;
+		x_current += h;
+		value.Add((x_current, y_next));
+	}
+
+	return value;
+
+}
+
+IEnumerable<(double x, double y)> EulerMethodImproved(string fun, double a, double b, double h, (double x, double y) conditions)
+{
+	SymbolicExpression function = SymbolicExpression.Parse(fun);
+
+	List<(double x, double y)> value = new List<(double, double)>()
+			{
+				(conditions.x, conditions.y)
+			};
+
+	double y_next, y_half, y_current, x_current;
+
+	for (double i = a; i <= b; i += h)
+	{
+		y_current = value[value.Count - 1].y;
+		x_current = value[value.Count - 1].x;
+
+		y_half = y_current + h / 2 * (function.EvaluateXY(x_current, y_current));
+		y_next = y_current + h * (function.EvaluateXY(x_current + h / 2, y_half));
+		x_current += h;
+		value.Add((x_current, y_next));
+	}
+
+	return value;
+}
+
+Console.WriteLine("Метод Эйлера");
+EulerMethod("2*(x^2+y)", 0, 1, 0.1, (0, 1))
+	.ToList()
+	.ForEach(value => Console.WriteLine($"{value.Item1} - {value.Item2}"));
+
+Console.WriteLine(new String('-', 100));
+
+Console.WriteLine("Метод Эйлера с перерасчётом");
+EulerMethodRecalculation("2*(x^2+y)", 0, 1, 0.1, (0, 1))
+	.ToList()
+	.ForEach(value => Console.WriteLine($"{value.Item1} - {value.Item2}"));
+
+Console.WriteLine(new String('-', 100));
+
+Console.WriteLine("Усовершенствованный метод Эйлера");
+EulerMethodImproved("2*(x^2+y)", 0, 1, 0.1, (0, 1))
+	.ToList()
+	.ForEach(value => Console.WriteLine($"{value.Item1} - {value.Item2}"));
 #endregion
