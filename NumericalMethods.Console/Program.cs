@@ -361,7 +361,7 @@ IEnumerable<(double x, double y)> EulerMethod(string fun, double a, double b, do
     {
         y_current = value[value.Count - 1].y;
         x_current = value[value.Count - 1].x;
-        y_next = value[value.Count - 1].y + h * (function.EvaluateXY(x_current, y_current));
+        y_next = y_current + h * (function.EvaluateXY(x_current, y_current));
         x_current += h;
         value.Add((x_current, y_next));
     }
@@ -392,6 +392,35 @@ IEnumerable<(double x, double y)> EulerMethodRecalculation(string fun, double a,
 
     return value;
 
+}
+
+IEnumerable<(double x, double y)> EulerIterativeMethod(string fun, double a, double b, double h, (double x, double y) conditions)
+{
+    SymbolicExpression function = SymbolicExpression.Parse(fun);
+
+    List<(double x, double y)> value = new List<(double, double)>()
+    {
+        (a, conditions.y)
+    };
+
+    double y_next, y_current, x_current;
+
+    for (double i = a; i <= b; i += h)
+    {
+        y_current = value[value.Count - 1].y;
+        x_current = value[value.Count - 1].x;
+
+        y_next = y_current + h * (function.EvaluateXY(x_current, y_current));
+
+        for (int k = 0; k < 4; k++)
+        {
+            y_next = y_current + h * (function.EvaluateXY(x_current, y_current) + function.EvaluateXY(x_current + h, y_next)) / 2;
+        }
+
+        x_current += h;
+        value.Add((x_current, y_next));
+    }
+    return value;
 }
 
 IEnumerable<(double x, double y)> EulerMethodImproved(string fun, double a, double b, double h, (double x, double y) conditions)
@@ -459,21 +488,28 @@ EulerMethod(func, a, b, h, conditions)
     .ToList()
     .ForEach(value => Console.WriteLine($"{value.Item1} - {value.Item2}"));
 
-Console.WriteLine(new String('-', 100));
+Console.WriteLine(new string('-', 100));
 
 Console.WriteLine("Метод Эйлера с перерасчётом");
 EulerMethodRecalculation(func, a, b, h, conditions)
     .ToList()
     .ForEach(value => Console.WriteLine($"{value.Item1} - {value.Item2}"));
 
-Console.WriteLine(new String('-', 100));
+Console.WriteLine(new string('-', 100));
+
+Console.WriteLine("Метод Эйлера с итерационной обработкой");
+EulerIterativeMethod(func, a, b, h, conditions)
+    .ToList()
+    .ForEach(value => Console.WriteLine($"{value.Item1} - {value.Item2}"));
+
+Console.WriteLine(new string('-', 100));
 
 Console.WriteLine("Усовершенствованный метод Эйлера");
 EulerMethodImproved(func, a, b, h, conditions)
     .ToList()
     .ForEach(value => Console.WriteLine($"{value.Item1} - {value.Item2}"));
 
-Console.WriteLine(new String('-', 100));
+Console.WriteLine(new string('-', 100));
 
 Console.WriteLine("Рунге-Кута метод");
 RungeKuttaMethods(func, a, b, h, conditions)
