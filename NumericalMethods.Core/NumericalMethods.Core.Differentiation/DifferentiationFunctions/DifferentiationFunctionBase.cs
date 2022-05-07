@@ -18,8 +18,8 @@ namespace NumericalMethods.Core.Differentiations.DifferentiationFunctions
         }
         protected double? GetFiniteDifference(double argument,int degree)
         {
-            bool isLeft = argument <= centerNode.X ? false : true;
-            return GetFiniteDifferenceRecursive(argument, 1, degree,isLeft);
+            bool isLeft = argument > centerNode.X;
+            return GetFiniteDifferenceRecursive(argument, 1, degree, isLeft);
         }
         private double? GetFiniteDifferenceRecursive(double current_argument,int depth,int degree,bool isLeft)
         {
