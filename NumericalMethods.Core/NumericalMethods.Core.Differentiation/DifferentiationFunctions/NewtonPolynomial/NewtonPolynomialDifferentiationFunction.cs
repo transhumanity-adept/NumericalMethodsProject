@@ -82,13 +82,37 @@ namespace NumericalMethods.Core.Differentiations.DifferentiationFunctions.Newton
             {
                 result = result.Differentiate("t");
             }
+
             return result.ToString();
         }
         public double? Calculate(double argument)
         {
-            List<double?> variablesValues = _degrees.Select(finiteDifferenceDegree => GetFiniteDifference(argument, finiteDifferenceDegree)).ToList();
-            
-            if (variablesValues.Any(variableValue => variableValue is null)) return null;
+            int max_finite_difference_degree = _numberOfMembers - 1;
+            double last_x_for_right_finite_difference = _first_node.X + (step * max_finite_difference_degree);
+            double first_x_for_left_finite_difference = _last_node.X - (step * max_finite_difference_degree);
+            List<double?> variablesValues = null;
+			if (argument <= centerNode.X)
+			{
+				variablesValues = _degrees.Select(finiteDifferenceDegree => GetRightFiniteDifference(argument, finiteDifferenceDegree)).ToList();
+			}
+			else
+			{
+				variablesValues = _degrees.Select(finiteDifferenceDegree => GetLeftFiniteDifference(argument, finiteDifferenceDegree)).ToList();
+			}
+			//if (argument <= last_x_for_right_finite_difference)
+			//{
+			//	variablesValues = _degrees.Select(finiteDifferenceDegree => GetRightFiniteDifference(argument, finiteDifferenceDegree)).ToList();
+			//}
+			//else if (argument >= first_x_for_left_finite_difference)
+			//{
+			//	variablesValues = _degrees.Select(finiteDifferenceDegree => GetLeftFiniteDifference(argument, finiteDifferenceDegree)).ToList();
+			//}
+			//else
+			//{
+			//	variablesValues = _degrees.Select(finiteDifferenceDegree => GetCenterFiniteDifference(argument, finiteDifferenceDegree)).ToList();
+			//}
+
+			if (variablesValues.Any(variableValue => variableValue is null)) return null;
             Dictionary<string, FloatingPoint> values = new Dictionary<string, FloatingPoint>()
             {
                 {"t", argument <= centerNode.X ? 0 : 1}
