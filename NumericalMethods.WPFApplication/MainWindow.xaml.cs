@@ -55,10 +55,10 @@ namespace NumericalMethods.WPFApplication
 
 			Differentiation_FunctionTypeComboBox.SelectedItem = Differentiation_InterpolationFunctionTypeComboBox.Items[0];
 
-			Differentiation_FunctionTextBox.Text = "sin(x)";
-			Differentiation_StartXTextBox.Text = "-4 * pi";
-			Differentiation_EndXTextBox.Text = "4 * pi";
-			Differentiation_StepTextBox.Text = "pi / 4";
+			Differentiation_FunctionTextBox.Text = "x^2";
+			Differentiation_StartXTextBox.Text = "-10";
+			Differentiation_EndXTextBox.Text = "10";
+			Differentiation_StepTextBox.Text = "1";
 
 			Differentiation_MainChart.Plot.Legend(enable: true);
 		}
@@ -70,6 +70,7 @@ namespace NumericalMethods.WPFApplication
 			double start_x = new Expression(Differentiation_StartXTextBox.Text.Trim()).calculate();
 			double end_x = new Expression(Differentiation_EndXTextBox.Text.Trim()).calculate();
 			double step = new Expression(Differentiation_StepTextBox.Text.Trim()).calculate();
+			double d = Differentiate.Derivative((double q) => function.calculate(q),1.0,1);
 
 			for (double x = start_x; x <= end_x; x += step)
 			{
@@ -93,7 +94,8 @@ namespace NumericalMethods.WPFApplication
 			var ys = new List<double>();
 			double start_x = new Expression(Differentiation_StartXTextBox.Text.Trim()).calculate();
 			double end_x = new Expression(Differentiation_EndXTextBox.Text.Trim()).calculate();
-			for (double x = start_x; x <= end_x; x += 0.05)
+			double step = new Expression(Differentiation_StepTextBox.Text.Trim()).calculate();
+			for (double x = start_x; x <= end_x; x += step)
 			{
 				var y = interpolation_function.Calculate(x);
 				if (y is null) continue;
@@ -110,13 +112,14 @@ namespace NumericalMethods.WPFApplication
 		{
 			string function_type_string = Differentiation_FunctionTypeComboBox.SelectedValue.ToString();
 			DifferentiationFunctionType interpolation_type = (DifferentiationFunctionType)Enum.Parse(typeof(DifferentiationFunctionType), function_type_string);
-			IDifferentiationFunction? interpolation_function = DifferentiationBuilder.Build(_points, interpolation_type, 0.05);
+			IDifferentiationFunction? interpolation_function = DifferentiationBuilder.Build(_points, interpolation_type, 0.1);
 			if (interpolation_function is null) return;
 			var xs = new List<double>();
 			var ys = new List<double>();
 			double start_x = new Expression(Differentiation_StartXTextBox.Text.Trim()).calculate();
 			double end_x = new Expression(Differentiation_EndXTextBox.Text.Trim()).calculate();
-			for (double x = start_x; x <= end_x; x += 0.05)
+			double step = new Expression(Differentiation_StepTextBox.Text.Trim()).calculate();
+			for (double x = start_x; x <= end_x; x += step)
 			{
 				int derivative_degree = int.Parse(DerivativeDegreeTextBox.Text.Trim());
 				var y = interpolation_function.Calculate(x, derivative_degree);

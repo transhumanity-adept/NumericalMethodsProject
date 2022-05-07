@@ -1,4 +1,5 @@
 ﻿using NumericalMethods.Core.Differentiations.DifferentiationFunctions.Linear;
+using NumericalMethods.Core.Differentiations.DifferentiationFunctions.Quadratic;
 using NumericalMethods.Core.Differentiations.Interfaces;
 
 namespace NumericalMethods.Core.Differentiations;
@@ -9,7 +10,8 @@ public static class DifferentiationBuilder
 		return function_type switch
 		{
 			DifferentiationFunctionType.Linear => new LinearDifferentiationFunction(interpolation_nodes, step),
-			_ => null
+			DifferentiationFunctionType.Quadratic => new QuadraticDifferentationFunction(interpolation_nodes, step),
+			_ => null,
 		};
 	}
 }
