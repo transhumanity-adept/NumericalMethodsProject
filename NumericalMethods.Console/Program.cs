@@ -1,9 +1,14 @@
 ﻿using MathNet.Numerics.Integration;
 using MathNet.Symbolics;
+
+using NumericalMethods.Console;
 using NumericalMethods.Console;
 using NumericalMethods.Infrastructure.Integration;
 using NumericalMethods.Infrastructure.NonLinearEquationsSystems;
 using System.Runtime.Serialization;
+
+TestFactorial.Run();
+TestNewtonDerrivative.Run();
 
 
 

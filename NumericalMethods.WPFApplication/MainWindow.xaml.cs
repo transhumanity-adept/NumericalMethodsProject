@@ -1,5 +1,6 @@
 ﻿using NumericalMethods.Core.Approximation;
 using NumericalMethods.Core.Approximation.Interfaces;
+using NumericalMethods.Core.Differentiation.Interfaces;
 using NumericalMethods.Core.Differentiations;
 using NumericalMethods.Core.Differentiations.Interfaces;
 using NumericalMethods.Infrastructure.Integration;
@@ -56,9 +57,11 @@ namespace NumericalMethods.WPFApplication
 			Differentiation_FunctionTypeComboBox.SelectedItem = Differentiation_InterpolationFunctionTypeComboBox.Items[0];
 
 			Differentiation_FunctionTextBox.Text = "x^2";
-			Differentiation_StartXTextBox.Text = "-10";
-			Differentiation_EndXTextBox.Text = "10";
+			Differentiation_StartXTextBox.Text = "-3";
+			Differentiation_EndXTextBox.Text = "3";
 			Differentiation_StepTextBox.Text = "1";
+			Differentiation_NumberOfMembers.Text = "2";
+			DerivativeDegreeTextBox.Text = "1";
 
 			Differentiation_MainChart.Plot.Legend(enable: true);
 		}
@@ -70,7 +73,6 @@ namespace NumericalMethods.WPFApplication
 			double start_x = new Expression(Differentiation_StartXTextBox.Text.Trim()).calculate();
 			double end_x = new Expression(Differentiation_EndXTextBox.Text.Trim()).calculate();
 			double step = new Expression(Differentiation_StepTextBox.Text.Trim()).calculate();
-			double d = Differentiate.Derivative((double q) => function.calculate(q),1.0,1);
 
 			for (double x = start_x; x <= end_x; x += step)
 			{
@@ -86,7 +88,8 @@ namespace NumericalMethods.WPFApplication
 
 		private void Differentiation_AddOnChartInterpolationButton_Click(object sender, RoutedEventArgs e)
 		{
-			string function_type_string = Differentiation_InterpolationFunctionTypeComboBox.SelectedValue.ToString();
+			string? function_type_string = Differentiation_InterpolationFunctionTypeComboBox.SelectedValue.ToString();
+			if (function_type_string is null) return;
 			InterpolationFunctionType interpolation_type = (InterpolationFunctionType)Enum.Parse(typeof(InterpolationFunctionType), function_type_string);
 			IInterpolationFunction? interpolation_function = InterpolationBuilder.Build(_points, interpolation_type);
 			if (interpolation_function is null) return;
@@ -110,19 +113,31 @@ namespace NumericalMethods.WPFApplication
 
 		private void Differentiation_AddOnChartButton_Click(object sender, RoutedEventArgs e)
 		{
-			string function_type_string = Differentiation_FunctionTypeComboBox.SelectedValue.ToString();
-			DifferentiationFunctionType interpolation_type = (DifferentiationFunctionType)Enum.Parse(typeof(DifferentiationFunctionType), function_type_string);
-			IDifferentiationFunction? interpolation_function = DifferentiationBuilder.Build(_points, interpolation_type, 0.1);
-			if (interpolation_function is null) return;
 			var xs = new List<double>();
 			var ys = new List<double>();
 			double start_x = new Expression(Differentiation_StartXTextBox.Text.Trim()).calculate();
 			double end_x = new Expression(Differentiation_EndXTextBox.Text.Trim()).calculate();
 			double step = new Expression(Differentiation_StepTextBox.Text.Trim()).calculate();
+			double numberOfMembers = new Expression(Differentiation_NumberOfMembers.Text.Trim()).calculate();
+			int derivative_degree = int.Parse(DerivativeDegreeTextBox.Text.Trim());
+			string? function_type_string = Differentiation_FunctionTypeComboBox.SelectedValue.ToString();
+			if (function_type_string is null) return;
+			DifferentiationFunctionType interpolation_type = (DifferentiationFunctionType)Enum.Parse(typeof(DifferentiationFunctionType), function_type_string);
+			INewtonDifferentiationFunction? newton_function = null;
+			IDifferentiationFunction? differentiation_function = null;
+			if (interpolation_type == DifferentiationFunctionType.NewtonPolynomials)
+			{
+				newton_function = DifferentiationBuilder.CreateNewton(_points, step, derivative_degree, (int)numberOfMembers);
+			} else
+			{
+				differentiation_function = DifferentiationBuilder.Build(_points, interpolation_type, step);
+			}
+
+			if (differentiation_function is null && newton_function is null) return;
 			for (double x = start_x; x <= end_x; x += step)
 			{
-				int derivative_degree = int.Parse(DerivativeDegreeTextBox.Text.Trim());
-				var y = interpolation_function.Calculate(x, derivative_degree);
+				var y = newton_function is not null ? newton_function.Calculate(x) 
+					: differentiation_function.Calculate(x, derivative_degree);
 				if (y is null) continue;
 
 				xs.Add(x);

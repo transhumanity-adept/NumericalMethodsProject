@@ -1,41 +1,104 @@
-﻿using NumericalMethods.Core.Differentiations.Interfaces;
+﻿using MathNet.Symbolics;
 
+using NumericalMethods.Core.Differentiation.Interfaces;
+using NumericalMethods.Core.Differentiations.Interfaces;
+
+using System.Globalization;
+using System.Text;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace NumericalMethods.Core.Differentiations.DifferentiationFunctions.NewtonPolynomial
 {
-    internal class NewtonPolynomialDifferentiationFunction : DifferentiationFunctionBase, IDifferentiationFunction
+    internal class NewtonPolynomialDifferentiationFunction : DifferentiationFunctionBase, INewtonDifferentiationFunction
     {
-        private readonly int dimension;
-        public NewtonPolynomialDifferentiationFunction(IEnumerable<IDifferentiationNode> differentiationNodes, double step,int dimension) : base(differentiationNodes, step)
+        private readonly Dictionary<int, int> factorialCache = new Dictionary<int, int>() { { 1, 1 } };
+        private int _derivative_degree;
+        private int _numberOfMembers;
+        private SymbolicExpression _functionExpression;
+        private List<string> _other_variables;
+        private List<int> _degrees;
+        public NewtonPolynomialDifferentiationFunction(IEnumerable<IDifferentiationNode> differentiationNodes, double step, int derivative_degree, int numberOfMembers) : base(differentiationNodes, step)
         {
-            this.dimension = dimension;
-        }
-        private Func<double,double?> BuildNewtonPolynomial(int dimension)
-        {
-            return new Func<double, double?>((double x) =>
-            {
-                double? result = 0;
-                for (int i = 0; i < dimension; i++)
-                {
-                    result += x <= centerNode.X ? (1 - i + 1) / CalculateFactorial(i)//В данном случае q = 1,мейби расписать
-                    : (-1 - i + 1) / CalculateFactorial(i) * GetFiniteDifference(x, i);
-                }
-                return result;
-            });
+            _derivative_degree = derivative_degree; ;
+            _numberOfMembers = numberOfMembers;
+            string? function = GetNewtonPolynomialDerrivative(_derivative_degree, _numberOfMembers);
+            _functionExpression = SymbolicExpression.Parse(function);
+            _other_variables = _functionExpression
+                .CollectVariables()
+                .Select(variable => variable.ToString())
+                .Where(variable => variable.Contains('y')).ToList();
+            _degrees = _other_variables
+                .Select(variable => int.Parse(variable[1..])).ToList();
         }
         private int CalculateFactorial(int value)
         {
-            if (value <= 0) return 0;
-            int factorialValue = 1;
-            for (int i = 1; i <= value; i++)
-            {
-                factorialValue *= i;
+            if (factorialCache.TryGetValue(value, out int cachedValue)) 
+            { 
+                return cachedValue; 
             }
-            return factorialValue;
+            else
+            {
+                if (value < 2) return 1;
+                int calculatedValue = value * CalculateFactorial(value - 1);
+                factorialCache.Add(value, calculatedValue);
+                return calculatedValue;
+            }
         }
-        public double? Calculate(double argument, int derivative_degree)
+        private string GetNewtonPolynomial(int numberOfMembers)
+		{
+			switch (numberOfMembers)
+			{
+                case < 2: return "f";
+                case 2: return "f + t*y1";
+                default:
+					{
+                        StringBuilder result = new StringBuilder("f + t*y1");
+                        for (int i = 3; i <= numberOfMembers; i++)
+                        {
+                            int n = i - 1;
+                            int factorial = CalculateFactorial(n);
+                            List<string> bracketsList = new List<string>();
+                            for (int j = 0; j < n - 1; j++)
+                            {
+                                bracketsList.Add($"(t - {j + 1})");
+                            }
+
+                            string bracketsString = string.Join(" * ", bracketsList);
+                            string member = $"t * {bracketsString}/{factorial}*y{n}";
+                            result.Append($" + {member}");
+                        }
+
+                        return result.ToString();
+                    }
+			}
+		}
+        private string? GetNewtonPolynomialDerrivative(int derrivativeDegree, int numberOfMembers)
         {
-            throw new NotImplementedException();
+            if (derrivativeDegree < 1 || derrivativeDegree + 1 > numberOfMembers) return null;
+            string newtonPolynomial = GetNewtonPolynomial(numberOfMembers);
+            SymbolicExpression result = SymbolicExpression.Parse(newtonPolynomial).Expand();
+            for (int i = 0; i < derrivativeDegree; i++)
+            {
+                result = result.Differentiate("t");
+            }
+            return result.ToString();
+        }
+        public double? Calculate(double argument)
+        {
+            List<double?> variablesValues = _degrees.Select(finiteDifferenceDegree => GetFiniteDifference(argument, finiteDifferenceDegree)).ToList();
+            
+            if (variablesValues.Any(variableValue => variableValue is null)) return null;
+            Dictionary<string, FloatingPoint> values = new Dictionary<string, FloatingPoint>()
+            {
+                {"t", argument <= centerNode.X ? 0 : 1}
+            };
+			for (int i = 0; i < _other_variables.Count; i++)
+			{
+                values.Add(_other_variables[i], variablesValues[i]);
+			}
+
+            return _functionExpression.Evaluate(values).RealValue / Math.Pow(step, _derivative_degree);
         }
     }
 }
