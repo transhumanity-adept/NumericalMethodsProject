@@ -12,7 +12,9 @@ using ScottPlot;
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -73,8 +75,8 @@ namespace NumericalMethods.WPFApplication
 			double start_x = new Expression(Differentiation_StartXTextBox.Text.Trim()).calculate();
 			double end_x = new Expression(Differentiation_EndXTextBox.Text.Trim()).calculate();
 			double step = new Expression(Differentiation_StepTextBox.Text.Trim()).calculate();
-
-			for (double x = start_x; x <= end_x; x += step)
+			int roundNumbers = step.ToString().Contains(',') ? step.ToString().Split(',')[1].Length : 1;
+			for (double x = start_x; Math.Round(x, roundNumbers) <= end_x; x += step)
 			{
 				double y = function.calculate(x);
 				_points.Add(new Point(x, y));
@@ -98,7 +100,8 @@ namespace NumericalMethods.WPFApplication
 			double start_x = new Expression(Differentiation_StartXTextBox.Text.Trim()).calculate();
 			double end_x = new Expression(Differentiation_EndXTextBox.Text.Trim()).calculate();
 			double step = new Expression(Differentiation_StepTextBox.Text.Trim()).calculate();
-			for (double x = start_x; x <= end_x; x += step)
+			int roundNumbers = step.ToString().Contains(',') ? step.ToString().Split(',')[1].Length : 1;
+			for (double x = start_x; Math.Round(x, roundNumbers) <= end_x; x += step)
 			{
 				var y = interpolation_function.Calculate(x);
 				if (y is null) continue;
@@ -118,6 +121,7 @@ namespace NumericalMethods.WPFApplication
 			double start_x = new Expression(Differentiation_StartXTextBox.Text.Trim()).calculate();
 			double end_x = new Expression(Differentiation_EndXTextBox.Text.Trim()).calculate();
 			double step = new Expression(Differentiation_StepTextBox.Text.Trim()).calculate();
+			int roundNumbers = step.ToString().Contains(',') ? step.ToString().Split(',')[1].Length : 1;
 			double numberOfMembers = new Expression(Differentiation_NumberOfMembers.Text.Trim()).calculate();
 			int derivative_degree = int.Parse(DerivativeDegreeTextBox.Text.Trim());
 			string? function_type_string = Differentiation_FunctionTypeComboBox.SelectedValue.ToString();
@@ -132,20 +136,42 @@ namespace NumericalMethods.WPFApplication
 			{
 				differentiation_function = DifferentiationBuilder.Build(_points, interpolation_type, step);
 			}
-
 			if (differentiation_function is null && newton_function is null) return;
-			for (double x = start_x; x <= end_x; x += step)
+			if (Differentiation_Animate.IsChecked.Value)
 			{
-				var y = newton_function is not null ? newton_function.Calculate(x) 
-					: differentiation_function.Calculate(x, derivative_degree);
-				if (y is null) continue;
+				Task.Run(async () =>
+				{
+					double last_x = start_x;
+					double? last_y = newton_function is not null ? newton_function.Calculate(last_x)
+							: differentiation_function.Calculate(last_x, derivative_degree);
+					Color line_color = App.Current.Dispatcher.Invoke(() => Differentiation_MainChart.Plot.GetNextColor());
+					for (double new_x = start_x + step; Math.Round(new_x, roundNumbers) <= end_x; new_x += step)
+					{
+						double? new_y = newton_function is not null ? newton_function.Calculate(new_x)
+							: differentiation_function.Calculate(new_x, derivative_degree);
+						if (new_y is null || last_y is null) continue;
+						App.Current.Dispatcher.Invoke(() => Differentiation_MainChart.Plot.AddLine(last_x, last_y.Value, new_x, new_y.Value, line_color, lineWidth: 4));
 
-				xs.Add(x);
-				ys.Add((double)y);
+						last_x = new_x;
+						last_y = new_y;
+						App.Current.Dispatcher.Invoke(() => Differentiation_MainChart.Refresh());
+						await Task.Delay(1);
+					}
+				});
+			} else
+			{
+				for (double x = start_x; Math.Round(x, roundNumbers) <= end_x; x += step)
+				{
+					var y = newton_function is not null ? newton_function.Calculate(x)
+						: differentiation_function.Calculate(x, derivative_degree);
+					if (y is null) continue;
+
+					xs.Add(x);
+					ys.Add((double)y);
+				}
+				Differentiation_MainChart.Plot.AddScatter(xs.ToArray(), ys.ToArray(), lineWidth: 4, markerSize: 0, label: "differentiation");
+				Differentiation_MainChart.Refresh();
 			}
-
-			Differentiation_MainChart.Plot.AddScatter(xs.ToArray(), ys.ToArray(), lineWidth: 4, markerSize: 0, label: "differentiation");
-			Differentiation_MainChart.Refresh();
 		}
 
 		private void Differentiation_ClearChartButton_Click(object sender, RoutedEventArgs e)
