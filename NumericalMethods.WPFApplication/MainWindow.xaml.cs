@@ -128,50 +128,59 @@ namespace NumericalMethods.WPFApplication
 			if (function_type_string is null) return;
 			DifferentiationFunctionType interpolation_type = (DifferentiationFunctionType)Enum.Parse(typeof(DifferentiationFunctionType), function_type_string);
 			INewtonDifferentiationFunction? newton_function = null;
-			IDifferentiationFunction? differentiation_function = null;
-			if (interpolation_type == DifferentiationFunctionType.NewtonPolynomials)
+			//IDifferentiationFunction? differentiation_function = null;
+			//if (interpolation_type == DifferentiationFunctionType.NewtonPolynomials)
+			//{
+			//	newton_function = DifferentiationBuilder.CreateNewton(_points, step, derivative_degree, (int)numberOfMembers);
+			//} else
+			//{
+			//	differentiation_function = DifferentiationBuilder.Build(_points, interpolation_type, step, derivative_degree);
+			//}
+			IUndefinedCoefficientsDifferentiationFunction differentiation_function = DifferentiationBuilder.CreateUndefinedCoefficients(_points, step, derivative_degree);
+			IDifferentiationNode[] point = differentiation_function.Calculate().ToArray();
+			Array.ForEach(point, (el) =>
 			{
-				newton_function = DifferentiationBuilder.CreateNewton(_points, step, derivative_degree, (int)numberOfMembers);
-			} else
-			{
-				differentiation_function = DifferentiationBuilder.Build(_points, interpolation_type, step, derivative_degree);
-			}
-			if (differentiation_function is null && newton_function is null) return;
-			if (Differentiation_Animate.IsChecked.Value)
-			{
-				Task.Run(async () =>
-				{
-					double last_x = start_x;
-					double? last_y = newton_function is not null ? newton_function.Calculate(last_x)
-							: differentiation_function.Calculate(last_x);
-					Color line_color = App.Current.Dispatcher.Invoke(() => Differentiation_MainChart.Plot.GetNextColor());
-					for (double new_x = start_x + step; Math.Round(new_x, roundNumbers) <= end_x; new_x += step)
-					{
-						double? new_y = newton_function is not null ? newton_function.Calculate(new_x)
-							: differentiation_function.Calculate(new_x);
-						if (new_y is null || last_y is null) continue;
-						App.Current.Dispatcher.Invoke(() => Differentiation_MainChart.Plot.AddLine(last_x, last_y.Value, new_x, new_y.Value, line_color, lineWidth: 4));
+				xs.Add(el.X);
+				ys.Add(el.Y);
+			});
+			Differentiation_MainChart.Plot.AddScatter(xs.ToArray(), ys.ToArray(), lineWidth: 4, markerSize: 0, label: "differentiation");
+			Differentiation_MainChart.Refresh();
+			//if (differentiation_function is null && newton_function is null) return;
+			//if (Differentiation_Animate.IsChecked.Value)
+			//{
+			//	Task.Run(async () =>
+			//	{
+			//		double last_x = start_x;
+			//		double? last_y = newton_function is not null ? newton_function.Calculate(last_x)
+			//				: differentiation_function.Calculate(last_x);
+			//		Color line_color = App.Current.Dispatcher.Invoke(() => Differentiation_MainChart.Plot.GetNextColor());
+			//		for (double new_x = start_x + step; Math.Round(new_x, roundNumbers) <= end_x; new_x += step)
+			//		{
+			//			double? new_y = newton_function is not null ? newton_function.Calculate(new_x)
+			//				: differentiation_function.Calculate(new_x);
+			//			if (new_y is null || last_y is null) continue;
+			//			App.Current.Dispatcher.Invoke(() => Differentiation_MainChart.Plot.AddLine(last_x, last_y.Value, new_x, new_y.Value, line_color, lineWidth: 4));
 
-						last_x = new_x;
-						last_y = new_y;
-						App.Current.Dispatcher.Invoke(() => Differentiation_MainChart.Refresh());
-						await Task.Delay(1);
-					}
-				});
-			} else
-			{
-				for (double x = start_x; Math.Round(x, roundNumbers) <= end_x; x += step)
-				{
-					var y = newton_function is not null ? newton_function.Calculate(x)
-						: differentiation_function.Calculate(x);
-					if (y is null) continue;
+			//			last_x = new_x;
+			//			last_y = new_y;
+			//			App.Current.Dispatcher.Invoke(() => Differentiation_MainChart.Refresh());
+			//			await Task.Delay(1);
+			//		}
+			//	});
+			//} else
+			//{
+			//	for (double x = start_x; Math.Round(x, roundNumbers) <= end_x; x += step)
+			//	{
+			//		var y = newton_function is not null ? newton_function.Calculate(x)
+			//			: differentiation_function.Calculate(x);
+			//		if (y is null) continue;
 
-					xs.Add(x);
-					ys.Add((double)y);
-				}
-				Differentiation_MainChart.Plot.AddScatter(xs.ToArray(), ys.ToArray(), lineWidth: 4, markerSize: 0, label: "differentiation");
-				Differentiation_MainChart.Refresh();
-			}
+			//		xs.Add(x);
+			//		ys.Add((double)y);
+			//	}
+			//	Differentiation_MainChart.Plot.AddScatter(xs.ToArray(), ys.ToArray(), lineWidth: 4, markerSize: 0, label: "differentiation");
+			//	Differentiation_MainChart.Refresh();
+			//}
 		}
 
 		private void Differentiation_ClearChartButton_Click(object sender, RoutedEventArgs e)

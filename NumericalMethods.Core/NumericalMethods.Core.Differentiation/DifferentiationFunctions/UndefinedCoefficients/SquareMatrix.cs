@@ -13,8 +13,9 @@ public class SquareMatrix
 	public SquareMatrix(double[,] data) 
 	{
 		Size = data.GetLength(0);
-		_data = new double[Size, Size];
-		FillDataFrom(_data);
+		_data = data;
+		//_data = new double[Size, Size];
+		//FillDataFrom(_data);
 	}
 	public double this[int row, int col]
 	{
@@ -117,22 +118,39 @@ public class SquareMatrix
 	/// <returns>Новая урезанная матрица</returns>
 	public SquareMatrix CreateMatrixWithoutRowAndColumn(int index_row, int index_column)
 	{
-		SquareMatrix new_matrix = new SquareMatrix(Size - 1);
-
-		for (int i = 0; i < new_matrix.Size; i++)
+        SquareMatrix new_matrix = new SquareMatrix(Size - 1);
+        List<List<double>> elements_new_matrix = new List<List<double>>();
+		for (int i = 0; i < this.Size; i++)
 		{
-			for (int j = 0; j < new_matrix.Size; j++)
+			if (i == index_row) continue;
+			elements_new_matrix.Add(new List<double>());
+			for (int j = 0; j < this.Size; j++)
 			{
-				if (i >= index_row && j >= index_column)
-					new_matrix[i, j] = this[i + 1, j + 1];
-				else if (i >= index_row)
-					new_matrix[i, j] = this[i + 1, j];
-				else if (j >= index_row)
-					new_matrix[i, j] = this[i, j + 1];
-				else
-					new_matrix[i, j] = this[i, j];
+				if (j == index_column) continue;
+				elements_new_matrix.Last().Add(this[i, j]);
 			}
 		}
+        for (int i = 0; i < new_matrix.Size; i++)
+        {
+            for (int j = 0; j < new_matrix.Size; j++)
+            {
+				new_matrix[i, j] = elements_new_matrix[i][j];
+            }
+        }
+		//for (int i = 0; i < new_matrix.Size; i++)
+		//{
+		//	for (int j = 0; j < new_matrix.Size; j++)
+		//	{
+		//		if (i >= index_row && j >= index_column)
+		//			new_matrix[i, j] = this[i + 1, j + 1];
+		//		else if (i >= index_row)
+		//			new_matrix[i, j] = this[i + 1, j];
+		//		else if (j >= index_row)
+		//			new_matrix[i, j] = this[i, j + 1];
+		//		else
+		//			new_matrix[i, j] = this[i, j];
+		//	}
+		//}
 
 		return new_matrix;
 	}

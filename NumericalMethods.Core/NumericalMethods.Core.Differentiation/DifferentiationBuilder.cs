@@ -2,6 +2,7 @@
 using NumericalMethods.Core.Differentiations.DifferentiationFunctions.Linear;
 using NumericalMethods.Core.Differentiations.DifferentiationFunctions.Quadratic;
 using NumericalMethods.Core.Differentiations.DifferentiationFunctions.NewtonPolynomial;
+using NumericalMethods.Core.Differentiations.DifferentiationFunctions.UndefinedCoefficients;
 using NumericalMethods.Core.Differentiations.Interfaces;
 using NumericalMethods.Core.Differentiation.DifferentiationFunctions.Cubic;
 
@@ -23,4 +24,8 @@ public static class DifferentiationBuilder
 	{
 		return new NewtonPolynomialDifferentiationFunction(differentiationNodes, step, derivative_degree, numberOfMembers);
 	}
+	public static IUndefinedCoefficientsDifferentiationFunction CreateUndefinedCoefficients(IEnumerable<IDifferentiationNode> differentiationNodes, double step, int derrivative_degre)
+    {
+		return new UndefinedCoefficientsDifferentiationFunction(differentiationNodes, step, derrivative_degre);
+    }
 }
