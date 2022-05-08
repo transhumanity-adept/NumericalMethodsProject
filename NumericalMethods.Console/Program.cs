@@ -1,7 +1,4 @@
-﻿using MathNet.Numerics.Integration;
-using MathNet.Symbolics;
-
-using NumericalMethods.Console;
+﻿using NumericalMethods.Console;
 using NumericalMethods.Console;
 using NumericalMethods.Infrastructure.Integration;
 using NumericalMethods.Infrastructure.NonLinearEquationsSystems;
