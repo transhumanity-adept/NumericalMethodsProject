@@ -12,9 +12,11 @@ namespace NumericalMethods.Core.Differentiations.DifferentiationFunctions
         protected readonly IDifferentiationNode _center_node;
         protected readonly IDifferentiationNode _first_node;
         protected readonly IDifferentiationNode _last_node;
+        protected readonly IEnumerable<IDifferentiationNode> _nodes;
         public DifferentiationFunctionBase(IEnumerable<IDifferentiationNode> differentiationNodes, double step, int derrivative_degree)
         {
             _step = step;
+            _nodes = differentiationNodes;
             _derrivative_degree = derrivative_degree;
             _first_node = differentiationNodes.First();
             _last_node = differentiationNodes.Last();
