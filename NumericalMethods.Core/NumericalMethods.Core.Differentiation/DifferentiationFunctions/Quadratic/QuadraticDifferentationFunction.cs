@@ -1,45 +1,15 @@
-﻿using NumericalMethods.Core.Differentiations.Interfaces;
+﻿using NumericalMethods.Core.Differentiation.Interfaces;
+using NumericalMethods.Core.Differentiations.Interfaces;
 
-namespace NumericalMethods.Core.Differentiations.DifferentiationFunctions.Quadratic
+namespace NumericalMethods.Core.Differentiations.DifferentiationFunctions.Quadratic;
+internal class QuadraticDifferentationFunction : DifferentiationFunctionBase, IDifferentiationFunction
 {
-    internal class QuadraticDifferentationFunction : DifferentiationFunctionBase,IDifferentiationFunction
+    private INewtonDifferentiationFunction _newton_function;
+    public QuadraticDifferentationFunction(IEnumerable<IDifferentiationNode> differentiation_nodes, double step, int derrivative_degree)
+        : base(differentiation_nodes, step, derrivative_degree)
     {
-        public QuadraticDifferentationFunction(IEnumerable<IDifferentiationNode> differentiationNodes,double step):base(differentiationNodes,step)
-        {}
-        public double? Calculate(double argument, int derivative_degree)
-        {
-            return CalculateRecursive(argument, 1, derivative_degree);
-        }
-        public double? CalculateRecursive(double argument,int depth,int derivative_degree)
-        {   
-            double? right_y,deltY1, deltaLeft_y, deltaRight_y, deltY2;
-            deltY1 = GetFiniteDifference(argument,1);
-            deltY2 = GetFiniteDifference(argument, 2);
-            //if (interpolationFunction.Calculate(argument + step) == null)
-            //{
-            //    deltY1 = interpolationFunction.Calculate(argument) - interpolationFunction.Calculate(argument - step);
-            //    deltaLeft_y = interpolationFunction.Calculate(argument - step) - interpolationFunction.Calculate(argument - 2 * step);
-            //    deltaRight_y = deltY1;
-            //    deltY2 = deltaRight_y - deltaLeft_y;
-            //}
-            //else
-            //{
-
-            //}
-
-            var new_deph = depth + 1;
-            if (depth != derivative_degree)
-            {
-                deltY1 = GetFiniteDifference(argument, 1);
-                deltY2 = GetFiniteDifference(argument, 2);
-                right_y = CalculateRecursive(argument + step, new_deph, derivative_degree);
-                deltY1 = right_y - argument;
-                deltaLeft_y = deltY1;
-                deltaRight_y = CalculateRecursive(right_y.Value + step, new_deph, derivative_degree) - right_y;
-                deltY2 = deltaRight_y - deltaLeft_y;
-            }
-            return argument <= centerNode.X ? (deltY1 - 0.5 * deltY2) / step : (deltY1 + 0.5 * deltY2) / step;
-
-        }
+        _newton_function = DifferentiationBuilder.CreateNewton(differentiation_nodes, step, derrivative_degree, derrivative_degree + 2);
     }
+
+    public double? Calculate(double argument) => _newton_function.Calculate(argument);
 }

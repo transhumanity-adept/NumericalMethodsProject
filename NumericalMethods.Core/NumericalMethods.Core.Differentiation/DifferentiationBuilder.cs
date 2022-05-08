@@ -3,17 +3,19 @@ using NumericalMethods.Core.Differentiations.DifferentiationFunctions.Linear;
 using NumericalMethods.Core.Differentiations.DifferentiationFunctions.Quadratic;
 using NumericalMethods.Core.Differentiations.DifferentiationFunctions.NewtonPolynomial;
 using NumericalMethods.Core.Differentiations.Interfaces;
+using NumericalMethods.Core.Differentiation.DifferentiationFunctions.Cubic;
 
 namespace NumericalMethods.Core.Differentiations;
 public static class DifferentiationBuilder
 {
-	public static IDifferentiationFunction? Build(IEnumerable<IDifferentiationNode> differentiationNodes, DifferentiationFunctionType functionType, double step)
+	public static IDifferentiationFunction? Build(IEnumerable<IDifferentiationNode> differentiation_nodes, DifferentiationFunctionType function_type, double step, int derrivative_degree)
 	{
-		return functionType switch
+		return function_type switch
 		{
-			DifferentiationFunctionType.Linear => new LinearDifferentiationFunction(differentiationNodes, step),
-			DifferentiationFunctionType.Quadratic => new QuadraticDifferentationFunction(differentiationNodes, step),
-			_ => null,
+			DifferentiationFunctionType.Linear => new LinearDifferentiationFunction(differentiation_nodes, step, derrivative_degree),
+			DifferentiationFunctionType.Quadratic => new QuadraticDifferentationFunction(differentiation_nodes, step, derrivative_degree),
+			DifferentiationFunctionType.Cubic => new CubicDifferentiationFunction(differentiation_nodes, step, derrivative_degree),
+			_ => throw new NotImplementedException()
 		};
 	}
 

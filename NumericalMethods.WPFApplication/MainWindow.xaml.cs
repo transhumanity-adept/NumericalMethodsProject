@@ -58,10 +58,10 @@ namespace NumericalMethods.WPFApplication
 
 			Differentiation_FunctionTypeComboBox.SelectedItem = Differentiation_InterpolationFunctionTypeComboBox.Items[0];
 
-			Differentiation_FunctionTextBox.Text = "x^2";
-			Differentiation_StartXTextBox.Text = "-3";
-			Differentiation_EndXTextBox.Text = "3";
-			Differentiation_StepTextBox.Text = "1";
+			Differentiation_FunctionTextBox.Text = "sin(x)";
+			Differentiation_StartXTextBox.Text = "-pi*3";
+			Differentiation_EndXTextBox.Text = "pi*3";
+			Differentiation_StepTextBox.Text = "0.1";
 			Differentiation_NumberOfMembers.Text = "2";
 			DerivativeDegreeTextBox.Text = "1";
 
@@ -134,7 +134,7 @@ namespace NumericalMethods.WPFApplication
 				newton_function = DifferentiationBuilder.CreateNewton(_points, step, derivative_degree, (int)numberOfMembers);
 			} else
 			{
-				differentiation_function = DifferentiationBuilder.Build(_points, interpolation_type, step);
+				differentiation_function = DifferentiationBuilder.Build(_points, interpolation_type, step, derivative_degree);
 			}
 			if (differentiation_function is null && newton_function is null) return;
 			if (Differentiation_Animate.IsChecked.Value)
@@ -143,12 +143,12 @@ namespace NumericalMethods.WPFApplication
 				{
 					double last_x = start_x;
 					double? last_y = newton_function is not null ? newton_function.Calculate(last_x)
-							: differentiation_function.Calculate(last_x, derivative_degree);
+							: differentiation_function.Calculate(last_x);
 					Color line_color = App.Current.Dispatcher.Invoke(() => Differentiation_MainChart.Plot.GetNextColor());
 					for (double new_x = start_x + step; Math.Round(new_x, roundNumbers) <= end_x; new_x += step)
 					{
 						double? new_y = newton_function is not null ? newton_function.Calculate(new_x)
-							: differentiation_function.Calculate(new_x, derivative_degree);
+							: differentiation_function.Calculate(new_x);
 						if (new_y is null || last_y is null) continue;
 						App.Current.Dispatcher.Invoke(() => Differentiation_MainChart.Plot.AddLine(last_x, last_y.Value, new_x, new_y.Value, line_color, lineWidth: 4));
 
@@ -163,7 +163,7 @@ namespace NumericalMethods.WPFApplication
 				for (double x = start_x; Math.Round(x, roundNumbers) <= end_x; x += step)
 				{
 					var y = newton_function is not null ? newton_function.Calculate(x)
-						: differentiation_function.Calculate(x, derivative_degree);
+						: differentiation_function.Calculate(x);
 					if (y is null) continue;
 
 					xs.Add(x);
