@@ -1,5 +1,6 @@
 ﻿using NumericalMethods.Core.Approximation;
 using NumericalMethods.Core.Approximation.Interfaces;
+using NumericalMethods.Core.Differentiation.DifferentiationFunctions.UndefinedCoefficients;
 using NumericalMethods.Core.Differentiation.Interfaces;
 using NumericalMethods.Core.Differentiations;
 using NumericalMethods.Core.Differentiations.Interfaces;
@@ -29,6 +30,10 @@ namespace NumericalMethods.WPFApplication
 	public partial class MainWindow : Window
 	{
 		private readonly List<Point> _points = new List<Point>();
+		private Function _current_function;
+		private double _start_x;
+		private double _end_x;
+		private double _step;
 		public MainWindow()
 		{
 			InitializeComponent();
@@ -58,10 +63,10 @@ namespace NumericalMethods.WPFApplication
 
 			Differentiation_FunctionTypeComboBox.SelectedItem = Differentiation_InterpolationFunctionTypeComboBox.Items[0];
 
-			Differentiation_FunctionTextBox.Text = "sin(x)";
-			Differentiation_StartXTextBox.Text = "-pi*3";
-			Differentiation_EndXTextBox.Text = "pi*3";
-			Differentiation_StepTextBox.Text = "0.1";
+			Differentiation_FunctionTextBox.Text = "x^2";
+			Differentiation_StartXTextBox.Text = "-3";
+			Differentiation_EndXTextBox.Text = "3";
+			Differentiation_StepTextBox.Text = "1";
 			Differentiation_NumberOfMembers.Text = "2";
 			DerivativeDegreeTextBox.Text = "1";
 
@@ -71,14 +76,14 @@ namespace NumericalMethods.WPFApplication
 		private void Differentiation_AddNodesOnChart_Click(object sender, RoutedEventArgs e)
 		{
 			_points.Clear();
-			Function function = new Function("f(x) = " + Differentiation_FunctionTextBox.Text.Trim());
+			_current_function = new Function("f(x) = " + Differentiation_FunctionTextBox.Text.Trim());
 			double start_x = new Expression(Differentiation_StartXTextBox.Text.Trim()).calculate();
 			double end_x = new Expression(Differentiation_EndXTextBox.Text.Trim()).calculate();
 			double step = new Expression(Differentiation_StepTextBox.Text.Trim()).calculate();
-			int roundNumbers = step.ToString().Contains(',') ? step.ToString().Split(',')[1].Length : 1;
+			int roundNumbers = step.ToString().Contains(',') ? step.ToString().Split(',')[1].Length % 16 : 1;
 			for (double x = start_x; Math.Round(x, roundNumbers) <= end_x; x += step)
 			{
-				double y = function.calculate(x);
+				double y = _current_function.calculate(x);
 				_points.Add(new Point(x, y));
 			}
 
@@ -100,7 +105,7 @@ namespace NumericalMethods.WPFApplication
 			double start_x = new Expression(Differentiation_StartXTextBox.Text.Trim()).calculate();
 			double end_x = new Expression(Differentiation_EndXTextBox.Text.Trim()).calculate();
 			double step = new Expression(Differentiation_StepTextBox.Text.Trim()).calculate();
-			int roundNumbers = step.ToString().Contains(',') ? step.ToString().Split(',')[1].Length : 1;
+			int roundNumbers = step.ToString().Contains(',') ? step.ToString().Split(',')[1].Length % 16 : 1;
 			for (double x = start_x; Math.Round(x, roundNumbers) <= end_x; x += step)
 			{
 				var y = interpolation_function.Calculate(x);
@@ -118,69 +123,70 @@ namespace NumericalMethods.WPFApplication
 		{
 			var xs = new List<double>();
 			var ys = new List<double>();
-			double start_x = new Expression(Differentiation_StartXTextBox.Text.Trim()).calculate();
-			double end_x = new Expression(Differentiation_EndXTextBox.Text.Trim()).calculate();
-			double step = new Expression(Differentiation_StepTextBox.Text.Trim()).calculate();
-			int roundNumbers = step.ToString().Contains(',') ? step.ToString().Split(',')[1].Length : 1;
+			_start_x = new Expression(Differentiation_StartXTextBox.Text.Trim()).calculate();
+			_end_x = new Expression(Differentiation_EndXTextBox.Text.Trim()).calculate();
+			_step = new Expression(Differentiation_StepTextBox.Text.Trim()).calculate();
+			int roundNumbers = _step.ToString().Contains(',') ? _step.ToString().Split(',')[1].Length % 16 : 1;
 			double numberOfMembers = new Expression(Differentiation_NumberOfMembers.Text.Trim()).calculate();
 			int derivative_degree = int.Parse(DerivativeDegreeTextBox.Text.Trim());
 			string? function_type_string = Differentiation_FunctionTypeComboBox.SelectedValue.ToString();
 			if (function_type_string is null) return;
+
 			DifferentiationFunctionType interpolation_type = (DifferentiationFunctionType)Enum.Parse(typeof(DifferentiationFunctionType), function_type_string);
-			INewtonDifferentiationFunction? newton_function = null;
-			//IDifferentiationFunction? differentiation_function = null;
-			//if (interpolation_type == DifferentiationFunctionType.NewtonPolynomials)
-			//{
-			//	newton_function = DifferentiationBuilder.CreateNewton(_points, step, derivative_degree, (int)numberOfMembers);
-			//} else
-			//{
-			//	differentiation_function = DifferentiationBuilder.Build(_points, interpolation_type, step, derivative_degree);
-			//}
-			IUndefinedCoefficientsDifferentiationFunction differentiation_function = DifferentiationBuilder.CreateUndefinedCoefficients(_points, step, derivative_degree);
-			IDifferentiationNode[] point = differentiation_function.Calculate().ToArray();
-			Array.ForEach(point, (el) =>
-			{
-				xs.Add(el.X);
-				ys.Add(el.Y);
-			});
+
+            switch (interpolation_type)
+            {
+				case DifferentiationFunctionType.NewtonPolynomials:
+					INewtonDifferentiationFunction newton_function = DifferentiationBuilder.CreateNewton(_points, _step, derivative_degree, (int)numberOfMembers);
+					for (double x = _start_x; Math.Round(x, roundNumbers) <= _end_x; x += _step)
+					{
+                        double? y = newton_function.Calculate(x);
+						if (y is null) continue;
+
+						xs.Add(x);
+						ys.Add((double)y);
+					}
+					break;
+				case DifferentiationFunctionType.UndefinedCoefficients:
+					int count_coefficients_c = int.Parse(Differentiation_Accuracy.Text);
+					List<Point> additional_right_points = new List<Point>();
+                    for (int i = 1; i <= (count_coefficients_c - 2) * derivative_degree; i++)
+                    {
+						double new_x = _end_x + _step * i;
+						double new_y = _current_function.calculate(new_x);
+						Point additional_point = new Point(new_x, new_y);
+						additional_right_points.Add(additional_point);
+                    }
+
+					List<Point> additional_left_point = new List<Point>();
+                    for (int i = derivative_degree; i >= 1; i--)
+                    {
+						double new_x = _start_x - _step * i;
+						double new_y = _current_function.calculate(new_x);
+						Point additional_point = new Point(new_x, new_y);
+						additional_left_point.Add(additional_point);
+					}
+					IEnumerable<Point> new_points = additional_left_point.Concat(_points.Concat(additional_right_points));
+					IUndefinedCoefficientsDifferentiationFunction undefined_coefficients_function = DifferentiationBuilder.CreateUndefinedCoefficients(new_points, _step, derivative_degree, count_coefficients_c);
+                    IEnumerable<IDifferentiationResultNode> result = undefined_coefficients_function.Calculate();
+					xs = result.Select(node => node.X).ToList();
+					ys = result.Select(node => node.Y).ToList();
+					break;
+				default:
+					IDifferentiationFunction differentiation_function = DifferentiationBuilder.Build(_points, interpolation_type, _step, derivative_degree);
+					for (double x = _start_x; Math.Round(x, roundNumbers) <= _end_x; x += _step)
+					{
+                        double? y = differentiation_function.Calculate(x);
+						if (y is null) continue;
+
+						xs.Add(x);
+						ys.Add((double)y);
+					}
+					break;
+			}
+			
 			Differentiation_MainChart.Plot.AddScatter(xs.ToArray(), ys.ToArray(), lineWidth: 4, markerSize: 0, label: "differentiation");
 			Differentiation_MainChart.Refresh();
-			//if (differentiation_function is null && newton_function is null) return;
-			//if (Differentiation_Animate.IsChecked.Value)
-			//{
-			//	Task.Run(async () =>
-			//	{
-			//		double last_x = start_x;
-			//		double? last_y = newton_function is not null ? newton_function.Calculate(last_x)
-			//				: differentiation_function.Calculate(last_x);
-			//		Color line_color = App.Current.Dispatcher.Invoke(() => Differentiation_MainChart.Plot.GetNextColor());
-			//		for (double new_x = start_x + step; Math.Round(new_x, roundNumbers) <= end_x; new_x += step)
-			//		{
-			//			double? new_y = newton_function is not null ? newton_function.Calculate(new_x)
-			//				: differentiation_function.Calculate(new_x);
-			//			if (new_y is null || last_y is null) continue;
-			//			App.Current.Dispatcher.Invoke(() => Differentiation_MainChart.Plot.AddLine(last_x, last_y.Value, new_x, new_y.Value, line_color, lineWidth: 4));
-
-			//			last_x = new_x;
-			//			last_y = new_y;
-			//			App.Current.Dispatcher.Invoke(() => Differentiation_MainChart.Refresh());
-			//			await Task.Delay(1);
-			//		}
-			//	});
-			//} else
-			//{
-			//	for (double x = start_x; Math.Round(x, roundNumbers) <= end_x; x += step)
-			//	{
-			//		var y = newton_function is not null ? newton_function.Calculate(x)
-			//			: differentiation_function.Calculate(x);
-			//		if (y is null) continue;
-
-			//		xs.Add(x);
-			//		ys.Add((double)y);
-			//	}
-			//	Differentiation_MainChart.Plot.AddScatter(xs.ToArray(), ys.ToArray(), lineWidth: 4, markerSize: 0, label: "differentiation");
-			//	Differentiation_MainChart.Refresh();
-			//}
 		}
 
 		private void Differentiation_ClearChartButton_Click(object sender, RoutedEventArgs e)

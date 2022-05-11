@@ -13,86 +13,89 @@ namespace NumericalMethods.Core.Differentiations.DifferentiationFunctions.Undefi
 {
     internal class UndefinedCoefficientsDifferentiationFunction : DifferentiationFunctionBase, IUndefinedCoefficientsDifferentiationFunction
     {
-        private readonly int _nodes_count;
-        private readonly double[] _h;
-        private string[] _old_derivative = null, _new_derivative = null;
-        public UndefinedCoefficientsDifferentiationFunction(IEnumerable<IDifferentiationNode> differentiationNodes, double step, int derrivative_degree) 
+        private readonly int _count_coefficients_c;
+        SymbolicExpression[] _ys_before_last_derivative_expressions;
+        SymbolicExpression[] _ys_last_derivative_expressions;
+        private double[] _current_xs;
+        private double[] _current_ys;
+        public UndefinedCoefficientsDifferentiationFunction(IEnumerable<IDifferentiationNode> differentiationNodes, double step, int derrivative_degree, int count_coefficients_c) 
             : base(differentiationNodes, step, derrivative_degree)
         {
-            _nodes_count = _nodes.Count();
-            _h = differentiationNodes.Select(node => node.X - _first_node.X).ToArray();
+            _count_coefficients_c = count_coefficients_c;
+            _current_xs = differentiationNodes.Select(node => node.X).ToArray();
+            _current_ys = differentiationNodes.Select(node => node.Y).ToArray();
+            _ys_before_last_derivative_expressions = new SymbolicExpression[_count_coefficients_c];
+            _ys_last_derivative_expressions = new SymbolicExpression[_count_coefficients_c];
+            for (int i = 0; i < _count_coefficients_c; i++)
+            {
+                _ys_before_last_derivative_expressions[i] = $"(x - x0)^{i}";
+            }
+            _ys_last_derivative_expressions = _ys_before_last_derivative_expressions.Select(y => y.Differentiate("x")).ToArray();
         }
 
-        public IEnumerable<DifferentiationNode> Calculate()
+        public IEnumerable<IDifferentiationResultNode> Calculate()
         {
-            VectorColumn vector = null;
             for (int i = 0; i < _derrivative_degree; i++)
-                vector = SolveLinearSystem(СompilationSystemEquations());
-            List<DifferentiationNode> result = new List<DifferentiationNode>();
-            double y = 0;
-            for (int i = 1; i < _nodes_count;i++)
             {
-                for (int j = 0; j < _nodes_count; j++)
+                List<double> cs = SolveLinearSystem().ToList();
+                int start_new_items_index = 1;
+                int end_new_items_index = _current_xs.Length - (_count_coefficients_c - 2);
+                double[] new_ys = new double[end_new_items_index];
+                double[] new_xs = _current_xs[start_new_items_index..end_new_items_index];
+                for (int j = start_new_items_index; j < end_new_items_index; j++)
                 {
-                    if (_nodes.ElementAtOrDefault(j + i - 1) == null) break;
-                    y += _nodes.ElementAt(j+i-1).Y * vector[j];
+                    new_ys[j - 1] = _current_ys[(j - 1)..(j - 1 + _count_coefficients_c)].Zip(cs, (y, c) => y * c).Sum();
                 }
-                result.Add(new DifferentiationNode(_nodes.ElementAt(i).X, y));
-                y = 0; 
+                _current_xs = new_xs;
+                _current_ys = new_ys;
             }
-            return result;
+            return _current_xs.Zip(_current_ys, (x, y) => new DifferentiationResultNode(x, y));
         }
 
-        private VectorColumn SolveLinearSystem(IEnumerable<LinerEquation> linerEquations) => CreateMatrix(linerEquations).Invert() * CreateVectorB(linerEquations);
+        private VectorColumn SolveLinearSystem()
+        {
+            SquareMatrix matrix = CreateMatrix();
+            VectorColumn vectorB = CreateVectorB();
 
-        private VectorColumn CreateVectorB(IEnumerable<LinerEquation> linerEquations) => new VectorColumn(linerEquations.Select(element => element.FreeMember).ToArray());
-        private void Find_new_derivarive()
-        {
-            _old_derivative = _new_derivative;
-            if(_old_derivative == null)
-            {
-                _old_derivative = new string[_nodes.Count()];
-                for (int i = 0; i < _old_derivative.Length; i++)
-                {
-                    _old_derivative[i] = $"h^{i}";
-                }
-            }
-            _new_derivative = new string[_old_derivative.Length];
-            for (int i = 0; i < _old_derivative.Length; i++)
-            {
-                _new_derivative[i] = SymbolicExpression.Parse(_old_derivative[i]).Expand().Differentiate("h").ToString();
-            }
-        }
-        private IEnumerable<LinerEquation> СompilationSystemEquations()
-        {
-            Find_new_derivarive();
-            List<LinerEquation> result = new List<LinerEquation>();
-            List<double> coef = new List<double>();
-            for (int i = 0; i < _old_derivative.Length; i++)
-            {
-                for (int j = 0; j < _old_derivative.Length; j++)
-                {
-                    coef.Add(SymbolicExpression.Parse(_old_derivative[i]).Evaluate(new Dictionary<string, FloatingPoint>() { { "h", _h[j] } }).RealValue);
-                }
-                result.Add(new LinerEquation(coef, SymbolicExpression.Parse(_new_derivative[i]).Evaluate(new Dictionary<string, FloatingPoint>() { { "h", _h[1] } }).RealValue));
-                coef = new List<double>();
-            }
-            return result;
+            SquareMatrix invertedMatrix = matrix.Invert();
+            var x = invertedMatrix * vectorB;
+            return invertedMatrix * vectorB;
         }
 
-        private SquareMatrix CreateMatrix(IEnumerable<LinerEquation> linerEquations)
+        private VectorColumn CreateVectorB()
         {
-            double[,] matrixBody = new double[_nodes_count, _nodes_count];
-            for (int i = 0; i < _nodes_count; i++)
+            IDictionary<string, FloatingPoint> values = new Dictionary<string, FloatingPoint>()
             {
-                for (int j = 0; j < _nodes_count; j++)
+                { "x", _current_xs[1] },
+                { "x0", _current_xs[0] }
+            };
+
+            double[] vectorBody = _ys_last_derivative_expressions
+                .Select((yExpression, index) => yExpression.Evaluate(values).RealValue)
+                .ToArray();
+
+            return new VectorColumn(vectorBody);
+        }
+
+        private SquareMatrix CreateMatrix()
+       {
+            double[,] matrixBody = new double[_count_coefficients_c, _count_coefficients_c];
+            for (int i = 0; i < _count_coefficients_c; i++)
+            {
+                for (int j = 0; j < _count_coefficients_c; j++)
                 {
-                    matrixBody[i,j] = linerEquations.ElementAt(i).Coefficients.ElementAt(j);
+                    Random random = new Random();
+
+                    IDictionary<string, FloatingPoint> values = new Dictionary<string, FloatingPoint>()
+                    {
+                        { "x", _current_xs[j] },
+                        { "x0", _current_xs[0] }
+                    };
+                    matrixBody[i, j] = _ys_before_last_derivative_expressions[i].Evaluate(values).RealValue;
                 }
             }
+
             return new SquareMatrix(matrixBody);
         }
-
-
     }
 }

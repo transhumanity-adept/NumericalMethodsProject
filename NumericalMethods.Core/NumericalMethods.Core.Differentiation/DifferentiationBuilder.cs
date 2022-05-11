@@ -24,8 +24,8 @@ public static class DifferentiationBuilder
 	{
 		return new NewtonPolynomialDifferentiationFunction(differentiationNodes, step, derivative_degree, numberOfMembers);
 	}
-	public static IUndefinedCoefficientsDifferentiationFunction CreateUndefinedCoefficients(IEnumerable<IDifferentiationNode> differentiationNodes, double step, int derrivative_degre)
+	public static IUndefinedCoefficientsDifferentiationFunction CreateUndefinedCoefficients(IEnumerable<IDifferentiationNode> differentiationNodes, double step, int derrivative_degre, int count_coefficients_c)
     {
-		return new UndefinedCoefficientsDifferentiationFunction(differentiationNodes, step, derrivative_degre);
+		return new UndefinedCoefficientsDifferentiationFunction(differentiationNodes, step, derrivative_degre, count_coefficients_c);
     }
 }

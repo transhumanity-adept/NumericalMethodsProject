@@ -1,8 +1,6 @@
 ﻿using NumericalMethods.Core.Differentiation.DifferentiationFunctions.UndefinedCoefficients;
-namespace NumericalMethods.Core.Differentiation.Interfaces
+namespace NumericalMethods.Core.Differentiation.Interfaces;
+public interface IUndefinedCoefficientsDifferentiationFunction
 {
-    public interface IUndefinedCoefficientsDifferentiationFunction
-    {
-        public IEnumerable<DifferentiationNode> Calculate();
-    }
+    public IEnumerable<IDifferentiationResultNode> Calculate();
 }

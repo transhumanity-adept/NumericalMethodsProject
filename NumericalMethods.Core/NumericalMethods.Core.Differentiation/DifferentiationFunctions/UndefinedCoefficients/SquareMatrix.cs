@@ -13,10 +13,9 @@ public class SquareMatrix
 	public SquareMatrix(double[,] data) 
 	{
 		Size = data.GetLength(0);
-		_data = data;
-		//_data = new double[Size, Size];
-		//FillDataFrom(_data);
-	}
+        _data = new double[Size, Size];
+        FillDataFrom(data);
+    }
 	public double this[int row, int col]
 	{
 		get

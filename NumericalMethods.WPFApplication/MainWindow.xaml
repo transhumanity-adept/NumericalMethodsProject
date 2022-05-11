@@ -55,6 +55,14 @@
                             <Label Grid.Column="0">Members Count</Label>
                             <TextBox Grid.Column="1" Name="Differentiation_NumberOfMembers"></TextBox>
                         </Grid>
+                        <Grid Height="30"  Margin="0 10 0 0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0">Accuracy</Label>
+                            <TextBox Grid.Column="1" Name="Differentiation_Accuracy"></TextBox>
+                        </Grid>
                         <Button Name="Differentiation_AddNodesOnChart" Height="30" Margin="0 10 0 0" Click="Differentiation_AddNodesOnChart_Click">ADD POINTS ON CHART</Button>
                         <Border Margin="0 10 0 0" BorderThickness="1" BorderBrush="Black">
                             <StackPanel Margin="5 5 5 5">
