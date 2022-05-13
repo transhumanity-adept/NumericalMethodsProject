@@ -5,6 +5,7 @@ using NumericalMethods.Core.Differentiations.DifferentiationFunctions.NewtonPoly
 using NumericalMethods.Core.Differentiations.DifferentiationFunctions.UndefinedCoefficients;
 using NumericalMethods.Core.Differentiations.Interfaces;
 using NumericalMethods.Core.Differentiation.DifferentiationFunctions.Cubic;
+using NumericalMethods.Core.Differentiation.DifferentiationFunctions.Runge;
 
 namespace NumericalMethods.Core.Differentiations;
 public static class DifferentiationBuilder
@@ -27,5 +28,9 @@ public static class DifferentiationBuilder
 	public static IUndefinedCoefficientsDifferentiationFunction CreateUndefinedCoefficients(IEnumerable<IDifferentiationNode> differentiationNodes, double step, int derrivative_degre, int count_coefficients_c)
     {
 		return new UndefinedCoefficientsDifferentiationFunction(differentiationNodes, step, derrivative_degre, count_coefficients_c);
+    }
+	public static IDifferentiationFunction CreateRunge(IEnumerable<IDifferentiationNode> differentiationNodes, double step, int derrivative_degre, int accuracy_order, int number_of_used_points)
+    {
+		return new RungeDifferentiationFunction(differentiationNodes, step, derrivative_degre, accuracy_order, number_of_used_points);
     }
 }

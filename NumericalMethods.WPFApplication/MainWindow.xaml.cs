@@ -172,17 +172,32 @@ namespace NumericalMethods.WPFApplication
 					xs = result.Select(node => node.X).ToList();
 					ys = result.Select(node => node.Y).ToList();
 					break;
-				default:
-					IDifferentiationFunction differentiation_function = DifferentiationBuilder.Build(_points, interpolation_type, _step, derivative_degree);
-					for (double x = _start_x; Math.Round(x, roundNumbers) <= _end_x; x += _step)
-					{
-                        double? y = differentiation_function.Calculate(x);
-						if (y is null) continue;
+				case DifferentiationFunctionType.Runge:
+                    {
+						IDifferentiationFunction differentiation_function = DifferentiationBuilder.CreateRunge(_points, _step, derivative_degree, 1, 2);
+						for (double x = _start_x; Math.Round(x, roundNumbers) <= _end_x; x += _step)
+						{
+							double? y = differentiation_function.Calculate(x);
+							if (y is null) continue;
 
-						xs.Add(x);
-						ys.Add((double)y);
+							xs.Add(x);
+							ys.Add((double)y);
+						}
+						break;
 					}
-					break;
+				default:
+                    {
+						IDifferentiationFunction differentiation_function = DifferentiationBuilder.Build(_points, interpolation_type, _step, derivative_degree);
+						for (double x = _start_x; Math.Round(x, roundNumbers) <= _end_x; x += _step)
+						{
+							double? y = differentiation_function.Calculate(x);
+							if (y is null) continue;
+
+							xs.Add(x);
+							ys.Add((double)y);
+						}
+						break;
+					}
 			}
 			
 			Differentiation_MainChart.Plot.AddScatter(xs.ToArray(), ys.ToArray(), lineWidth: 4, markerSize: 0, label: "differentiation");
