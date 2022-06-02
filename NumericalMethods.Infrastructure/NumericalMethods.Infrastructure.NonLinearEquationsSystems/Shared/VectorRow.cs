@@ -8,4 +8,8 @@ public class VectorRow : VectorBase
 	public VectorRow(double[] data) : base(data)
 	{
 	}
+	public VectorColumn Transposition()
+    {
+		return new VectorColumn(this._data);
+    }
 }

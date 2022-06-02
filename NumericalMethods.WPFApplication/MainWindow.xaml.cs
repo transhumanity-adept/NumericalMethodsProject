@@ -6,6 +6,8 @@ using NumericalMethods.Core.Differentiations;
 using NumericalMethods.Core.Differentiations.Interfaces;
 using NumericalMethods.Infrastructure.Integration;
 using NumericalMethods.Infrastructure.Integration.Interfaces;
+using NumericalMethods.Infrastructure.NonLinearEquationsSystems;
+using NumericalMethods.Infrastructure.NonLinearEquationsSystems.Methods;
 
 using org.mariuszgromada.math.mxparser;
 
@@ -36,7 +38,25 @@ namespace NumericalMethods.WPFApplication
 		private double _step;
 		public MainWindow()
 		{
-			InitializeComponent();
+            //IEnumerable<IEnumerable<double>> res = new NonLinearEquationsSolverBuilder().Build(SolvingMethods.Secant).SolveWithSteps(new NonLinearEquationsSystem(new List<string>()
+            //{
+            //    "x1 + x2 - 3",
+            //    "x1^2 + x2^2 - 9"
+            //}), 0.001, new Dictionary<string, MathNet.Symbolics.FloatingPoint>() { { "x2", 5.0 }, { "x1", 1.0 } });
+            //IEnumerable<IEnumerable<double>> res1 = new NonLinearEquationsSolverBuilder().Build(SolvingMethods.ModifiedNewton).SolveWithSteps(new NonLinearEquationsSystem(new List<string>()
+            //{
+            //	"x1 + x2 - 3",
+            //	"x1^2 + x2^2 - 9"
+            //}), 0.001, new Dictionary<string, MathNet.Symbolics.FloatingPoint>() { { "x2", 5.0 }, { "x1", 1.0 } });
+            IEnumerable<IEnumerable<double>> res = new NonLinearEquationsSolverBuilder().Build(SolvingMethods.SimpleIterations).SolveWithSteps(new NonLinearEquationsSystem(new List<string>()
+            {
+                "sqrt((x1*(x2+5)-1)/2)",
+                "sqrt(x1 + 3* lg(x1))"
+            }), 0.001, new Dictionary<string, MathNet.Symbolics.FloatingPoint>() { { "x2", 2.2 }, { "x1", 3.5 } });
+
+
+            InitializeComponent();
+
 
 			Width = 1300;
 			Height = 750;
@@ -116,6 +136,7 @@ namespace NumericalMethods.WPFApplication
 			}
 
 			Differentiation_MainChart.Plot.AddScatter(xs.ToArray(), ys.ToArray(), lineWidth: 4, markerSize: 0, label: "interpolation");
+			Differentiation_MainChart.Refresh();
 			Differentiation_MainChart.Refresh();
 		}
 

@@ -66,7 +66,7 @@ public class ChebyshevIntegrationMethod : IIntegrationMethodWithVariableStep
                 try
 				{
                     if (token.IsCancellationRequested) break;
-                    findedRoots = solver.Solve(snu, 0.001d, randomInitial);
+                    //findedRoots = solver.Solve(snu, 0.001d, randomInitial);
                     if (findedRoots.Any(root => double.IsNaN(root) || root is < -1 or > 1))
                     {
                         randomInitial = randomInitial.Select(value => random.Next(-1, 2) + random.NextDouble());

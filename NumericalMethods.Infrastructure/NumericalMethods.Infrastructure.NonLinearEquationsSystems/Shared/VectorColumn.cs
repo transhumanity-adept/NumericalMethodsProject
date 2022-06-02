@@ -9,7 +9,10 @@
 		public VectorColumn(double[] data) : base(data)
 		{
 		}
-
+		public VectorRow Transposition()
+        {
+			return new VectorRow(this._data);
+        }
 		public static VectorColumn operator -(VectorColumn vector)
 		{
 			for (int i = 0; i < vector.Size; i++)
@@ -19,7 +22,29 @@
 
 			return vector;
 		}
-
+		public static SquareMatrix operator *(VectorColumn vectorColumn, VectorRow vectorRow)
+        {
+			if (vectorColumn.Size != vectorRow.Size) return null;
+			double[,] dataSquareMatrix = new double[vectorRow.Size, vectorColumn.Size];
+            for (int i = 0; i < vectorRow.Size; i++)
+            {
+                for (int j = 0; j < vectorColumn.Size; j++)
+                {
+					dataSquareMatrix[i,j] = vectorColumn[i] * vectorRow[j];
+                }
+            }
+			return new SquareMatrix(dataSquareMatrix);
+        }
+		public static double? operator *(VectorRow vectorRow, VectorColumn vectorColumn)
+		{
+			if (vectorColumn.Size != vectorRow.Size) return null;
+			double result = 0;
+			for (int i = 0; i < vectorRow.Size; i++)
+			{
+				result += vectorRow[i] * vectorColumn[i];
+			}
+			return result;
+		}
 		public static VectorColumn operator +(VectorColumn vectorOne, VectorColumn vectorTwo)
 		{
 			// TODO: Попытаться переделать это

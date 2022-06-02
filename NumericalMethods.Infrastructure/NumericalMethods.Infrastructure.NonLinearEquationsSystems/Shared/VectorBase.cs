@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace NumericalMethods.Infrastructure.NonLinearEquationsSystems.Shared;
 public abstract class VectorBase
 {
-	private readonly double[] _data;
+	protected readonly double[] _data;
 
 	public VectorBase(double[] data)
 	{

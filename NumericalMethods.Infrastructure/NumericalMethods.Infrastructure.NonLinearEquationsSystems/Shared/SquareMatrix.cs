@@ -28,7 +28,7 @@ public class SquareMatrix
 
 		Size = data.GetLength(0);
 		_data = new double[Size, Size];
-		FillDataFrom(_data);
+		FillDataFrom(data);
 	}
 	public double this[int row, int col]
 	{
@@ -45,6 +45,51 @@ public class SquareMatrix
 				: throw new ArgumentOutOfRangeException("row or col invalid");
 		}
 	}
+	public static SquareMatrix operator * (SquareMatrix matrix1, SquareMatrix matrix2)
+    {
+		//Проверка чтобы у matrix1 колличество столбцов = колличество строк matrix2
+		double[,] dataResultSquareMatrix = new double[matrix1.Size, matrix2.Size];//Здесь первый параметр должен быть кол-во строк первой матрицы, следующий кол-во столбцов матрицы 2
+		double sum = 0;
+        for (int i = 0; i < matrix1.Size; i++)
+        {
+            for (int j = 0; j < matrix1.Size; j++)
+            {
+				for (int k = 0; k < matrix2.Size; k++)
+				{
+					sum += matrix1[i, k] * matrix2[k, j];
+				}
+				dataResultSquareMatrix[i, j] = sum;
+				sum = 0;
+			}
+
+        }
+		return new SquareMatrix(dataResultSquareMatrix);
+	}
+	public static SquareMatrix operator +(SquareMatrix matrix1, SquareMatrix matrix2)
+    {
+		if (matrix1.Size != matrix2.Size) return null;
+		double[,] dataResultSquareMatrix = new double[matrix1.Size, matrix2.Size];
+		for (int i = 0; i < matrix1.Size; i++)
+        {
+            for (int j = 0; j < matrix1.Size; j++)
+            {
+				dataResultSquareMatrix[i, j] = matrix1[i, j] + matrix2[i, j];
+            }
+        }
+		return new SquareMatrix(dataResultSquareMatrix);
+    }
+	public static SquareMatrix operator / (SquareMatrix matrix , double number)
+    {
+		double[,] resultDataSquareMatrix = new double[matrix.Size, matrix.Size];
+        for (int i = 0; i < matrix.Size; i++)
+        {
+            for (int j = 0; j < matrix.Size; j++)
+            {
+				resultDataSquareMatrix[i, j] = matrix[i, j] / number;
+            }
+        }
+		return new SquareMatrix(resultDataSquareMatrix);
+    }
 	public static VectorColumn operator * (SquareMatrix matrix, VectorColumn vector)
 	{
 		VectorColumn result = new VectorColumn(vector.Size);
@@ -154,17 +199,17 @@ public class SquareMatrix
 	/// <summary> Инвертирует текущую матрицу</summary>
 	public SquareMatrix Invert()
 	{
-		double determinant = this.GetDeterminant();
-		SquareMatrix transposed = this.CreateAlgebraicAddition().Transpose();
+		double determinant = GetDeterminant();
+		SquareMatrix transposed = CreateAlgebraicAddition().Transpose();
+		double[,] dataInvertSquareMatrix = new double[Size, Size];
 		for (int i = 0; i < Size; i++)
 		{
 			for (int j = 0; j < Size; j++)
 			{
-				this[i, j] = transposed[i, j] / determinant;
+				dataInvertSquareMatrix[i, j] = transposed[i, j] / determinant;
 			}
 		}
-
-		return this;
+		return new SquareMatrix(dataInvertSquareMatrix);
 	}
 
 	/// <summary> Создает алгебраическое дополнение </summary>

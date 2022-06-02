@@ -21,19 +21,19 @@ namespace NumericalMethods.Infrastructure.NonLinearEquationsSystems
 
 		private void CheckInvariants()
 		{
-			InvariantException.ThrowIf(
-				isViolated: CheckFunctionsIsNotNull(),
-				message: $"{nameof(Functions)} не должно быть null");
-			InvariantException.ThrowIf(
-				isViolated: CheckFunctionsHaveAnyEquation(),
-				message: $"{nameof(Functions)} должно иметь хотябы одно уравнение");
-			InvariantException.ThrowIf(
-				isViolated: CheckNumberVariablesInEquationsIsSame(),
-				message: $"{nameof(Functions)} должны иметь одинаковое количество аргументов");
-			InvariantException.ThrowIf(
-				isViolated: CheckNumberVariablesEqualsNumberEquations(),
-				message: $"Количество аргументов в {nameof(Functions)} должно совпадать с количеством уравнений");
-		}
+            InvariantException.ThrowIf(
+                isViolated: CheckFunctionsIsNotNull(),
+                message: $"{nameof(Functions)} не должно быть null");
+            InvariantException.ThrowIf(
+                isViolated: CheckFunctionsHaveAnyEquation(),
+                message: $"{nameof(Functions)} должно иметь хотябы одно уравнение");
+            //InvariantException.ThrowIf(
+            //    isViolated: CheckNumberVariablesInEquationsIsSame(),
+            //    message: $"{nameof(Functions)} должны иметь одинаковое количество аргументов");
+            InvariantException.ThrowIf(
+                isViolated: CheckNumberVariablesEqualsNumberEquations(),
+                message: $"Количество аргументов в {nameof(Functions)} должно совпадать с количеством уравнений");
+        }
 
 		private bool CheckFunctionsIsNotNull()
 		{
