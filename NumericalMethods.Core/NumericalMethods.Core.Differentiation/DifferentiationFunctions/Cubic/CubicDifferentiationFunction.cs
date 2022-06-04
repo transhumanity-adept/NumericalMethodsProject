@@ -1,7 +1,4 @@
 ﻿using NumericalMethods.Core.Differentiation.Interfaces;
-using NumericalMethods.Core.Differentiations;
-using NumericalMethods.Core.Differentiations.DifferentiationFunctions;
-using NumericalMethods.Core.Differentiations.Interfaces;
 
 namespace NumericalMethods.Core.Differentiation.DifferentiationFunctions.Cubic;
 internal class CubicDifferentiationFunction : DifferentiationFunctionBase, IDifferentiationFunction

@@ -1,5 +1,4 @@
-﻿using NumericalMethods.Core.Differentiations.DifferentiationFunctions;
-using NumericalMethods.Core.Differentiations.Interfaces;
+﻿using NumericalMethods.Core.Differentiation.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;

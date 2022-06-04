@@ -1,7 +1,8 @@
-﻿using NumericalMethods.Core.Differentiation.Interfaces;
-using NumericalMethods.Core.Differentiations.Interfaces;
+﻿using NumericalMethods.Core.Differentiation;
+using NumericalMethods.Core.Differentiation.DifferentiationFunctions;
+using NumericalMethods.Core.Differentiation.Interfaces;
 
-namespace NumericalMethods.Core.Differentiations.DifferentiationFunctions.Quadratic;
+namespace NumericalMethods.Core.Differentiation.DifferentiationFunctions.Quadratic;
 internal class QuadraticDifferentationFunction : DifferentiationFunctionBase, IDifferentiationFunction
 {
     private INewtonDifferentiationFunction _newton_function;

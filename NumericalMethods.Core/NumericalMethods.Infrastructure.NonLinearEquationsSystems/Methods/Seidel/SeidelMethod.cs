@@ -1,4 +1,5 @@
 ﻿using MathNet.Symbolics;
+using NumericalMethods.Infrastructure.NonLinearEquationsSystems.Shared;
 
 namespace NumericalMethods.Infrastructure.NonLinearEquationsSystems.Methods.Seidel
 {

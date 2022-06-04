@@ -1,5 +1,5 @@
-﻿namespace NumericalMethods.Core.Differentiations.Interfaces;
+﻿namespace NumericalMethods.Core.Differentiation.Interfaces;
 public interface IDifferentiationFunction
 {
-	public double? Calculate(double argument);
+    public double? Calculate(double argument);
 }

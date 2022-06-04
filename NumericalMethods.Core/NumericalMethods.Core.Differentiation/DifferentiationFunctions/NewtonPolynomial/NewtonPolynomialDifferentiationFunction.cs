@@ -1,14 +1,13 @@
 ﻿using MathNet.Symbolics;
 using NumericalMethods.Core.Differentiation.DifferentiationFunctions;
 using NumericalMethods.Core.Differentiation.Interfaces;
-using NumericalMethods.Core.Differentiations.Interfaces;
 
 using System.Globalization;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
-namespace NumericalMethods.Core.Differentiations.DifferentiationFunctions.NewtonPolynomial;
+namespace NumericalMethods.Core.Differentiation.DifferentiationFunctions.NewtonPolynomial;
 internal class NewtonPolynomialDifferentiationFunction : DifferentiationFunctionBase, INewtonDifferentiationFunction
 {
     private readonly Dictionary<int, int> factorialCache = new Dictionary<int, int>() { { 1, 1 } };
@@ -34,8 +33,8 @@ internal class NewtonPolynomialDifferentiationFunction : DifferentiationFunction
             .Select(variable => int.Parse(variable[1..])).ToList();
 
         int max_finite_difference_degree = _numberOfMembers - 1;
-        last_x_for_right_finite_difference = _first_node.X + (step * max_finite_difference_degree);
-        first_x_for_left_finite_difference = _last_node.X - (step * max_finite_difference_degree);
+        last_x_for_right_finite_difference = _first_node.X + step * max_finite_difference_degree;
+        first_x_for_left_finite_difference = _last_node.X - step * max_finite_difference_degree;
     }
     private int CalculateFactorial(int value)
     {

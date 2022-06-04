@@ -1,15 +1,13 @@
-﻿using NumericalMethods.Core.Differentiations.DifferentiationFunctions;
-using NumericalMethods.Core.Differentiations.Interfaces;
-using MathNet.Symbolics;
+﻿using MathNet.Symbolics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NumericalMethods.Core.Differentiation.Interfaces;
-using NumericalMethods.Core.Differentiation.DifferentiationFunctions.UndefinedCoefficients;
+using NumericalMethods.Core.Differentiation.DifferentiationFunctions;
 
-namespace NumericalMethods.Core.Differentiations.DifferentiationFunctions.UndefinedCoefficients
+namespace NumericalMethods.Core.Differentiation.DifferentiationFunctions.UndefinedCoefficients
 {
     internal class UndefinedCoefficientsDifferentiationFunction : DifferentiationFunctionBase, IUndefinedCoefficientsDifferentiationFunction
     {
@@ -18,7 +16,7 @@ namespace NumericalMethods.Core.Differentiations.DifferentiationFunctions.Undefi
         SymbolicExpression[] _ys_last_derivative_expressions;
         private double[] _current_xs;
         private double[] _current_ys;
-        public UndefinedCoefficientsDifferentiationFunction(IEnumerable<IDifferentiationNode> differentiationNodes, double step, int derrivative_degree, int count_coefficients_c) 
+        public UndefinedCoefficientsDifferentiationFunction(IEnumerable<IDifferentiationNode> differentiationNodes, double step, int derrivative_degree, int count_coefficients_c)
             : base(differentiationNodes, step, derrivative_degree)
         {
             _count_coefficients_c = count_coefficients_c;
@@ -78,7 +76,7 @@ namespace NumericalMethods.Core.Differentiations.DifferentiationFunctions.Undefi
         }
 
         private SquareMatrix CreateMatrix()
-       {
+        {
             double[,] matrixBody = new double[_count_coefficients_c, _count_coefficients_c];
             for (int i = 0; i < _count_coefficients_c; i++)
             {

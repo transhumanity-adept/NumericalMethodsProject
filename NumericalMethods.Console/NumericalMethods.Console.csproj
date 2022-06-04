@@ -13,8 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NumericalMethods.Infrastructure\NumericalMethods.Infrastructure.Integration\NumericalMethods.Infrastructure.Integration.csproj" />
-    <ProjectReference Include="..\NumericalMethods.Infrastructure\NumericalMethods.Infrastructure.NonLinearEquationsSystems\NumericalMethods.Infrastructure.NonLinearEquationsSystems.csproj" />
+    <ProjectReference Include="..\NumericalMethods.Core\NumericalMethods.Infrastructure.Integration\NumericalMethods.Infrastructure.Integration.csproj" />
+    <ProjectReference Include="..\NumericalMethods.Core\NumericalMethods.Infrastructure.NonLinearEquationsSystems\NumericalMethods.Infrastructure.NonLinearEquationsSystems.csproj" />
   </ItemGroup>
 
 </Project>

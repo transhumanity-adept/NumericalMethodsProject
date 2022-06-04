@@ -1,11 +1,11 @@
-﻿namespace NumericalMethods.Core.Differentiations;
+﻿namespace NumericalMethods.Core.Differentiation;
 public enum DifferentiationFunctionType
 {
-	Linear,
-	Quadratic,
-	Cubic,
-	NewtonPolynomials,
-	LagrangePolynomials,
-	UndefinedCoefficients,
-	Runge
+    Linear,
+    Quadratic,
+    Cubic,
+    NewtonPolynomials,
+    LagrangePolynomials,
+    UndefinedCoefficients,
+    Runge
 }

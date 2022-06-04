@@ -1,6 +1,6 @@
 ﻿namespace NumericalMethods.Infrastructure.NonLinearEquationsSystems.Shared
 {
-	public class VectorColumn : VectorBase
+    public class VectorColumn : VectorBase
 	{
 		public VectorColumn(int size) : base(size)
 		{

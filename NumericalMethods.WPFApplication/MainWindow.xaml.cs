@@ -1,9 +1,8 @@
 ﻿using NumericalMethods.Core.Approximation;
 using NumericalMethods.Core.Approximation.Interfaces;
+using NumericalMethods.Core.Differentiation;
 using NumericalMethods.Core.Differentiation.DifferentiationFunctions.UndefinedCoefficients;
 using NumericalMethods.Core.Differentiation.Interfaces;
-using NumericalMethods.Core.Differentiations;
-using NumericalMethods.Core.Differentiations.Interfaces;
 using NumericalMethods.Infrastructure.Integration;
 using NumericalMethods.Infrastructure.Integration.Interfaces;
 using NumericalMethods.Infrastructure.NonLinearEquationsSystems;
@@ -26,10 +25,10 @@ using Point = NumericalMethods.WPFApplication.Differentiation.Point;
 
 namespace NumericalMethods.WPFApplication
 {
-	/// <summary>
-	/// Interaction logic for MainWindow.xaml
-	/// </summary>
-	public partial class MainWindow : Window
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window
 	{
 		private readonly List<Point> _points = new List<Point>();
 		private Function _current_function;

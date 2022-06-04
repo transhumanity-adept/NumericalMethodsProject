@@ -1,8 +1,9 @@
 ﻿using NumericalMethods.Core.Approximation;
 using NumericalMethods.Core.Approximation.Interfaces;
-using NumericalMethods.Core.Differentiations.Interfaces;
+using NumericalMethods.Core.Differentiation.Interfaces;
+using NumericalMethods.Core.Differentiation;
 
-namespace NumericalMethods.Core.Differentiations.DifferentiationFunctions
+namespace NumericalMethods.Core.Differentiation.DifferentiationFunctions
 {
     internal abstract class DifferentiationFunctionBase
     {
@@ -42,33 +43,33 @@ namespace NumericalMethods.Core.Differentiations.DifferentiationFunctions
                     : GetFiniteDifferenceRecursive(current_argument + _step, new_depth, degree, isLeft) - GetFiniteDifferenceRecursive(current_argument, new_depth, degree, isLeft);
             }
         }*/
-        
+
         private double? GetCenterFiniteDifference(double argument) => _interpolation_function.Calculate(argument + _step) - _interpolation_function.Calculate(argument - _step);
         protected double? GetCenterFiniteDifference(double argument, int degree) => GetCenterFiniteDifferenceRecursive(argument, degree, 1);
-		private double? GetCenterFiniteDifferenceRecursive(double argument, int degree, int depth)
-		{
+        private double? GetCenterFiniteDifferenceRecursive(double argument, int degree, int depth)
+        {
             return depth == degree ?
                 GetCenterFiniteDifference(argument)
                 : GetCenterFiniteDifferenceRecursive(argument + _step, degree, depth + 1) - GetCenterFiniteDifferenceRecursive(argument - _step, degree, depth + 1);
 
         }
 
-		private double? GetLeftFiniteDifference(double argument) => _interpolation_function.Calculate(argument) - _interpolation_function.Calculate(argument - _step);
+        private double? GetLeftFiniteDifference(double argument) => _interpolation_function.Calculate(argument) - _interpolation_function.Calculate(argument - _step);
         protected double? GetLeftFiniteDifference(double argument, int degree) => GetLeftFiniteDifferenceRecursive(argument, degree, 1);
-		private double? GetLeftFiniteDifferenceRecursive(double argument, int degree, int depth)
-		{
+        private double? GetLeftFiniteDifferenceRecursive(double argument, int degree, int depth)
+        {
             return depth == degree ?
                 GetLeftFiniteDifference(argument)
                 : GetLeftFiniteDifferenceRecursive(argument, degree, depth + 1) - GetLeftFiniteDifferenceRecursive(argument - _step, degree, depth + 1);
-		}
+        }
 
-		private double? GetRightFiniteDifference(double argument) => _interpolation_function.Calculate(argument + _step) - _interpolation_function.Calculate(argument);
+        private double? GetRightFiniteDifference(double argument) => _interpolation_function.Calculate(argument + _step) - _interpolation_function.Calculate(argument);
         protected double? GetRightFiniteDifference(double argument, int degree) => GetRightFiniteDifferenceRecursive(argument, degree, 1);
         private double? GetRightFiniteDifferenceRecursive(double current_argument, int degree, int depth)
-		{
+        {
             return depth == degree ?
                 GetRightFiniteDifference(current_argument)
                 : GetRightFiniteDifferenceRecursive(current_argument + _step, degree, depth + 1) - GetRightFiniteDifferenceRecursive(current_argument, degree, depth + 1);
-		}
+        }
     }
 }
