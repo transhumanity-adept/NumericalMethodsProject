@@ -11,61 +11,55 @@ namespace NumericalMethods.Console
     {
         public static void Run()
         {
-            string func = "2*(x^2+y)";
-            double a = 0, b = 1, h = 0.1;
-            (double, double) conditions = (0, 1);
-
-            System.Console.WriteLine("Метод Эйлера");
-            EulerMethod(func, a, b, h, conditions)
-                .ToList()
-                .ForEach(value => System.Console.WriteLine($"{value.Item1} - {value.Item2}"));
-
-            System.Console.WriteLine(new string('-', 100));
-
-            System.Console.WriteLine("Метод Эйлера с перерасчётом");
-            EulerMethodRecalculation(func, a, b, h, conditions)
-                .ToList()
-                .ForEach(value => System.Console.WriteLine($"{value.Item1} - {value.Item2}"));
-
-            System.Console.WriteLine(new string('-', 100));
-
-            System.Console.WriteLine("Метод Эйлера с итерационной обработкой");
-            EulerIterativeMethod(func, a, b, h, conditions)
-                .ToList()
-                .ForEach(value => System.Console.WriteLine($"{value.Item1} - {value.Item2}"));
-
-            System.Console.WriteLine(new string('-', 100));
-
-            System.Console.WriteLine("Усовершенствованный метод Эйлера");
-            EulerMethodImproved(func, a, b, h, conditions)
-                .ToList()
-                .ForEach(value => System.Console.WriteLine($"{value.Item1} - {value.Item2}"));
-
-            System.Console.WriteLine(new string('-', 100));
-
-            System.Console.WriteLine("Рунге-Кута метод");
-            RungeKuttaMethods(func, a, b, h, conditions)
-                .ToList()
-                .ForEach(value => System.Console.WriteLine($"{value.Item1} - {value.Item2}"));
-        }
-        private static IEnumerable<(double x, double y)> EulerMethod(string fun, double a, double b, double h, (double x, double y) conditions)
-        {
-            SymbolicExpression function = SymbolicExpression.Parse(fun);
-
-            List<(double x, double y)> value = new List<(double, double)>(){ (a, conditions.y) };
-
-            double y_next, y_current, x_current;
-
-            for (double i = a; i <= b; i += h)
+            ResultTable result = Calculate(
+            function: "x - 2*y1 - y0",
+            b: 1,
+            h: 0.2,
+            initialGuess: (x: 0, ys: new Dictionary<string, double>()
             {
-                y_current = value[value.Count - 1].y;
-                x_current = value[value.Count - 1].x;
-                y_next = y_current + h * (function.EvaluateXY(x_current, y_current));
-                x_current += h;
-                value.Add((x_current, y_next));
-            }
+                {"y0", 1},
+                {"y1", 0}
+            }));
 
-            return value;
+            /*            System.Console.WriteLine("Метод Эйлера");
+                        EulerMethod(func, a, b, h, conditions)
+                            .ToList()
+                            .ForEach(value => System.Console.WriteLine($"{value.Item1} - {value.Item2}"));*/
+
+            /*            System.Console.WriteLine(new string('-', 100));
+
+                        System.Console.WriteLine("Метод Эйлера с перерасчётом");
+                        EulerMethodRecalculation(func, a, b, h, conditions)
+                            .ToList()
+                            .ForEach(value => System.Console.WriteLine($"{value.Item1} - {value.Item2}"));
+
+                        System.Console.WriteLine(new string('-', 100));
+
+                        System.Console.WriteLine("Метод Эйлера с итерационной обработкой");
+                        EulerIterativeMethod(func, a, b, h, conditions)
+                            .ToList()
+                            .ForEach(value => System.Console.WriteLine($"{value.Item1} - {value.Item2}"));
+
+                        System.Console.WriteLine(new string('-', 100));
+
+                        System.Console.WriteLine("Усовершенствованный метод Эйлера");
+                        EulerMethodImproved(func, a, b, h, conditions)
+                            .ToList()
+                            .ForEach(value => System.Console.WriteLine($"{value.Item1} - {value.Item2}"));
+
+                        System.Console.WriteLine(new string('-', 100));
+
+                        System.Console.WriteLine("Рунге-Кута метод");
+                        RungeKuttaMethods(func, a, b, h, conditions)
+                            .ToList()
+                            .ForEach(value => System.Console.WriteLine($"{value.Item1} - {value.Item2}"));*/
+        }
+        private static double EulerMethod(SymbolicExpression function, double h, double x, double y, Dictionary<string, FloatingPoint> conditions)
+        {
+            Dictionary<string, FloatingPoint>? conditionsWithX = conditions
+                .Append(new KeyValuePair<string, FloatingPoint>("x", x))
+                .ToDictionary(pair => pair.Key, pair => pair.Value);
+            return y + h * function.Evaluate(conditionsWithX).RealValue;
         }
 
         private static IEnumerable<(double x, double y)> EulerMethodRecalculation(string fun, double a, double b, double h, (double x, double y) conditions)
@@ -92,7 +86,6 @@ namespace NumericalMethods.Console
             return value;
 
         }
-
         private static IEnumerable<(double x, double y)> EulerIterativeMethod(string fun, double a, double b, double h, (double x, double y) conditions)
         {
             SymbolicExpression function = SymbolicExpression.Parse(fun);
@@ -121,7 +114,6 @@ namespace NumericalMethods.Console
             }
             return value;
         }
-
         private static IEnumerable<(double x, double y)> EulerMethodImproved(string fun, double a, double b, double h, (double x, double y) conditions)
         {
             SymbolicExpression function = SymbolicExpression.Parse(fun);
@@ -146,8 +138,6 @@ namespace NumericalMethods.Console
 
             return value;
         }
-
-
         // Метод из учебника Турчак Л.И., Плотников П.В. - основы численных методов
         private static IEnumerable<(double x, double y)> RungeKuttaMethods(string fun, double a, double b, double h, (double x, double y) conditions)
         {
@@ -176,6 +166,58 @@ namespace NumericalMethods.Console
             }
 
             return value;
+        }
+
+        static double RungeKuttaFourthOrderMethods(SymbolicExpression function, double h, double x, double y, Dictionary<string, FloatingPoint> conditions)
+        {
+            Dictionary<string, FloatingPoint>? conditionsWithX = conditions
+                .Append(new KeyValuePair<string, FloatingPoint>("x", x))
+                .ToDictionary(pair => pair.Key, pair => pair.Value);
+
+            double k_one, k_two, k_three, k_four, l_one, l_two, l_three, l_four, z;
+            z = function.Evaluate(conditionsWithX).RealValue;
+            k_one = y;
+            l_one = z;
+            k_two = z + h * l_one / 2;
+            l_two = (-2 * (z + h * l_one / 2) - (y + h * k_one / 2) + x + h / 2);
+            k_three = z + h * l_two / 2;
+            l_three = (-2 * (z + h * l_two / 2) - (y + h * k_two / 2) + x + h / 2);
+            k_four = z + h * l_three;
+            l_four = (-2 * (z + h * l_three) - (y + h * k_three) + x + h);
+            return y + h / 6 * (k_one + 2 * k_two + 2 * k_three + k_four);
+        }
+
+        private static ResultTable Calculate(string function, double b, double h, (double x, Dictionary<string, double> ys) initialGuess)
+        {
+            Dictionary<string, double> sortedYs = initialGuess.ys
+                .OrderBy(pair => pair.Key)
+                .ToDictionary(pair => pair.Key, pair => pair.Value);
+            KeyValuePair<string, double> maxOrderY = sortedYs.Last();
+            var order = int.Parse(maxOrderY.Key[1..]);
+            Dictionary<string, string> functions = new Dictionary<string, string>();
+            for (int i = 0; i < order; i++)
+            {
+                functions.Add(sortedYs.ElementAt(i).Key, sortedYs.ElementAt(i + 1).Key);
+            }
+            functions.Add(maxOrderY.Key, function);
+            ResultTable result = new ResultTable(order);
+            result.Add(initialGuess.x, initialGuess.ys);
+            for (double current_x = initialGuess.x + h; Math.Round(current_x, 7) <= Math.Round(b, 7); current_x += h)
+            {
+                Dictionary<string, double> ys = new Dictionary<string, double>();
+                Dictionary<string, FloatingPoint> conditions = new Dictionary<string, FloatingPoint>();
+                foreach (var yName in initialGuess.ys.Keys)
+                {
+                    conditions.Add(yName, result[yName].Last().yi);
+                }
+                foreach (KeyValuePair<string, double> y in initialGuess.ys)
+                {
+                    var newValueY = RungeKuttaFourthOrderMethods(SymbolicExpression.Parse(functions[y.Key]), h, current_x - h, conditions[y.Key].RealValue, conditions);
+                    ys.Add(y.Key, newValueY);
+                }
+                result.Add(current_x, ys);
+            }
+            return result;
         }
     }
 }
