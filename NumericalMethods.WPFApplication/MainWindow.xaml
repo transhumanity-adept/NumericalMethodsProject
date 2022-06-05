@@ -149,24 +149,77 @@
                     </Grid>
                 </Grid>
             </TabItem>
-            <TabItem Header="System of linear equations">
+            <TabItem Header="System of non-linear equations">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
+                        <ColumnDefinition Width="2*"></ColumnDefinition>
+                        <ColumnDefinition Width="8*"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
-                    <Grid Grid.Column="0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <Grid x:Name="gridSystemLinearEquations">
+                    <StackPanel Grid.Column="0" VerticalAlignment="Top" Margin="5 15 5 0">
+                        <Grid Height="550">
                             <Grid.RowDefinitions>
-                                <RowDefinition/>
+                                <RowDefinition Height="1*"></RowDefinition>
+                                <RowDefinition Height="1*"></RowDefinition>
+                                <RowDefinition Height="1*"></RowDefinition>
+                                <RowDefinition Height="5*"></RowDefinition>
+                                <RowDefinition Height="1*"></RowDefinition>
+                                <RowDefinition Height="4*"></RowDefinition>
+                                <RowDefinition Height="1*"></RowDefinition>
+                                <RowDefinition Height="1*"></RowDefinition>
                             </Grid.RowDefinitions>
-                            <TextBox x:Name="textBoxLinearEquations"
-                                     KeyDown="textBoxLinearEquations_KeyDown"/>
+
+                            <Grid Grid.Row="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" VerticalAlignment="Center">SNE Method</Label>
+                                <ComboBox Grid.Column="1" Margin="0 10 10 0" Name="SNE_methodComboBox"></ComboBox>
+                            </Grid>
+                            <Grid Grid.Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" VerticalAlignment="Center">Count of equations</Label>
+                                <ComboBox Grid.Column="1" Margin="0 10 10 0" Name="SNE_equationsCountComboBox"></ComboBox>
+                            </Grid>
+                            <Grid Grid.Row="2">
+                                <Button Name="SNE_SelectButton" Height="30" Click="SNE_SelectButton_Click">SELECT</Button>
+                            </Grid>
+                            <Grid Grid.Row="3">
+                                <ScrollViewer Background="LightGray">
+                                    <Grid x:Name="SNE_systemOfEquationsGrid"></Grid>
+                                </ScrollViewer>
+                            </Grid>
+                            <Grid Grid.Row="4">
+                                <Label VerticalAlignment="Center">Initial approximation</Label>
+                            </Grid>
+                            <Grid Grid.Row="5">
+                                <ScrollViewer Background="LightGray">
+                                    <Grid x:Name="SNE_initialApproximationGrid"></Grid>
+                                </ScrollViewer>
+                            </Grid>
+                            <Grid Grid.Row="6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" VerticalAlignment="Center">Accuracy</Label>
+                                <TextBox Grid.Column="1" Margin="0 10 10 0" Name="SNE_AccuracyTextBox" PreviewTextInput="SNE_textBox_PreviewTextInput"></TextBox>
+                            </Grid>
+                            <Grid Grid.Row="7">
+                                <Button Name="SNE_CalculateButton" Height="30" Click="SNE_CalculateButton_Click" >CALCULATE</Button>
+                            </Grid>
                         </Grid>
+                    </StackPanel>
+
+                    <Grid Grid.Column="1">
+                        <Border BorderBrush="Black" BorderThickness="1 0 0 0">
+                            <ScrollViewer Background="LightGray">
+                                <DataGrid x:Name="SNE_ResultDataGrid" IsReadOnly="True"></DataGrid>
+                            </ScrollViewer>
+                        </Border>
                     </Grid>
                 </Grid>
             </TabItem>
