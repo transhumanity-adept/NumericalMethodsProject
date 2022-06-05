@@ -79,6 +79,14 @@ namespace NumericalMethods.WPFApplication
 
 		private void Differentiation_AddNodesOnChart_Click(object sender, RoutedEventArgs e)
 		{
+			if (String.IsNullOrEmpty(Differentiation_FunctionTextBox.Text) ||
+				String.IsNullOrEmpty(Differentiation_StartXTextBox.Text) ||
+				String.IsNullOrEmpty(Differentiation_EndXTextBox.Text) ||
+				String.IsNullOrEmpty(Differentiation_StepTextBox.Text))
+			{
+				MessageBox.Show("Для начала рассчёта, заполните все поля");
+				return;
+			}
 			_points.Clear();
 			_current_function = new Function("f(x) = " + Differentiation_FunctionTextBox.Text.Trim());
 			double start_x = new Expression(Differentiation_StartXTextBox.Text.Trim()).calculate();
@@ -131,6 +139,11 @@ namespace NumericalMethods.WPFApplication
 		}
 		private void Differentiation_AddOnChartInterpolationButton_Click(object sender, RoutedEventArgs e)
 		{
+			if(_points.Count == 0)
+            {
+				MessageBox.Show("Добавьте точки");
+				return;
+            }
 			string? function_type_string = Differentiation_InterpolationFunctionTypeComboBox.SelectedValue.ToString();
 			if (function_type_string is null) return;
 			InterpolationFunctionType interpolation_type = (InterpolationFunctionType)Enum.Parse(typeof(InterpolationFunctionType), function_type_string);
@@ -158,13 +171,17 @@ namespace NumericalMethods.WPFApplication
 
 		private void Differentiation_AddOnChartButton_Click(object sender, RoutedEventArgs e)
 		{
+			if (_points.Count == 0)
+			{
+				MessageBox.Show("Добавьте точки");
+				return;
+			}
 			var xs = new List<double>();
 			var ys = new List<double>();
 			_start_x = new Expression(Differentiation_StartXTextBox.Text.Trim()).calculate();
 			_end_x = new Expression(Differentiation_EndXTextBox.Text.Trim()).calculate();
 			_step = new Expression(Differentiation_StepTextBox.Text.Trim()).calculate();
 			int roundNumbers = _step.ToString().Contains(',') ? _step.ToString().Split(',')[1].Length % 16 : 1;
-			double numberOfMembers = new Expression(Differentiation_NumberOfMembers.Text.Trim()).calculate();
 			int derivative_degree = int.Parse(DerivativeDegreeTextBox.Text.Trim());
 			string? function_type_string = Differentiation_FunctionTypeComboBox.SelectedValue.ToString();
 			if (function_type_string is null) return;
@@ -174,7 +191,13 @@ namespace NumericalMethods.WPFApplication
             switch (interpolation_type)
             {
 				case DifferentiationFunctionType.NewtonPolynomials:
-					INewtonDifferentiationFunction newton_function = DifferentiationBuilder.CreateNewton(_points, _step, derivative_degree, (int)numberOfMembers);
+                    if (String.IsNullOrEmpty(Differentiation_NumberOfMembers.Text))
+                    {
+						MessageBox.Show("Введите number of members");
+						return;
+                    }
+					int numberOfMembers = int.Parse(Differentiation_NumberOfMembers.Text);
+					INewtonDifferentiationFunction newton_function = DifferentiationBuilder.CreateNewton(_points, _step, derivative_degree, numberOfMembers);
 					for (double x = _start_x; Math.Round(x, roundNumbers) <= _end_x; x += _step)
 					{
                         double? y = newton_function.Calculate(x);
@@ -185,6 +208,11 @@ namespace NumericalMethods.WPFApplication
 					}
 					break;
 				case DifferentiationFunctionType.UndefinedCoefficients:
+                    if (String.IsNullOrEmpty(Differentiation_Accuracy.Text))
+                    {
+						MessageBox.Show("Введите accuracy");
+						return;
+                    }
 					int count_coefficients_c = int.Parse(Differentiation_Accuracy.Text);
 					List<Point> additional_right_points = new List<Point>();
                     for (int i = 1; i <= (count_coefficients_c - 2) * derivative_degree; i++)
@@ -211,6 +239,11 @@ namespace NumericalMethods.WPFApplication
 					break;
 				case DifferentiationFunctionType.Runge:
                     {
+						if (String.IsNullOrEmpty(Differentiation_Accuracy.Text))
+						{
+							MessageBox.Show("Введите accuracy");
+							return;
+						}
 						IDifferentiationFunction differentiation_function = DifferentiationBuilder.CreateRunge(_points, _step, derivative_degree, 1, 2);
 						for (double x = _start_x; Math.Round(x, roundNumbers) <= _end_x; x += _step)
 						{
@@ -615,5 +648,19 @@ namespace NumericalMethods.WPFApplication
 
         #endregion
 
+        private void DifferentiationEquation_ClearChartButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void DifferentiationEquation_AddOnChartButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void DifferentiationEquation_AddOnChartInterpolationButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
