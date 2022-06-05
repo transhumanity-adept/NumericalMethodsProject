@@ -6,6 +6,7 @@ using NumericalMethods.Core.Differentiation.Interfaces;
 using NumericalMethods.Infrastructure.Integration;
 using NumericalMethods.Infrastructure.Integration.Interfaces;
 using NumericalMethods.Infrastructure.NonLinearEquationsSystems;
+using NumericalMethods.Core.CauchyProblem;
 using NumericalMethods.Infrastructure.NonLinearEquationsSystems.Methods;
 
 using org.mariuszgromada.math.mxparser;
@@ -17,6 +18,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -36,6 +38,8 @@ namespace NumericalMethods.WPFApplication
 		private double _start_x;
 		private double _end_x;
 		private double _step;
+		private int _order;
+		private ResultTable _resultTable;
 		public MainWindow()
 		{
             InitializeComponent();
@@ -47,6 +51,7 @@ namespace NumericalMethods.WPFApplication
 			InitializeDifferentiation();
 			InitializeIntegration();
 			InitializeNonLinerEquation();
+			InitializeCauchyProblem();
 
 		}
 
@@ -163,7 +168,6 @@ namespace NumericalMethods.WPFApplication
 				xs.Add(x);
 				ys.Add((double)y);
 			}
-
 			Differentiation_MainChart.Plot.AddScatter(xs.ToArray(), ys.ToArray(), lineWidth: 4, markerSize: 0, label: "interpolation");
 			Differentiation_MainChart.Refresh();
 			Differentiation_MainChart.Refresh();
@@ -646,21 +650,274 @@ namespace NumericalMethods.WPFApplication
 			GenerateResultTable(res, initialGuess.Select(el => el.Key), (SolvingMethods)Enum.Parse(typeof(SolvingMethods), SNE_methodComboBox.SelectedValue.ToString()));
 		}
 
-        #endregion
+		#endregion
 
-        private void DifferentiationEquation_ClearChartButton_Click(object sender, RoutedEventArgs e)
+		#region CauchyProblem
+		private void InitializeCauchyProblem()
         {
-
-        }
-
-        private void DifferentiationEquation_AddOnChartButton_Click(object sender, RoutedEventArgs e)
+            foreach (var item in Enum.GetValues(typeof(OneStepMethods)))
+            {
+				CauchyProblem_FunctionTypeComboBox.Items.Add(item);
+			}
+            foreach (var item in Enum.GetValues(typeof(MultiStepMethods)))
+            {
+				CauchyProblem_FunctionTypeComboBox.Items.Add(item);
+			}
+			CauchyProblem_FunctionTypeComboBox.Items.Add("Adams");
+			foreach (var item in Enum.GetValues(typeof(InterpolationFunctionType)))
+			{
+				CauchyProblem_InterpolationFunctionTypeComboBox.Items.Add(item);
+			}
+			foreach (var item in Enum.GetValues(typeof(OneStepMethods)))
+			{
+				CauchyProblem_OneStepMethodComboBox.Items.Add(item);
+			}
+			CauchyProblem_FunctionTypeComboBox.SelectedItem = CauchyProblem_FunctionTypeComboBox.Items[0];
+			CauchyProblem_OneStepMethodComboBox.SelectedItem = CauchyProblem_OneStepMethodComboBox.Items[CauchyProblem_OneStepMethodComboBox.Items.Count -1];
+		}
+		private void CauchyProblem_IntTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+		{
+			if (!(Char.IsDigit(e.Text, 0)))
+			{
+				e.Handled = true;
+			}
+		}
+		private void CauchyProblem_DoubleTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+		{
+			if (!(Char.IsDigit(e.Text, 0) || (e.Text == ".")
+			   && (!((TextBox)sender).Text.Contains(".")
+			   && ((TextBox)sender).Text.Length != 0)))
+			{
+				e.Handled = true;
+			}
+		}
+		private void CauchyProblem_OrderSelectButton_Click(object sender, RoutedEventArgs e)
         {
-
-        }
-
-        private void DifferentiationEquation_AddOnChartInterpolationButton_Click(object sender, RoutedEventArgs e)
+            if (String.IsNullOrEmpty(CauchyProblem_OrderTextBox.Text))
+            {
+				MessageBox.Show("Заполните поле order");
+				CauchyProblem_Properties.Visibility = Visibility.Collapsed;
+				return;
+				
+			}
+			_order = int.Parse(CauchyProblem_OrderTextBox.Text);
+			CauchyProblem_FillPropertiesGrid();
+			CauchyProblem_Properties.Visibility = Visibility.Visible;
+		}
+		private string FormingContenLabelOrderFunction(int order)
         {
+			if (order <= 3)
+				return new StringBuilder("Y").Append('\'', order).ToString();
+			else
+				return $"Y^({order})";
+		}
+		private void CauchyProblem_FillPropertiesGrid()
+        {
+			CauchyProblem_MaxOrderFunctionLabel.Content = FormingContenLabelOrderFunction(_order);
+		}
+		private void CauchyProblem_InitXTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+		{
+			if (!(Char.IsDigit(e.Text, 0) || (e.Text == ",")
+			   && (!((TextBox)sender).Text.Contains(",")
+			   && ((TextBox)sender).Text.Length != 0)))
+			{
+				e.Handled = true;
+			}
+		}
+		private void CauchyProblem_EditLabelsInitFunctions(double x)
+        {
+			foreach(var children in CauchyProblem_InitFunctionsGrid.Children)
+            {
+				if(children is Grid)
+                {
+					foreach(var gridChildren in ((Grid)children).Children)
+                    {
+						if(gridChildren is Label)
+                        {
+							string content = ((Label)gridChildren).Content.ToString();
+							int f = content.IndexOf('(');
+							((Label)gridChildren).Content = content.Remove(content.LastIndexOf('(')) + $"({x})";
+							break;
+						}
+                    }
+                }
+            }
+			
 
+		}
+		private void CauchyProblem_FunctionTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if(((ComboBox)sender).SelectedValue.ToString() == "Adams")
+            {
+				CauchyProblem_PreCalcCountGrid.Visibility = Visibility.Collapsed;
+				CauchyProblem_OneStepMethodComboBox.Visibility = Visibility.Visible;
+				return;
+			}
+            if (Enum.IsDefined(typeof(MultiStepMethods), ((ComboBox)sender).SelectedValue.ToString())){
+				CauchyProblem_OneStepMethodComboBox.Visibility = Visibility.Visible;
+				CauchyProblem_PreCalcCountGrid.Visibility = Visibility.Visible;
+			}
+            else
+            {
+				CauchyProblem_OneStepMethodComboBox.Visibility = Visibility.Collapsed;
+				CauchyProblem_PreCalcCountGrid.Visibility = Visibility.Collapsed;
+			}
+		}
+		private void CauchyProblem_FillInitFunctionsGrid()
+        {
+			CauchyProblem_InitFunctionsGrid.RowDefinitions.Clear();
+			CauchyProblem_InitFunctionsGrid.Children.Clear();
+			Grid grid;
+			Label label;
+			TextBox textBox;
+            for (int i = 0; i < _order; i++)
+            {
+				CauchyProblem_InitFunctionsGrid.RowDefinitions.Add(new RowDefinition());
+				grid = new Grid()
+				{
+					Height = 30,
+					Margin = new Thickness(0, 10, 0, 0)
+				};
+				grid.ColumnDefinitions.Add(new ColumnDefinition()
+				{
+					Width = new GridLength(50)
+				});
+				grid.ColumnDefinitions.Add(new ColumnDefinition());
+				label = new Label()
+				{
+					Content = FormingContenLabelOrderFunction(i) + "()"
+				};
+				textBox = new TextBox();
+				textBox.PreviewTextInput += CauchyProblem_DoubleTextBox_PreviewTextInput;
+				grid.Children.Add(label);
+				Grid.SetColumn(grid.Children[grid.Children.Count - 1], 0);
+				grid.Children.Add(textBox);
+				Grid.SetColumn(grid.Children[grid.Children.Count - 1], 1);
+				CauchyProblem_InitFunctionsGrid.Children.Add(grid);
+				Grid.SetRow(CauchyProblem_InitFunctionsGrid.Children[CauchyProblem_InitFunctionsGrid.Children.Count - 1], i);
+
+			}
         }
-    }
+		private void CauchyProblem_InitXTextBox_TextChanged(object sender, TextChangedEventArgs e)
+		{
+			if (String.IsNullOrEmpty(((TextBox)sender).Text))
+			{
+				CauchyProblem_ParentInitFunctionsGrid.Visibility = Visibility.Collapsed;
+				CauchyProblem_InitFunctionsGrid.RowDefinitions.Clear();
+				CauchyProblem_InitFunctionsGrid.Children.Clear();
+			}
+			else
+			{
+				if (((TextBox)sender).Text.Last() == '.') return;
+				if (CauchyProblem_InitFunctionsGrid.Children.Count == 0)
+				{
+					CauchyProblem_FillInitFunctionsGrid();
+					CauchyProblem_ParentInitFunctionsGrid.Visibility = Visibility.Visible;
+				}
+				CauchyProblem_EditLabelsInitFunctions(double.Parse(((TextBox)sender).Text));
+			}
+		}
+		private void CauchyProblem_AddOnChartButton_Click(object sender, RoutedEventArgs e)
+		{
+			if(String.IsNullOrEmpty(CauchyProblem_OrderTextBox.Text)||
+				String.IsNullOrEmpty(CauchyProblem_MaxOrderFunctionTextBox.Text)||
+				String.IsNullOrEmpty(CauchyProblem_EndXTextBox.Text) ||
+				String.IsNullOrEmpty(CauchyProblem_StepTextBox.Text)||
+				String.IsNullOrEmpty(CauchyProblem_InitXTextBox.Text))
+            {
+				MessageBox.Show("заполните все поля");
+				return;
+            }
+			if(CauchyProblem_InitFunctionsGrid.Children.Count == 0)
+            {
+				MessageBox.Show("заполните все поля");
+				return;
+			}
+			foreach (var children in CauchyProblem_InitFunctionsGrid.Children)
+			{
+				if (children is Grid)
+				{
+					foreach (var gridChildren in ((Grid)children).Children)
+					{
+						if (gridChildren is TextBox)
+						{
+							if(String.IsNullOrEmpty((gridChildren as TextBox).Text))
+                            {
+								MessageBox.Show("заполните все поля");
+								return;
+							}
+						}
+					}
+				}
+			}
+			Dictionary<string, double> initialGuess = CauchyProblem_CreateInitialGuess();
+			if (CauchyProblem_FunctionTypeComboBox.SelectedValue.ToString() == "Adams")
+			{
+				_resultTable = CauchyProblemBuilder.CreateAdams(
+				function: CauchyProblem_MaxOrderFunctionTextBox.Text,
+				oneStepMethodType: Enum.Parse<OneStepMethods>(CauchyProblem_OneStepMethodComboBox.SelectedValue.ToString()))
+				.Calculate(
+					b: double.Parse(CauchyProblem_EndXTextBox.Text),
+					h: double.Parse(CauchyProblem_StepTextBox.Text),
+					initialGuess: (x: double.Parse(CauchyProblem_InitXTextBox.Text), ys: initialGuess)
+				);
+				return;
+			}
+			if (Enum.IsDefined(typeof(MultiStepMethods), CauchyProblem_FunctionTypeComboBox.SelectedValue.ToString()))
+			{
+				if (String.IsNullOrEmpty(CauchyProblem_PreCalcCount.Text))
+                {
+					MessageBox.Show("заполните все поля");
+					return;
+				}
+				_resultTable = CauchyProblemBuilder.BuildWithMultiStep(
+					function: CauchyProblem_MaxOrderFunctionTextBox.Text,
+					multiStepMethodType: Enum.Parse<MultiStepMethods>(CauchyProblem_FunctionTypeComboBox.SelectedValue.ToString()),
+					oneStepMethodType: Enum.Parse<OneStepMethods>(CauchyProblem_OneStepMethodComboBox.SelectedValue.ToString()),
+					preCalculatedPointsNumber: int.Parse(CauchyProblem_PreCalcCount.Text))
+					.Calculate(
+						b: double.Parse(CauchyProblem_EndXTextBox.Text),
+						h: double.Parse(CauchyProblem_StepTextBox.Text),
+						initialGuess: (x: double.Parse(CauchyProblem_InitXTextBox.Text), ys: initialGuess)
+					);
+			}
+			if(Enum.IsDefined(typeof(OneStepMethods), CauchyProblem_FunctionTypeComboBox.SelectedValue.ToString()))
+			{
+				_resultTable = CauchyProblemBuilder.BuildWithOneStep(
+					function: CauchyProblem_MaxOrderFunctionTextBox.Text,
+					methodType: Enum.Parse<OneStepMethods>(CauchyProblem_FunctionTypeComboBox.SelectedValue.ToString()))
+					.Calculate(
+						b: double.Parse(CauchyProblem_EndXTextBox.Text),
+						h: double.Parse(CauchyProblem_StepTextBox.Text),
+						initialGuess: (x: double.Parse(CauchyProblem_InitXTextBox.Text), ys: initialGuess)
+					);
+			}
+			foreach(var y in initialGuess)
+            {
+				List<(double x, double yi)> points = _resultTable[y.Key];
+				CauchyProblem_MainChart.Plot.AddScatter(points.Select(point=> point.x).ToArray(), points.Select(point => point.yi).ToArray(), lineWidth: 0, markerSize: 5, label: y.Key);
+			}
+			CauchyProblem_MainChart.Refresh();
+		}
+		private new Dictionary<string, double> CauchyProblem_CreateInitialGuess()
+        {
+			Dictionary<string, double> result = new Dictionary<string, double>();
+			for (int i = 0; i < CauchyProblem_InitFunctionsGrid.Children.Count; i++)
+            {
+				if (CauchyProblem_InitFunctionsGrid.Children[i] is Grid)
+				{
+					foreach (var gridChildren in ((Grid)CauchyProblem_InitFunctionsGrid.Children[i]).Children)
+					{
+						if (gridChildren is TextBox)
+						{
+							result.Add($"y{i}", double.Parse(((TextBox)gridChildren).Text));
+							break;
+						}
+					}
+				}
+			}
+			return result;
+		}
+		#endregion
+	}
 }

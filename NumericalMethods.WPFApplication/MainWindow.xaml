@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NumericalMethods.WPFApplication"
         mc:Ignorable="d"
-        Title="MainWindow" Height="630" Width="800" WindowStartupLocation="CenterScreen">
+        Title="MainWindow" Height="630" Width="800" WindowStartupLocation="CenterScreen" WindowState="Maximized" ResizeMode="NoResize">
     <Grid>
         <TabControl Margin="0,0,0,-26">
             <TabItem Header="Derivation">
@@ -89,7 +89,12 @@
                         <Button Name="Differentiation_ClearChartButton" Height="30" Margin="0 10 0 0" Click="Differentiation_ClearChartButton_Click">CLEAR CHART</Button>
                     </StackPanel>
                     <Grid Grid.Column="1">
-                        <WpfPlot Name="Differentiation_MainChart"/>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="224*"/>
+                            <ColumnDefinition Width="9*"/>
+                            <ColumnDefinition Width="411*"/>
+                        </Grid.ColumnDefinitions>
+                        <WpfPlot Name="Differentiation_MainChart" Grid.ColumnSpan="3"/>
                     </Grid>
                 </Grid>
             </TabItem>
@@ -231,76 +236,106 @@
                     </Grid>
                 </Grid>
             </TabItem>
-            <TabItem Header="DerivationEquation">
+            <TabItem Header="CauchyProblem">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="150"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0" VerticalAlignment="Top" Margin="5 15 5 0">
-                        <Grid Height="30">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="70"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-                            <Label Grid.Column="0">Derivative</Label>
-                            <TextBox Grid.Column="1" Name="DifferentiationEquation_DerivativeTextBox"></TextBox>
+                        <Grid Height="70">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="30"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="50"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0">Order</Label>
+                                <TextBox Grid.Column="1" Name="CauchyProblem_OrderTextBox" PreviewTextInput="CauchyProblem_IntTextBox_PreviewTextInput"></TextBox>
+                            </Grid>
+                            <Button Grid.Row="1" Margin="0 10 0 0" Name="CauchyProblem_OrderSelectButton" Click="CauchyProblem_OrderSelectButton_Click">Select</Button>
                         </Grid>
-                        <Grid Height="30">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="50"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-                            <Label Grid.Column="0" Name="DifferentiationEquation_MaxDerivativeFunctionLabel">Y'''</Label>
-                            <TextBox Grid.Column="1" Name="DifferentiationEquation_MaxDerivativeFunctionTextBox"></TextBox>
-                        </Grid>
-                        <Grid Height="30"  Margin="0 10 0 0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="50"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-                            <Label Grid.Column="0">End X</Label>
-                            <TextBox Grid.Column="1" Name="DifferentiationEquation_EndXTextBox" PreviewTextInput="Differentiation_DoubleTextBox_PreviewTextInput"></TextBox>
-                        </Grid>
-                        <Grid Height="30"  Margin="0 10 0 0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="50"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-                            <Label Grid.Column="0">Step</Label>
-                            <TextBox Grid.Column="1" Name="DifferentiationEquation_StepTextBox" PreviewTextInput="Differentiation_DoubleTextBox_PreviewTextInput"></TextBox>
-                        </Grid>
-                        <Grid Height="30"  Margin="0 10 0 0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="50"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-                            <Label Grid.Column="0">X</Label>
-                            <TextBox Grid.Column="1" Name="DifferentiationEquation_XTextBox" PreviewTextInput="Differentiation_DoubleTextBox_PreviewTextInput"></TextBox>
-                        </Grid>
-                        <Grid Height="30"  Margin="0 10 0 0">
-                            <ScrollViewer Background="LightGray">
-                                <Grid Name="DifferentiationEquation_Grid"></Grid>
-                            </ScrollViewer>
+                        <Grid Height="280" Name="CauchyProblem_Properties" Visibility="Collapsed">
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition Height="3*"/>
+                            </Grid.RowDefinitions>
+                            <Grid Height="30" Margin="0 10 0 0" Grid.Row="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="50"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" Name="CauchyProblem_MaxOrderFunctionLabel"></Label>
+                                <TextBox Grid.Column="1" Name="CauchyProblem_MaxOrderFunctionTextBox"></TextBox>
+                            </Grid>
+                            <Grid Height="30"  Margin="0 10 0 0" Grid.Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="50"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0">End X</Label>
+                                <TextBox Grid.Column="1" Name="CauchyProblem_EndXTextBox" PreviewTextInput="CauchyProblem_DoubleTextBox_PreviewTextInput"></TextBox>
+                            </Grid>
+                            <Grid Height="30"  Margin="0 10 0 0" Grid.Row="2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="50"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0">Step</Label>
+                                <TextBox Grid.Column="1" Name="CauchyProblem_StepTextBox" PreviewTextInput="CauchyProblem_DoubleTextBox_PreviewTextInput"></TextBox>
+                            </Grid>
+                            <Grid Height="30"  Margin="0 10 0 0" Grid.Row="3">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="50"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0">X</Label>
+                                <TextBox Grid.Column="1" Name="CauchyProblem_InitXTextBox" PreviewTextInput="CauchyProblem_InitXTextBox_PreviewTextInput" TextChanged="CauchyProblem_InitXTextBox_TextChanged"></TextBox>
+                            </Grid>
+                            <Grid Height="110" Grid.Row="4" Margin="0 5 0 0" Name="CauchyProblem_ParentInitFunctionsGrid" Visibility="Collapsed">
+                                <ScrollViewer Background="White">
+                                    <Grid Name="CauchyProblem_InitFunctionsGrid">
+                                    </Grid>
+                                </ScrollViewer>
+                            </Grid>
                         </Grid>
                         <Border Margin="0 10 0 0" BorderThickness="1" BorderBrush="Black">
                             <StackPanel Margin="5 5 5 5">
-                                <Label Margin="0 10 0 0" HorizontalContentAlignment="Center">Differentiation</Label>
-                                <ComboBox Name="DifferentiationEquation_FunctionTypeComboBox" Height="30"  Margin="0 10 0 0"/>
-                                <Button Name="DifferentiationEquation_AddOnChartButton" Height="30" Margin="0 10 0 0" Click="DifferentiationEquation_AddOnChartButton_Click">ADD ON CHART</Button>
+                                <Label Margin="0 10 0 0" HorizontalContentAlignment="Center">Method</Label>
+                                <ComboBox Name="CauchyProblem_FunctionTypeComboBox" Height="30"  Margin="0 10 0 0" SelectionChanged="CauchyProblem_FunctionTypeComboBox_SelectionChanged"/>
+                                <ComboBox Name="CauchyProblem_OneStepMethodComboBox" Height="30"  Margin="0 10 0 0" Visibility="Collapsed"/>
+                                <Grid Height="30"  Margin="0 10 0 0" Name="CauchyProblem_PreCalcCountGrid" Visibility="Collapsed">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="90"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Grid.Column="0">PreCalcCount</Label>
+                                    <TextBox Grid.Column="1" Name="CauchyProblem_PreCalcCount" PreviewTextInput="CauchyProblem_DoubleTextBox_PreviewTextInput"></TextBox>
+                                </Grid>
+                                <Button Name="CauchyProblem_AddOnChartButton" Height="30" Margin="0 10 0 0" Click="CauchyProblem_AddOnChartButton_Click">ADD ON CHART</Button>
                             </StackPanel>
                         </Border>
                         <Border Margin="0 10 0 0" BorderThickness="1" BorderBrush="Black">
                             <StackPanel Margin="5 5 5 5">
                                 <Label Margin="0 10 0 0" HorizontalContentAlignment="Center">Interpolation</Label>
-                                <ComboBox Name="DifferentiationEquation_InterpolationFunctionTypeComboBox" Height="30"  Margin="0 10 0 0"/>
-                                <Button Name="DifferentiationEquation_AddOnChartInterpolationButton" Height="30" Margin="0 10 0 0" Click="DifferentiationEquation_AddOnChartInterpolationButton_Click">ADD ON CHART</Button>
+                                <ComboBox Name="CauchyProblem_InterpolationFunctionTypeComboBox" Height="30"  Margin="0 10 0 0"/>
+                                <Button Name="CauchyProblem_AddOnChartInterpolationButton" Height="30" Margin="0 10 0 0">ADD ON CHART</Button>
                             </StackPanel>
                         </Border>
-                        <Button Name="DifferentiationEquation_ClearChartButton" Height="30" Margin="0 10 0 0" Click="DifferentiationEquation_ClearChartButton_Click">CLEAR CHART</Button>
+                        <Button Name="CauchyProblem_ClearChartButton" Height="30" Margin="0 10 0 0">CLEAR CHART</Button>
                     </StackPanel>
                     <Grid Grid.Column="1">
-                        <WpfPlot Name="DifferentiationEquation_MainChart"/>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="251*"/>
+                            <ColumnDefinition Width="393*"/>
+                        </Grid.ColumnDefinitions>
+                        <WpfPlot Name="CauchyProblem_MainChart" Grid.ColumnSpan="2"/>
                     </Grid>
                 </Grid>
             </TabItem>

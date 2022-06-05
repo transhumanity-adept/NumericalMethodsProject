@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NumericalMethods.Core\NumericalMethods.Core.Approximation\NumericalMethods.Core.Approximation.csproj" />
+    <ProjectReference Include="..\NumericalMethods.Core\NumericalMethods.Core.CauchyProblem\NumericalMethods.Core.CauchyProblem.csproj" />
     <ProjectReference Include="..\NumericalMethods.Core\NumericalMethods.Core.Differentiation\NumericalMethods.Core.Differentiation.csproj" />
     <ProjectReference Include="..\NumericalMethods.Core\NumericalMethods.Infrastructure.Integration\NumericalMethods.Infrastructure.Integration.csproj" />
     <ProjectReference Include="..\NumericalMethods.Core\NumericalMethods.Infrastructure.NonLinearEquationsSystems\NumericalMethods.Infrastructure.NonLinearEquationsSystems.csproj" />
