@@ -635,6 +635,11 @@ namespace NumericalMethods.WPFApplication
 			CauchyProblem_InterpolationFunctionTypeComboBox.SelectedItem = CauchyProblem_InterpolationFunctionTypeComboBox.Items[0];
 			CauchyProblem_FunctionTypeComboBox.SelectedItem = CauchyProblem_FunctionTypeComboBox.Items[0];
 			CauchyProblem_OneStepMethodComboBox.SelectedItem = CauchyProblem_OneStepMethodComboBox.Items[CauchyProblem_OneStepMethodComboBox.Items.Count -1];
+			CauchyProblem_OrderTextBox.Text = "3";
+			CauchyProblem_MaxOrderFunctionTextBox.Text = "-3*y2-3*y1-y0";
+			CauchyProblem_EndXTextBox.Text = "10";
+			CauchyProblem_StepTextBox.Text = "0,05";
+			CauchyProblem_InitXTextBox.Text = "0";
 			CauchyProblem_MainChart.Plot.Legend(enable: true);
 		}
 		private void CauchyProblem_OrderSelectButton_Click(object sender, RoutedEventArgs e)
@@ -744,7 +749,7 @@ namespace NumericalMethods.WPFApplication
 			}
 			else
 			{
-				if (((TextBox)sender).Text.Last() == '.') return;
+				if (((TextBox)sender).Text.Last() is '.' or '-') return;
 				if (CauchyProblem_InitFunctionsGrid.Children.Count == 0)
 				{
 					CauchyProblem_FillInitFunctionsGrid();
@@ -873,9 +878,9 @@ namespace NumericalMethods.WPFApplication
                 IEnumerable<Point> calculated_ys = _resultTable[y.Key].Select(pair => new Point(pair.x, pair.yi));
 				IInterpolationFunction? interpolation_function = InterpolationBuilder.Build(calculated_ys, interpolation_type);
 				if (interpolation_function is null) return;
-				double start_x = new Expression(CauchyProblem_InitXTextBox.Text.Trim()).calculate();
-				double end_x = new Expression(CauchyProblem_EndXTextBox.Text.Trim()).calculate();
-				double step = new Expression(CauchyProblem_StepTextBox.Text.Trim()).calculate() / 5.0;
+				double start_x = new Expression(CauchyProblem_InitXTextBox.Text.Trim().Replace(',', '.')).calculate();
+				double end_x = new Expression(CauchyProblem_EndXTextBox.Text.Trim().Replace(',', '.')).calculate();
+				double step = new Expression(CauchyProblem_StepTextBox.Text.Trim().Replace(',', '.')).calculate() / 5.0;
 				int roundNumbers = step.ToString().Contains(',') ? step.ToString().Split(',')[1].Length % 16 : 1;
 				var xs = new List<double>();
 				var ys = new List<double>();
@@ -886,6 +891,12 @@ namespace NumericalMethods.WPFApplication
 
 					xs.Add(x);
 					ys.Add((double)current_y);
+				}
+				double? last_y = interpolation_function.Calculate(end_x);
+				if (last_y is not null)
+                {
+					xs.Add(end_x);
+					ys.Add(last_y.Value);
 				}
 				CauchyProblem_MainChart.Plot.AddScatter(xs.ToArray(), ys.ToArray(), lineWidth: 3, markerSize: 0, label: "i" + y.Key);
 			}

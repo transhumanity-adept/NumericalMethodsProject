@@ -4,13 +4,14 @@ using NumericalMethods.Core.CauchyProblem;
 using NumericalMethods.Core.CauchyProblem.Interfaces;
 
 Console.WriteLine($"{nameof(OneStepMethods.RungeKuttaFourthOrder)}:");
-CauchyProblemBuilder.BuildWithOneStep("2*x", OneStepMethods.RungeKuttaThridOrder)
+CauchyProblemBuilder.BuildWithOneStep("-2*y1-y0+x", OneStepMethods.RungeKuttaFourthOrder)
     .Calculate(
-        b: 10,
-        h: 1,
-        initialGuess: (x: 1, ys: new Dictionary<string, double>()
+        b: 1,
+        h: 0.2,
+        initialGuess: (x: 0, ys: new Dictionary<string, double>()
         {
-            { "y0", 1 }
+            { "y0", 1 },
+            { "y1", 0 }
         })
     ).GetRows(..).ForEach(rows =>
     {

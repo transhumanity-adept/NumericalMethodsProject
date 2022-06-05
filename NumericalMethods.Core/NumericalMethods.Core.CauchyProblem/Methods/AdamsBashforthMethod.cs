@@ -100,7 +100,7 @@ public class AdamsBashforthMethod : IMultiStepMethod
             {
                 string current_y_name = last_first_row.ElementAt(i + 1).Key;
                 double current_y_value = last_first_row[current_y_name].RealValue;
-                double new_y_value = current_y_value + h * (1901.0 / 720.0 * functions[i].Evaluate(last_first_row).RealValue
+                 double new_y_value = current_y_value + h * (1901.0 / 720.0 * functions[i].Evaluate(last_first_row).RealValue
                     - 1387.0 / 360.0 * functions[i].Evaluate(last_second_row).RealValue
                     + 109.0 / 30.0 * functions[i].Evaluate(last_third_row).RealValue
                     - 637.0 / 360.0 * functions[i].Evaluate(last_four_row).RealValue
