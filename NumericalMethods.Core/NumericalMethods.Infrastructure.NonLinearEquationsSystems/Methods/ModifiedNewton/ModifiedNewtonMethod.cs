@@ -20,7 +20,7 @@ namespace NumericalMethods.Infrastructure.NonLinearEquationsSystems.Methods.Modi
 				Dictionary<string, FloatingPoint> values = new();
 				for (int i = 0; i < lastVectorX.Size; i++)
 				{
-					values.Add(sortedInitialGuess.ElementAt(i).ToString(), lastVectorX[i]);
+					values.Add(sortedInitialGuess.ElementAt(i).Key, lastVectorX[i]);
 				}
 
 				VectorColumn? yVector = new VectorColumn(system.FunctionExpressions

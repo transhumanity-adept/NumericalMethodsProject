@@ -28,8 +28,11 @@ public record class IntegrationBuilder
 		{
 			IntegrationMethodsWithVariableStep.Gauss => new IntegratorWithVariableStep(new GaussIntegrationMethod(),function),
 			IntegrationMethodsWithVariableStep.Chebyshev => new IntegratorWithVariableStep(new ChebyshevIntegrationMethod(), function),
-			IntegrationMethodsWithVariableStep.MonteCarlo => new IntegratorWithVariableStep(new MonteCarloIntegrationMethod(),function),
 			_ => throw new NotImplementedException()
 		};
 	}
+	public IIntegratorMonteCarloMethod BuildMonteCarlo(string function)
+    {
+		return new IntegratorMonteCarloMethod(new MonteCarloIntegrationMethod(), function);
+    }
 }

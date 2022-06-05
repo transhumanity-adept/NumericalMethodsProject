@@ -14,6 +14,7 @@ using ScottPlot;
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
@@ -37,23 +38,6 @@ namespace NumericalMethods.WPFApplication
 		private double _step;
 		public MainWindow()
 		{
-            //IEnumerable<IEnumerable<double>> res = new NonLinearEquationsSolverBuilder().Build(SolvingMethods.Secant).SolveWithSteps(new NonLinearEquationsSystem(new List<string>()
-            //{
-            //    "x1 + x2 - 3",
-            //    "x1^2 + x2^2 - 9"
-            //}), 0.001, new Dictionary<string, MathNet.Symbolics.FloatingPoint>() { { "x2", 5.0 }, { "x1", 1.0 } });
-            //IEnumerable<IEnumerable<double>> res1 = new NonLinearEquationsSolverBuilder().Build(SolvingMethods.ModifiedNewton).SolveWithSteps(new NonLinearEquationsSystem(new List<string>()
-            //{
-            //	"x1 + x2 - 3",
-            //	"x1^2 + x2^2 - 9"
-            //}), 0.001, new Dictionary<string, MathNet.Symbolics.FloatingPoint>() { { "x2", 5.0 }, { "x1", 1.0 } });
-            IEnumerable<IEnumerable<double>> res = new NonLinearEquationsSolverBuilder().Build(SolvingMethods.SimpleIterations).SolveWithSteps(new NonLinearEquationsSystem(new List<string>()
-            {
-                "sqrt((x1*(x2+5)-1)/2)",
-                "sqrt(x1 + 3* lg(x1))"
-            }), 0.001, new Dictionary<string, MathNet.Symbolics.FloatingPoint>() { { "x2", 2.2 }, { "x1", 3.5 } });
-
-
             InitializeComponent();
 
 
@@ -62,6 +46,7 @@ namespace NumericalMethods.WPFApplication
 
 			InitializeDifferentiation();
 			InitializeIntegration();
+			InitializeNonLinerEquation();
 
 		}
 
@@ -238,13 +223,18 @@ namespace NumericalMethods.WPFApplication
 			{
 				Integration_MethodComboBox.Items.Add(item.ToString());
 			}
+			foreach(var item in Enum.GetValues(typeof(IntegrationMethodsWithVariableStep)))
+            {
+				Integration_MethodComboBox.Items.Add(item.ToString());
+			}
+			Integration_MethodComboBox.Items.Add("MonteCarlo");
 
 			Integration_MethodComboBox.SelectedItem = Integration_MethodComboBox.Items[0];
 
-			Integration_FunctionTextBox.Text = "x^2";
-			Integration_StartXTextBox.Text = "-5";
-			Integration_EndXTextBox.Text = "5";
-			Integration_StepTextBox.Text = "0.1";
+			//Integration_FunctionTextBox.Text = "x^2";
+			//Integration_StartXTextBox.Text = "-5";
+			//Integration_EndXTextBox.Text = "5";
+			//Integration_StepTextBox.Text = "0.1";
 
 			Integration_MainChart.Plot.Legend(enable: true);
 		}
@@ -275,12 +265,23 @@ namespace NumericalMethods.WPFApplication
 			Integration_MainChart.Refresh();
 
 			string function_type_string = Integration_MethodComboBox.SelectedValue.ToString();
-			//IntegrationMethodsWithConstantStep method = (IntegrationMethodsWithConstantStep)Enum.Parse(typeof(IntegrationMethodsWithConstantStep), function_type_string);
-			//IIntegratorWithConstantStep integrator = new IntegrationBuilder()
-			//																.Build(Integration_FunctionTextBox.Text.Trim(), method);
-			IIntegratorWithVariableStep integrator = new IntegrationBuilder().Build(Integration_FunctionTextBox.Text.Trim(), IntegrationMethodsWithVariableStep.Chebyshev);
-			double integration_result = integrator.Integrate(start_x, end_x, (int)step);
-			MessageBox.Show($"Integration result: {integration_result}");
+            if (Enum.IsDefined(typeof(IntegrationMethodsWithConstantStep), function_type_string))
+            {
+				IntegrationMethodsWithConstantStep method = (IntegrationMethodsWithConstantStep)Enum.Parse(typeof(IntegrationMethodsWithConstantStep), function_type_string);
+				IIntegratorWithConstantStep integrator = new IntegrationBuilder()
+																				.Build(Integration_FunctionTextBox.Text.Trim(), method);
+			}
+			if (Enum.IsDefined(typeof(IntegrationMethodsWithVariableStep), function_type_string))
+            {
+				IIntegratorWithVariableStep integrator = new IntegrationBuilder().Build(Integration_FunctionTextBox.Text.Trim(), IntegrationMethodsWithVariableStep.Chebyshev);
+			}
+			if(function_type_string == "MonteCarlo")
+            {
+				IIntegratorMonteCarloMethod integrator = new IntegrationBuilder().BuildMonteCarlo(Integration_FunctionTextBox.Text.Trim());
+            }
+
+			//double integration_result = integrator.Integrate(start_x, end_x, (int)step);
+			//MessageBox.Show($"Integration result: {integration_result}");
 		}
 		#endregion
 
@@ -299,20 +300,228 @@ namespace NumericalMethods.WPFApplication
 
 			return (xs, ys);
 		}
-        #endregion
-
-        private void textBoxLinearEquations_KeyDown(object sender, KeyEventArgs e)
-        {
-			if (e.Key == Key.Enter)
-            {
-				RowDefinition rowDefinition = new RowDefinition();
-				TextBox tbx1 = new TextBox();
-				tbx1.Text = "fad";
-				gridSystemLinearEquations.RowDefinitions.Add(rowDefinition);
-				Grid.SetRow(tbx1, gridSystemLinearEquations.RowDefinitions.Count - 1);
-				gridSystemLinearEquations.Children.Add(tbx1);
-                tbx1.KeyDown += textBoxLinearEquations_KeyDown;
+		#endregion
+		#region SystemOfNonLinearEquationsTab
+		private void InitializeNonLinerEquation()
+		{
+			Enum.GetNames(typeof(SolvingMethods)).ToList().ForEach(nameSolvingMethod =>
+			{
+				SNE_methodComboBox.Items.Add(nameSolvingMethod);
+			});
+			for (int i = 2; i <= 5; i++)
+			{
+				SNE_equationsCountComboBox.Items.Add(i.ToString());
+			};
+			SNE_methodComboBox.SelectedItem = SNE_methodComboBox.Items[0];
+			SNE_equationsCountComboBox.SelectedItem = SNE_equationsCountComboBox.Items[0];
+		}
+		private void SNE_textBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+		{
+			if (!(Char.IsDigit(e.Text, 0) || (e.Text == ",")
+			   && (!((TextBox)sender).Text.Contains(",")
+			   && ((TextBox)sender).Text.Length != 0)))
+			{
+				e.Handled = true;
 			}
-        }
+		}
+
+		private void InitialDefaulSystemOfEquations(int equations_count)
+		{
+			SNE_systemOfEquationsGrid.Children.Clear();
+			SNE_systemOfEquationsGrid.RowDefinitions.Clear();
+			Canvas equationsCanvas;
+			int start_position = 10;
+			for (int i = 0; i < equations_count; i++)
+			{
+				RowDefinition rowDefinition = new RowDefinition();
+				rowDefinition.Height = new GridLength(52, GridUnitType.Pixel);
+				equationsCanvas = new Canvas();
+				SNE_systemOfEquationsGrid.RowDefinitions.Add(rowDefinition);
+				SNE_systemOfEquationsGrid.Children.Add(equationsCanvas);
+
+				Label equationLabel = new Label();
+				equationLabel.Content = "f(x) = ";
+				equationLabel.FontSize = 14;
+				equationLabel.Margin = new Thickness(10, start_position, 0, 0);
+				equationsCanvas.Children.Add(equationLabel);
+
+				TextBox equationOfSystem = new TextBox();
+				equationOfSystem.Margin = new Thickness(60, start_position, 20, 0);
+				equationOfSystem.FontSize = 10;
+				equationOfSystem.Width = 150;
+				equationOfSystem.Height = 30;
+				equationsCanvas.Children.Add(equationOfSystem);
+				start_position += 40;
+			}
+		}
+
+		private void InitialOtherSystemOfEquations(int equations_count)
+		{
+			SNE_systemOfEquationsGrid.Children.Clear();
+			SNE_systemOfEquationsGrid.RowDefinitions.Clear();
+			Canvas equationsCanvas;
+			int start_position = 10;
+			for (int i = 1; i <= equations_count; i++)
+			{
+				RowDefinition rowDefinition = new RowDefinition();
+				rowDefinition.Height = new GridLength(52, GridUnitType.Pixel);
+				equationsCanvas = new Canvas();
+				SNE_systemOfEquationsGrid.RowDefinitions.Add(rowDefinition);
+				SNE_systemOfEquationsGrid.Children.Add(equationsCanvas);
+
+				Label equationLabel = new Label();
+				equationLabel.Content = $"x{i} = ";
+				equationLabel.FontSize = 14;
+				equationLabel.Margin = new Thickness(10, start_position, 0, 0);
+				equationsCanvas.Children.Add(equationLabel);
+
+				TextBox equationOfSystem = new TextBox();
+				equationOfSystem.Margin = new Thickness(60, start_position, 20, 0);
+				equationOfSystem.FontSize = 10;
+				equationOfSystem.Width = 150;
+				equationOfSystem.Height = 30;
+				equationsCanvas.Children.Add(equationOfSystem);
+				start_position += 40;
+			}
+		}
+
+		private void GenerateInitialApproximation(int equations_count)
+		{
+			SNE_initialApproximationGrid.Children.Clear();
+			SNE_initialApproximationGrid.RowDefinitions.Clear();
+			Canvas initialApproximationCanvas;
+			int start_position = 10;
+			for (int i = 1; i <= equations_count; i++)
+			{
+				RowDefinition rowDefinition = new RowDefinition();
+				rowDefinition.Height = new GridLength(52, GridUnitType.Pixel);
+				initialApproximationCanvas = new Canvas();
+				SNE_initialApproximationGrid.RowDefinitions.Add(rowDefinition);
+				SNE_initialApproximationGrid.Children.Add(initialApproximationCanvas);
+
+				Label equationLabel = new Label();
+				equationLabel.Content = $"x{i}";
+				equationLabel.FontSize = 12;
+				equationLabel.Margin = new Thickness(10, start_position, 0, 0);
+				initialApproximationCanvas.Children.Add(equationLabel);
+
+				TextBox equationOfSystem = new TextBox();
+				equationOfSystem.Margin = new Thickness(60, start_position, 20, 0);
+				equationOfSystem.FontSize = 10;
+				equationOfSystem.Width = 50;
+				equationOfSystem.Height = 30;
+				equationOfSystem.PreviewTextInput += SNE_textBox_PreviewTextInput;
+				initialApproximationCanvas.Children.Add(equationOfSystem);
+				start_position += 40;
+			}
+		}
+
+		private void GenerateResultTable(IEnumerable<IEnumerable<double>> result, IEnumerable<string> variablesNames, SolvingMethods solvingMethod)
+		{
+			variablesNames = variablesNames.OrderBy(el => el);
+			DataTable dataTable = new DataTable();
+			SNE_ResultDataGrid.ColumnWidth = new DataGridLength(1, DataGridLengthUnitType.Star);
+			dataTable.Columns.Add("k");
+			foreach (var variableName in variablesNames)
+			{
+				dataTable.Columns.Add($"{variableName}(k)");
+			}
+			dataTable.Columns.Add(solvingMethod == SolvingMethods.Secant ? "Sk" : "Difference");
+			int countResult = result.Count();
+			for (int i = 0; i < countResult; i++)
+			{
+				object[] row = new object[variablesNames.Count() + 2];
+				row[0] = i;
+				for (int j = 0; j < result.ElementAt(i).Count() - 1; j++)
+				{
+					row[j + 1] = string.Format("{0:F4}",result.ElementAt(i).ElementAt(j));
+				}
+				row[row.Length - 1] = result.ElementAt(i).Last() == double.MinValue ? "-" : string.Format("{0:F4}", result.ElementAt(i).Last());
+				dataTable.Rows.Add(row);
+			}
+			SNE_ResultDataGrid.ItemsSource = dataTable.AsDataView();
+		}
+
+		private void SNE_SelectButton_Click(object sender, RoutedEventArgs e)
+		{
+			SNE_ResultDataGrid.ItemsSource = null;
+			int equations_count = int.Parse(SNE_equationsCountComboBox.SelectedItem.ToString());
+			string method_type = SNE_methodComboBox.SelectedItem.ToString();
+			if (method_type == SolvingMethods.Seidel.ToString() || method_type == SolvingMethods.SimpleIterations.ToString()) { InitialOtherSystemOfEquations(equations_count); }
+			else { InitialDefaulSystemOfEquations(equations_count); }
+			GenerateInitialApproximation(equations_count);
+
+		}
+		private void SNE_CalculateButton_Click(object sender, RoutedEventArgs e)
+		{
+			if(SNE_systemOfEquationsGrid.Children.Count == 0 || SNE_initialApproximationGrid.Children.Count == 0)
+            {
+				MessageBox.Show("Добавьте уравнения и начальное приближение");
+				return;
+            }
+			List<string> functions = new List<string>();
+			foreach (var childrenGrid in SNE_systemOfEquationsGrid.Children)
+			{
+				Canvas canvas = childrenGrid as Canvas;
+				foreach (var childrenCanvas in canvas.Children)
+				{
+					if (childrenCanvas is TextBox)
+					{
+						TextBox textBox = childrenCanvas as TextBox;
+						if (String.IsNullOrEmpty(textBox.Text))
+						{
+							MessageBox.Show("Заполните все поля, связанные с функциями");
+							return;
+						}
+						functions.Add(textBox.Text.Trim());
+					}
+				}
+			}
+			Dictionary<string, MathNet.Symbolics.FloatingPoint> initialGuess = new Dictionary<string, MathNet.Symbolics.FloatingPoint>();
+			string initialGuessKey = null;
+			MathNet.Symbolics.FloatingPoint initialGuessValue = null;
+			foreach (var childrenGrid in SNE_initialApproximationGrid.Children)
+			{
+				Canvas canvas = childrenGrid as Canvas;
+				foreach (var childrenCanvas in canvas.Children)
+				{
+					if (childrenCanvas is Label)
+					{
+						Label label = childrenCanvas as Label;
+						initialGuessKey = label.Content.ToString();
+					}
+					if (childrenCanvas is TextBox)
+					{
+						TextBox textBox = childrenCanvas as TextBox;
+						if (String.IsNullOrEmpty(textBox.Text))
+						{
+							MessageBox.Show("Заполните все поля, связанные с начальным приближением");
+							return;
+						}
+						initialGuessValue = double.Parse(textBox.Text);
+					}
+				}
+				initialGuess.Add(initialGuessKey, initialGuessValue);
+			}
+			if (String.IsNullOrEmpty(SNE_AccuracyTextBox.Text))
+			{
+				MessageBox.Show("Заполните поле точность");
+				return;
+			}
+			IEnumerable<IEnumerable<double>> res;
+			try
+			{
+				res = new NonLinearEquationsSolverBuilder().Build((SolvingMethods)Enum.Parse(typeof(SolvingMethods), SNE_methodComboBox.SelectedValue.ToString())).SolveWithSteps(new NonLinearEquationsSystem(functions), double.Parse(SNE_AccuracyTextBox.Text), initialGuess);
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(ex.Message);
+				return;
+			}
+			res = res.Select(row => row.Select(item => Math.Round(item, 4)));
+			GenerateResultTable(res, initialGuess.Select(el => el.Key), (SolvingMethods)Enum.Parse(typeof(SolvingMethods), SNE_methodComboBox.SelectedValue.ToString()));
+		}
+
+		#endregion
     }
 }
