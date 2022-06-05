@@ -11,6 +11,14 @@ namespace NumericalMethods.Console
     {
         public static void Run()
         {
+            ResultTable resultTwo = Calculate(
+            function: "2*x",
+            b: 10,
+            h: 1,
+            initialGuess: (x: 1, ys: new Dictionary<string, double>()
+            {
+                            {"y0", 1},
+            }));
             ResultTable result = Calculate(
             function: "x - 2*y1 - y0",
             b: 1,
@@ -19,15 +27,6 @@ namespace NumericalMethods.Console
             {
                 {"y0", 1},
                 {"y1", 0}
-            }));
-
-            ResultTable resultTwo = Calculate(
-            function: "2*x",
-            b: 10,
-            h: 1,
-            initialGuess: (x: 1, ys: new Dictionary<string, double>()
-            {
-                {"y0", 1},
             }));
             ResultTable resultThree = Calculate(
             function: "2*(x^2 + y0)",
@@ -102,7 +101,7 @@ namespace NumericalMethods.Console
             conditionsCopy[yi.name] = y_half;
             return yi.value + h * function.Evaluate(conditionsCopy).RealValue;
         }
-        static double RungeKuttaThridOrderMethods(SymbolicExpression function, double h, double x, (string name, double value) yi, Dictionary<string, FloatingPoint> conditions)
+        private static double RungeKuttaThridOrderMethods(SymbolicExpression function, double h, double x, (string name, double value) yi, Dictionary<string, FloatingPoint> conditions)
         {
             Dictionary<string, FloatingPoint> conditionsCopy = conditions.ToDictionary(pair => pair.Key, pair => pair.Value);
 
@@ -118,7 +117,7 @@ namespace NumericalMethods.Console
             y_delta = (k_one + 3 * k_three) / 4;
             return yi.value + y_delta;
         }
-        static double RungeKuttaFourthOrderMethods(SymbolicExpression function, double h, double x, (string name, double value) yi, Dictionary<string, FloatingPoint> conditions)
+        private static double RungeKuttaFourthOrderMethods(SymbolicExpression function, double h, double x, (string name, double value) yi, Dictionary<string, FloatingPoint> conditions)
         {
             Dictionary<string, FloatingPoint> conditionsCopy = conditions.ToDictionary(pair => pair.Key, pair => pair.Value);
             double y_delta, k_one, k_two, k_three, k_four;
@@ -134,88 +133,209 @@ namespace NumericalMethods.Console
             y_delta = (k_one + 2 * k_two + 2 * k_three + k_four) / 6;
             return yi.value + y_delta;
         }
-/*        static IEnumerable<(double x, double y)> AdamsMethod(string fun, double a, double b, double h, (double x, double y) conditions)
+        private static ResultTable AdamsMethod(List<SymbolicExpression> functions, double b, double h, ResultTable initialResult)
         {
-            SymbolicExpression function = SymbolicExpression.Parse(fun);
+            if (initialResult.CountRow < 4) throw new ArgumentException($"{nameof(initialResult)} count row less then 4");
 
-            List<(double x, double y)> value = RungeKuttaFourthOrderMethods(fun, a, b, h, conditions)
-                .Take(4)
-                .ToList();
-
-            double y_next, x_current = value.Last().x;
-
-            for (double i = x_current; i < b; i += h)
+            for (double current_x = initialResult["x"].Last().x + h; current_x <= b; current_x += h)
             {
-                double delta_f, delta_two_f, delta_three_f;
-
-                delta_f = function.EvaluateXY(value[value.Count - 1].x, value[value.Count - 1].y);
-
-                delta_two_f = function.EvaluateXY(value[value.Count - 1].x, value[value.Count - 1].y) -
-                   2 * function.EvaluateXY(value[value.Count - 2].x, value[value.Count - 2].y) +
-                   function.EvaluateXY(value[value.Count - 3].x, value[value.Count - 3].y);
-
-                delta_three_f = function.EvaluateXY(value[value.Count - 1].x, value[value.Count - 1].y) -
-                   3 * function.EvaluateXY(value[value.Count - 2].x, value[value.Count - 2].y) +
-                   3 * function.EvaluateXY(value[value.Count - 3].x, value[value.Count - 3].y) -
-                   function.EvaluateXY(value[value.Count - 4].x, value[value.Count - 4].y);
-
-                y_next = value[value.Count - 1].y + h * function.EvaluateXY(value[value.Count - 1].x, value[value.Count - 1].y)
-                    + Math.Pow(h, 2) * delta_f + 5 * Math.Pow(h, 3) / 12 * delta_two_f + 3 * Math.Pow(h, 4) / 8 * delta_three_f;
-
-                x_current += h;
-
-                value.Add((x_current, y_next));
+                Dictionary<string, double> new_ys = new Dictionary<string, double>();
+                List<Dictionary<string, FloatingPoint>> last_four_rows = initialResult.GetRows(^4..)
+                    .Select(row => row.Select(pair => new KeyValuePair<string, FloatingPoint>(pair.Key, pair.Value))
+                        .ToDictionary(pair => pair.Key, pair => pair.Value))
+                    .ToList();
+                for (int i = 0; i < functions.Count; i++)
+                {
+                    string current_y_name = last_four_rows.Last().ElementAt(i + 1).Key;
+                    double current_y_value = last_four_rows.Last()[current_y_name].RealValue;
+                    double fi = functions[i].Evaluate(last_four_rows.Last()).RealValue;
+                    double fi_minus_one = functions[i].Evaluate(last_four_rows.SkipLast(1).Last()).RealValue;
+                    double fi_minus_two = functions[i].Evaluate(last_four_rows.SkipLast(2).Last()).RealValue;
+                    double fi_minus_three = functions[i].Evaluate(last_four_rows.SkipLast(3).Last()).RealValue;
+                    double delta_f = fi - fi_minus_one;
+                    double delta_f_two = fi - 2 * fi_minus_one + fi_minus_two;
+                    double delta_f_three = fi - 3 * fi_minus_one + 3 * fi_minus_two - fi_minus_three;
+                    double new_y_value = current_y_value + fi * h + Math.Pow(h, 2) / 2.0 * delta_f + 5 * Math.Pow(h, 3) / 12.0 * delta_f_two + 3 * Math.Pow(h, 4) / 8.0 * delta_f_three;
+                    new_ys.Add(current_y_name, new_y_value);
+                }
+                initialResult.Add(current_x, new_ys);
             }
-
-            return value;
+            return initialResult;
         }
-        static IEnumerable<(double x, double y)> AdamsBashforthMethod(string fun, double a, double b, double h, (double x, double y) conditions)
+        private static ResultTable AdamsBashforthMethod(List<SymbolicExpression> functions, double b, double h, ResultTable initialResult)
         {
-            SymbolicExpression function = SymbolicExpression.Parse(fun);
+            if (initialResult.CountRow < 1) throw new ArgumentException($"{nameof(initialResult)} count row less then 1");
 
-            List<(double x, double y)> value = new List<(double, double)>()
+            Func<Dictionary<string, double>, Dictionary<string, FloatingPoint>> convert_with_floating_point = 
+                (row) => row
+                    .Select(pair => new KeyValuePair<string, FloatingPoint>(pair.Key, pair.Value))
+                    .ToDictionary(pair => pair.Key, pair => pair.Value);
+
+            double current_x = initialResult["x"].Last().x + h;
+            if (initialResult.CountRow == 1)
             {
-                (conditions.x, conditions.y)
-            };
-
-            double x_current = value[value.Count - 1].x, f1, f2, f3, f4, f5;
-
-            for (double i = a; i < b; i += h)
-            {
-                f1 = value[value.Count - 1].y + h * function.EvaluateXY(value[value.Count - 1].x, value[value.Count - 1].y);
-                x_current += h;
-                value.Add((x_current, f1));
-
-                f2 = f1 + h * (3 / 2 * function.EvaluateXY(value[value.Count - 1].x, value[value.Count - 1].y)
-                    - 1 / 2 * function.EvaluateXY(value[value.Count - 2].x, value[value.Count - 2].y));
-                x_current += h;
-                value.Add((x_current, f2));
-
-                f3 = f2 + h * (23 / 12 * function.EvaluateXY(value[value.Count - 1].x, value[value.Count - 1].y)
-                    - 4 / 3 * function.EvaluateXY(value[value.Count - 2].x, value[value.Count - 2].y)
-                    + 5 / 12 * function.EvaluateXY(value[value.Count - 3].x, value[value.Count - 3].y));
-                x_current += h;
-                value.Add((x_current, f3));
-
-                f4 = f3 + h * (55 / 24 * function.EvaluateXY(value[value.Count - 1].x, value[value.Count - 1].y)
-                    - 59 / 24 * function.EvaluateXY(value[value.Count - 2].x, value[value.Count - 2].y)
-                    + 37 / 24 * function.EvaluateXY(value[value.Count - 3].x, value[value.Count - 3].y)
-                    - 3 / 8 * function.EvaluateXY(value[value.Count - 4].x, value[value.Count - 4].y));
-                x_current += h;
-                value.Add((x_current, f4));
-
-                f5 = f4 + h * (1901 / 720 * function.EvaluateXY(value[value.Count - 1].x, value[value.Count - 1].y)
-                    - 1387 / 360 * function.EvaluateXY(value[value.Count - 2].x, value[value.Count - 2].y)
-                    + 109 / 30 * function.EvaluateXY(value[value.Count - 3].x, value[value.Count - 3].y)
-                    - 637 / 360 * function.EvaluateXY(value[value.Count - 4].x, value[value.Count - 4].y)
-                    + 251 / 720 * function.EvaluateXY(value[value.Count - 5].x, value[value.Count - 5].y));
-                x_current += h;
-                value.Add((x_current, f5));
-
-                i = x_current;
+                Dictionary<string, double> new_ys = new Dictionary<string, double>();
+                Dictionary<string, FloatingPoint> first_row = convert_with_floating_point(initialResult.GetRow(0));
+                for (int i = 0; i < functions.Count; i++)
+                {
+                    string current_y_name = first_row.ElementAt(i + 1).Key;
+                    double current_y_value = first_row[current_y_name].RealValue;
+                    double new_y_value = current_y_value + h * functions[i].Evaluate(first_row).RealValue;
+                    new_ys.Add(current_y_name, new_y_value);
+                }
+                initialResult.Add(current_x, new_ys);
+                current_x += h;
+                if (current_x > b) return initialResult;
             }
-            return value;
-        }*/
+            if (initialResult.CountRow == 2)
+            {
+                Dictionary<string, double> new_ys = new Dictionary<string, double>();
+                Dictionary<string, FloatingPoint> first_row = convert_with_floating_point(initialResult.GetRow(0));
+                Dictionary<string, FloatingPoint> second_row = convert_with_floating_point(initialResult.GetRow(1));
+                for (int i = 0; i < functions.Count; i++)
+                {
+                    string current_y_name = second_row.ElementAt(i + 1).Key;
+                    double current_y_value = second_row[current_y_name].RealValue;
+                    double new_y_value = current_y_value + h * (3.0 / 2.0 * functions[i].Evaluate(second_row).RealValue 
+                        - 1.0/2.0 * functions[i].Evaluate(first_row).RealValue);
+                    new_ys.Add(current_y_name, new_y_value);
+                }
+                initialResult.Add(current_x, new_ys);
+                current_x += h;
+                if (current_x > b) return initialResult;
+            }
+            if (initialResult.CountRow == 3)
+            {
+                Dictionary<string, double> new_ys = new Dictionary<string, double>();
+                Dictionary<string, FloatingPoint> first_row = convert_with_floating_point(initialResult.GetRow(0));
+                Dictionary<string, FloatingPoint> second_row = convert_with_floating_point(initialResult.GetRow(1));
+                Dictionary<string, FloatingPoint> third_row = convert_with_floating_point(initialResult.GetRow(2));
+                for (int i = 0; i < functions.Count; i++)
+                {
+                    string current_y_name = third_row.ElementAt(i + 1).Key;
+                    double current_y_value = third_row[current_y_name].RealValue;
+                    double new_y_value = current_y_value + h * (23.0 / 12.0 * functions[i].Evaluate(third_row).RealValue
+                        - 4.0 / 3.0 * functions[i].Evaluate(second_row).RealValue
+                        + 5.0 / 12.0 * functions[i].Evaluate(first_row).RealValue);
+                    new_ys.Add(current_y_name, new_y_value);
+                }
+                initialResult.Add(current_x, new_ys);
+                current_x += h;
+                if (current_x > b) return initialResult;
+            }
+            if (initialResult.CountRow == 4)
+            {
+                Dictionary<string, double> new_ys = new Dictionary<string, double>();
+                Dictionary<string, FloatingPoint> first_row = convert_with_floating_point(initialResult.GetRow(0));
+                Dictionary<string, FloatingPoint> second_row = convert_with_floating_point(initialResult.GetRow(1));
+                Dictionary<string, FloatingPoint> third_row = convert_with_floating_point(initialResult.GetRow(2));
+                Dictionary<string, FloatingPoint> four_row = convert_with_floating_point(initialResult.GetRow(3));
+                for (int i = 0; i < functions.Count; i++)
+                {
+                    string current_y_name = four_row.ElementAt(i + 1).Key;
+                    double current_y_value = four_row[current_y_name].RealValue;
+                    double new_y_value = current_y_value + h * (55.0 / 24.0 * functions[i].Evaluate(four_row).RealValue
+                        - 59.0 / 24.0 * functions[i].Evaluate(third_row).RealValue
+                        + 37.0 / 24.0 * functions[i].Evaluate(second_row).RealValue
+                        - 3.0 / 8.0 * functions[i].Evaluate(first_row).RealValue);
+                    new_ys.Add(current_y_name, new_y_value);
+                }
+                initialResult.Add(current_x, new_ys);
+                current_x += h;
+                if (current_x > b) return initialResult;
+            }
+
+
+            for (; current_x <= b; current_x += h)
+            {
+                Dictionary<string, double> new_ys = new Dictionary<string, double>();
+                Dictionary<string, FloatingPoint> last_five_row = convert_with_floating_point(initialResult.GetRow(initialResult.CountRow - 5));
+                Dictionary<string, FloatingPoint> last_four_row = convert_with_floating_point(initialResult.GetRow(initialResult.CountRow - 4));
+                Dictionary<string, FloatingPoint> last_third_row = convert_with_floating_point(initialResult.GetRow(initialResult.CountRow - 3));
+                Dictionary<string, FloatingPoint> last_second_row = convert_with_floating_point(initialResult.GetRow(initialResult.CountRow - 2));
+                Dictionary<string, FloatingPoint> last_first_row = convert_with_floating_point(initialResult.GetRow(initialResult.CountRow - 1));
+                for (int i = 0; i < functions.Count; i++)
+                {
+                    string current_y_name = last_first_row.ElementAt(i + 1).Key;
+                    double current_y_value = last_first_row[current_y_name].RealValue;
+                    double new_y_value = current_y_value + h * (1901.0/720.0*functions[i].Evaluate(last_first_row).RealValue
+                        - 1387.0/360.0* functions[i].Evaluate(last_second_row).RealValue
+                        + 109.0/30.0* functions[i].Evaluate(last_third_row).RealValue
+                        - 637.0/360.0* functions[i].Evaluate(last_four_row).RealValue
+                        + 251.0/720.0* functions[i].Evaluate(last_five_row).RealValue);
+                    new_ys.Add(current_y_name, new_y_value);
+                }
+                initialResult.Add(current_x, new_ys);
+            }
+            return initialResult;
+        }
+        private static ResultTable AdamsMoultonMethod(List<SymbolicExpression> functions, double b, double h, ResultTable initialResult)
+        {
+            Func<Dictionary<string, double>, Dictionary<string, FloatingPoint>> convert_with_floating_point =
+                (row) => row
+                    .Select(pair => new KeyValuePair<string, FloatingPoint>(pair.Key, pair.Value))
+                    .ToDictionary(pair => pair.Key, pair => pair.Value);
+
+            ResultTable filledResultTable = AdamsBashforthMethod(functions, b, h, initialResult);
+            Dictionary<string, FloatingPoint> second_row = convert_with_floating_point(filledResultTable.GetRow(1));
+            for (int i = 0; i < functions.Count; i++)
+            {
+                KeyValuePair<string, double> previous_y = filledResultTable.GetRow(0).ElementAt(i + 1);
+                double new_y_value = previous_y.Value + h * functions[i].Evaluate(second_row).RealValue;
+                filledResultTable.EditRowItem(1, previous_y.Key, new_y_value);
+            }
+            Dictionary<string, FloatingPoint> third_row = convert_with_floating_point(filledResultTable.GetRow(2));
+            for (int i = 0; i < functions.Count; i++)
+            {
+                KeyValuePair<string, FloatingPoint> previous_y = second_row.ElementAt(i + 1);
+                double new_y_value = previous_y.Value.RealValue + 1.0 / 2.0 * h 
+                    * (functions[i].Evaluate(third_row).RealValue + functions[i].Evaluate(second_row).RealValue);
+                filledResultTable.EditRowItem(2, previous_y.Key, new_y_value);
+            }
+            Dictionary<string, FloatingPoint> four_row = convert_with_floating_point(filledResultTable.GetRow(3));
+            for (int i = 0; i < functions.Count; i++)
+            {
+                KeyValuePair<string, FloatingPoint> previous_y = third_row.ElementAt(i + 1);
+                double new_y_value = previous_y.Value.RealValue + h
+                    * (5.0 / 12.0 * functions[i].Evaluate(four_row).RealValue 
+                    + 2.0 / 3.0 * functions[i].Evaluate(third_row).RealValue
+                    - 1.0 / 12.0 * functions[i].Evaluate(second_row).RealValue);
+                filledResultTable.EditRowItem(3, previous_y.Key, new_y_value);
+            }
+            Dictionary<string, FloatingPoint> five_row = convert_with_floating_point(filledResultTable.GetRow(4));
+            for (int i = 0; i < functions.Count; i++)
+            {
+                KeyValuePair<string, FloatingPoint> previous_y = four_row.ElementAt(i + 1);
+                double new_y_value = previous_y.Value.RealValue + h
+                    * (3.0 / 8.0 * functions[i].Evaluate(five_row).RealValue
+                    + 19.0 / 24.0 * functions[i].Evaluate(four_row).RealValue
+                    - 5.0 / 24.0 * functions[i].Evaluate(third_row).RealValue
+                    + 1.0 / 24.0 * functions[i].Evaluate(second_row).RealValue);
+                filledResultTable.EditRowItem(4, previous_y.Key, new_y_value);
+            }
+
+
+            for (int row_index = 5; row_index < filledResultTable.CountRow; row_index++)
+            {
+                Dictionary<string, FloatingPoint> previous_four_row = convert_with_floating_point(filledResultTable.GetRow(row_index - 4));
+                Dictionary<string, FloatingPoint> previous_third_row = convert_with_floating_point(filledResultTable.GetRow(row_index - 3));
+                Dictionary<string, FloatingPoint> previous_two_row = convert_with_floating_point(filledResultTable.GetRow(row_index - 2));
+                Dictionary<string, FloatingPoint> previous_one_row = convert_with_floating_point(filledResultTable.GetRow(row_index - 1));
+                Dictionary<string, FloatingPoint> current_row = convert_with_floating_point(filledResultTable.GetRow(row_index));
+                for (int i = 0; i < functions.Count; i++)
+                {
+                    KeyValuePair<string, FloatingPoint> previous_y = previous_one_row.ElementAt(i + 1);
+                    double new_y_value = previous_y.Value.RealValue + h
+                        * (251.0 / 720.0 * functions[i].Evaluate(current_row).RealValue
+                        + 646.0 / 720.0 * functions[i].Evaluate(previous_one_row).RealValue
+                        - 264.0 / 720.0 * functions[i].Evaluate(previous_two_row).RealValue
+                        + 106.0 / 720.0 * functions[i].Evaluate(previous_third_row).RealValue
+                        - 19.0 / 720.0 * functions[i].Evaluate(previous_four_row).RealValue);
+                    filledResultTable.EditRowItem(row_index, previous_y.Key, new_y_value);
+                }
+            }
+            return filledResultTable;
+        }
         private static ResultTable Calculate(string function, double b, double h, (double x, Dictionary<string, double> ys) initialGuess)
         {
             Dictionary<string, double> sortedYs = initialGuess.ys
@@ -230,7 +350,27 @@ namespace NumericalMethods.Console
             }
             functions.Add(maxOrderY.Key, function);
             ResultTable result = new ResultTable(order);
-            result.Add(initialGuess.x, initialGuess.ys);
+            result.Add(initialGuess.x, sortedYs);
+            for (double current_x = initialGuess.x + h; Math.Round(current_x, 7) <= Math.Round(initialGuess.x + 3 * h, 7); current_x += h)
+            {
+                Dictionary<string, double> ys = new Dictionary<string, double>();
+                Dictionary<string, FloatingPoint> conditions = new Dictionary<string, FloatingPoint>() { { "x", current_x - h } };
+                foreach (var yName in initialGuess.ys.Keys)
+                {
+                    conditions.Add(yName, result[yName].Last().yi);
+                }
+                foreach (KeyValuePair<string, double> y in initialGuess.ys)
+                {
+                    var newValueY = RungeKuttaFourthOrderMethods(SymbolicExpression.Parse(functions[y.Key]), h, current_x - h, (y.Key, conditions[y.Key].RealValue), conditions);
+                    ys.Add(y.Key, newValueY);
+                }
+                result.Add(current_x, ys);
+            }
+            return AdamsBashforthMethod(
+                functions: functions.Select(pair => SymbolicExpression.Parse(pair.Value)).ToList(),
+                b: b,
+                h: h,
+                result);
             for (double current_x = initialGuess.x + h; Math.Round(current_x, 7) <= Math.Round(b, 7); current_x += h)
             {
                 Dictionary<string, double> ys = new Dictionary<string, double>();
