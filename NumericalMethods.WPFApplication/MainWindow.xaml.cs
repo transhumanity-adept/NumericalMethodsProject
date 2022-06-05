@@ -674,6 +674,7 @@ namespace NumericalMethods.WPFApplication
 			}
 			CauchyProblem_FunctionTypeComboBox.SelectedItem = CauchyProblem_FunctionTypeComboBox.Items[0];
 			CauchyProblem_OneStepMethodComboBox.SelectedItem = CauchyProblem_OneStepMethodComboBox.Items[CauchyProblem_OneStepMethodComboBox.Items.Count -1];
+			CauchyProblem_MainChart.Plot.Legend(enable: true);
 		}
 		private void CauchyProblem_IntTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
 		{
@@ -918,6 +919,12 @@ namespace NumericalMethods.WPFApplication
 			}
 			return result;
 		}
-		#endregion
-	}
+        #endregion
+
+        private void CauchyProblem_ClearChartButton_Click(object sender, RoutedEventArgs e)
+        {
+			CauchyProblem_MainChart.Plot.Clear();
+			CauchyProblem_MainChart.Refresh();
+		}
+    }
 }

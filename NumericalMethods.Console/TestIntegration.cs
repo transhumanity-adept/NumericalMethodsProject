@@ -53,10 +53,6 @@ namespace NumericalMethods.Console
 				.Build(function, IntegrationMethodsWithConstantStep.Parabolic)
 				.Integrate(start, end, step);
 
-			var resultM = new IntegrationBuilder()
-				.Build(function, IntegrationMethodsWithVariableStep.MonteCarlo)
-				.Integrate(start, end, countNodesMonteCarlo);
-
 			var resultG = new IntegrationBuilder()
 				.Build(function, IntegrationMethodsWithVariableStep.Gauss)
 				.Integrate(start, end, countNodesChebyshev);
@@ -69,7 +65,6 @@ namespace NumericalMethods.Console
 			System.Console.WriteLine($"Trapeze:    {resultT}");
 			System.Console.WriteLine($"Parabolic:  {resultP}");
 			System.Console.WriteLine($"Spline:     {resultS}");
-			System.Console.WriteLine($"MonteCarlo: {resultM}");
 			System.Console.WriteLine($"Gauss:      {resultG}");
 			System.Console.WriteLine($"Chebyshev:  {resultC}");
 		}
