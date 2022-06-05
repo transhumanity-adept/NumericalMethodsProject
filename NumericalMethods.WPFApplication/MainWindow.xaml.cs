@@ -126,22 +126,6 @@ namespace NumericalMethods.WPFApplication
 				Differentiation_AccuracyGrid.Visibility = Visibility.Visible;
 			}
 		}
-		private void Differentiation_IntTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
-		{
-			if (!(Char.IsDigit(e.Text, 0)))
-			{
-				e.Handled = true;
-			}
-		}
-		private void Differentiation_DoubleTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
-		{
-			if (!(Char.IsDigit(e.Text, 0) || (e.Text == ".")
-			   && (!((TextBox)sender).Text.Contains(".")
-			   && ((TextBox)sender).Text.Length != 0)))
-			{
-				e.Handled = true;
-			}
-		}
 		private void Differentiation_AddOnChartInterpolationButton_Click(object sender, RoutedEventArgs e)
 		{
 			if(_points.Count == 0)
@@ -307,22 +291,6 @@ namespace NumericalMethods.WPFApplication
 
             Integration_MainChart.Plot.Legend(enable: true);
 		}
-		private void Integration_IntTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
-		{
-			if (!(Char.IsDigit(e.Text, 0)))
-			{
-				e.Handled = true;
-			}
-		}
-		private void Integration_DoubleTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
-		{
-			if (!(Char.IsDigit(e.Text, 0) || (e.Text == ".")
-			   && (!((TextBox)sender).Text.Contains(".")
-			   && ((TextBox)sender).Text.Length != 0)))
-			{
-				e.Handled = true;
-			}
-		}
 		private void Integration_MethodComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (Enum.IsDefined(typeof(IntegrationMethodsWithConstantStep), ((ComboBox)sender).SelectedValue))
@@ -440,15 +408,6 @@ namespace NumericalMethods.WPFApplication
 			if (SNE_systemOfEquationsGrid.RowDefinitions.Count == 0)
 				SNE_RemoveEquationButton.IsEnabled = false;
 		}
-		private void SNE_textBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
-		{
-			if (!(Char.IsDigit(e.Text, 0) || (e.Text == ",")
-			   && (!((TextBox)sender).Text.Contains(",")
-			   && ((TextBox)sender).Text.Length != 0)))
-			{
-				e.Handled = true;
-			}
-		}
 
 		private void InitialDefaulSystemOfEquations()
 		{
@@ -534,7 +493,6 @@ namespace NumericalMethods.WPFApplication
 			equationOfSystem.FontSize = 14;
 			equationOfSystem.Width = 50;
 			equationOfSystem.Height = 30;
-			equationOfSystem.PreviewTextInput += SNE_textBox_PreviewTextInput;
 			SNE_initialApproximationCanvas.Children.Add(equationOfSystem);
 		}
 
@@ -674,25 +632,10 @@ namespace NumericalMethods.WPFApplication
 			{
 				CauchyProblem_OneStepMethodComboBox.Items.Add(item);
 			}
+			CauchyProblem_InterpolationFunctionTypeComboBox.SelectedItem = CauchyProblem_InterpolationFunctionTypeComboBox.Items[0];
 			CauchyProblem_FunctionTypeComboBox.SelectedItem = CauchyProblem_FunctionTypeComboBox.Items[0];
 			CauchyProblem_OneStepMethodComboBox.SelectedItem = CauchyProblem_OneStepMethodComboBox.Items[CauchyProblem_OneStepMethodComboBox.Items.Count -1];
 			CauchyProblem_MainChart.Plot.Legend(enable: true);
-		}
-		private void CauchyProblem_IntTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
-		{
-			if (!(Char.IsDigit(e.Text, 0)))
-			{
-				e.Handled = true;
-			}
-		}
-		private void CauchyProblem_DoubleTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
-		{
-			if (!(Char.IsDigit(e.Text, 0) || (e.Text == ".")
-			   && (!((TextBox)sender).Text.Contains(".")
-			   && ((TextBox)sender).Text.Length != 0)))
-			{
-				e.Handled = true;
-			}
 		}
 		private void CauchyProblem_OrderSelectButton_Click(object sender, RoutedEventArgs e)
         {
@@ -717,15 +660,6 @@ namespace NumericalMethods.WPFApplication
 		private void CauchyProblem_FillPropertiesGrid()
         {
 			CauchyProblem_MaxOrderFunctionLabel.Content = FormingContenLabelOrderFunction(_order);
-		}
-		private void CauchyProblem_InitXTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
-		{
-			if (!(Char.IsDigit(e.Text, 0) || (e.Text == ",")
-			   && (!((TextBox)sender).Text.Contains(",")
-			   && ((TextBox)sender).Text.Length != 0)))
-			{
-				e.Handled = true;
-			}
 		}
 		private void CauchyProblem_EditLabelsInitFunctions(double x)
         {
@@ -791,7 +725,6 @@ namespace NumericalMethods.WPFApplication
 					Content = FormingContenLabelOrderFunction(i) + "()"
 				};
 				textBox = new TextBox();
-				textBox.PreviewTextInput += CauchyProblem_DoubleTextBox_PreviewTextInput;
 				grid.Children.Add(label);
 				Grid.SetColumn(grid.Children[grid.Children.Count - 1], 0);
 				grid.Children.Add(textBox);

@@ -29,7 +29,7 @@
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
                             <Label Grid.Column="0">Start X</Label>
-                            <TextBox Grid.Column="1" Name="Differentiation_StartXTextBox" PreviewTextInput="Differentiation_DoubleTextBox_PreviewTextInput"></TextBox>
+                            <TextBox Grid.Column="1" Name="Differentiation_StartXTextBox" ></TextBox>
                         </Grid>
                         <Grid Height="30"  Margin="0 10 0 0">
                             <Grid.ColumnDefinitions>
@@ -37,7 +37,7 @@
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
                             <Label Grid.Column="0">End X</Label>
-                            <TextBox Grid.Column="1" Name="Differentiation_EndXTextBox" PreviewTextInput="Differentiation_DoubleTextBox_PreviewTextInput"></TextBox>
+                            <TextBox Grid.Column="1" Name="Differentiation_EndXTextBox"></TextBox>
                         </Grid>
                         <Grid Height="30"  Margin="0 10 0 0">
                             <Grid.ColumnDefinitions>
@@ -45,7 +45,7 @@
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
                             <Label Grid.Column="0">Step</Label>
-                            <TextBox Grid.Column="1" Name="Differentiation_StepTextBox" PreviewTextInput="Differentiation_DoubleTextBox_PreviewTextInput"></TextBox>
+                            <TextBox Grid.Column="1" Name="Differentiation_StepTextBox" ></TextBox>
                         </Grid>
                         <Grid Height="30"  Margin="0 10 0 0" Name="Differentiation_NumberOfMembersGrid" Visibility="Collapsed">
                             <Grid.ColumnDefinitions>
@@ -53,7 +53,7 @@
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
                             <Label Grid.Column="0">Members Count</Label>
-                            <TextBox Grid.Column="1" Name="Differentiation_NumberOfMembers" PreviewTextInput="Differentiation_IntTextBox_PreviewTextInput"></TextBox>
+                            <TextBox Grid.Column="1" Name="Differentiation_NumberOfMembers" ></TextBox>
                         </Grid>
                         <Grid Height="30"  Margin="0 10 0 0" Name="Differentiation_AccuracyGrid" Visibility="Collapsed">
                             <Grid.ColumnDefinitions>
@@ -61,7 +61,7 @@
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
                             <Label Grid.Column="0">Accuracy</Label>
-                            <TextBox Grid.Column="1" Name="Differentiation_Accuracy" PreviewTextInput="Differentiation_DoubleTextBox_PreviewTextInput"></TextBox>
+                            <TextBox Grid.Column="1" Name="Differentiation_Accuracy"></TextBox>
                         </Grid>
                         <Button Name="Differentiation_AddNodesOnChart" Height="30" Margin="0 10 0 0" Click="Differentiation_AddNodesOnChart_Click">ADD POINTS ON CHART</Button>
                         <Border Margin="0 10 0 0" BorderThickness="1" BorderBrush="Black">
@@ -119,7 +119,7 @@
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
                             <Label Grid.Column="0">Start X</Label>
-                            <TextBox Grid.Column="1" Name="Integration_StartXTextBox" PreviewTextInput="Integration_DoubleTextBox_PreviewTextInput"></TextBox>
+                            <TextBox Grid.Column="1" Name="Integration_StartXTextBox" ></TextBox>
                         </Grid>
                         <Grid Height="30"  Margin="0 10 0 0">
                             <Grid.ColumnDefinitions>
@@ -127,7 +127,7 @@
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
                             <Label Grid.Column="0">End X</Label>
-                            <TextBox Grid.Column="1" Name="Integration_EndXTextBox" PreviewTextInput="Integration_DoubleTextBox_PreviewTextInput"></TextBox>
+                            <TextBox Grid.Column="1" Name="Integration_EndXTextBox"></TextBox>
                         </Grid>
                         <Grid Height="30"  Margin="0 10 0 0">
                             <Grid.ColumnDefinitions>
@@ -135,7 +135,7 @@
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
                             <Label Grid.Column="0">Step</Label>
-                            <TextBox Grid.Column="1" Name="Integration_StepTextBox" PreviewTextInput="Integration_DoubleTextBox_PreviewTextInput"></TextBox>
+                            <TextBox Grid.Column="1" Name="Integration_StepTextBox"></TextBox>
                         </Grid>
                         <Grid Height="30"  Margin="0 10 0 0" Name="Integration_CountPointGrid" Visibility="Collapsed">
                             <Grid.ColumnDefinitions>
@@ -143,7 +143,7 @@
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
                             <Label Grid.Column="0">Count point</Label>
-                            <TextBox Grid.Column="1" Name="Integration_CountPointTextBox" PreviewTextInput="Integration_IntTextBox_PreviewTextInput"></TextBox>
+                            <TextBox Grid.Column="1" Name="Integration_CountPointTextBox"></TextBox>
                         </Grid>
                         <Grid Height="30"  Margin="0 10 0 0" Name="Integration_CountNodesGrid"  Visibility="Collapsed">
                             <Grid.ColumnDefinitions>
@@ -151,7 +151,7 @@
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
                             <Label Grid.Column="0">Count nodes</Label>
-                            <TextBox Grid.Column="1" Name="Integration_CountNodesTextBox" PreviewTextInput="Integration_IntTextBox_PreviewTextInput"></TextBox>
+                            <TextBox Grid.Column="1" Name="Integration_CountNodesTextBox"></TextBox>
                         </Grid>
                         <Label Margin="0 10 0 0" HorizontalContentAlignment="Center">Integration method</Label>
                         <ComboBox Name="Integration_MethodComboBox" Height="30"  Margin="0 10 0 0" SelectionChanged="Integration_MethodComboBox_SelectionChanged"/>
@@ -195,7 +195,7 @@
                                     <ColumnDefinition Width="1*"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
                                 <Label Grid.Column="0" VerticalAlignment="Center" FontSize="14">Accuracy</Label>
-                                <TextBox Grid.Column="1" Name="SNE_AccuracyTextBox" PreviewTextInput="SNE_textBox_PreviewTextInput" VerticalContentAlignment="Center"/>
+                                <TextBox Grid.Column="1" Name="SNE_AccuracyTextBox" VerticalContentAlignment="Center"/>
                             </Grid>
                             <Grid Grid.Row="2">
                                 <Label VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14">Add/Remove equation</Label>
@@ -262,7 +262,7 @@
                                     <ColumnDefinition/>
                                 </Grid.ColumnDefinitions>
                                 <Label Grid.Column="0">Order</Label>
-                                <TextBox Grid.Column="1" Name="CauchyProblem_OrderTextBox" PreviewTextInput="CauchyProblem_IntTextBox_PreviewTextInput"></TextBox>
+                                <TextBox Grid.Column="1" Name="CauchyProblem_OrderTextBox"></TextBox>
                             </Grid>
                             <Button Grid.Row="1" Margin="0 10 0 0" Name="CauchyProblem_OrderSelectButton" Click="CauchyProblem_OrderSelectButton_Click">Select</Button>
                         </Grid>
@@ -288,7 +288,7 @@
                                     <ColumnDefinition/>
                                 </Grid.ColumnDefinitions>
                                 <Label Grid.Column="0">End X</Label>
-                                <TextBox Grid.Column="1" Name="CauchyProblem_EndXTextBox" PreviewTextInput="CauchyProblem_DoubleTextBox_PreviewTextInput"></TextBox>
+                                <TextBox Grid.Column="1" Name="CauchyProblem_EndXTextBox"></TextBox>
                             </Grid>
                             <Grid Height="30"  Margin="0 10 0 0" Grid.Row="2">
                                 <Grid.ColumnDefinitions>
@@ -296,7 +296,7 @@
                                     <ColumnDefinition/>
                                 </Grid.ColumnDefinitions>
                                 <Label Grid.Column="0">Step</Label>
-                                <TextBox Grid.Column="1" Name="CauchyProblem_StepTextBox" PreviewTextInput="CauchyProblem_DoubleTextBox_PreviewTextInput"></TextBox>
+                                <TextBox Grid.Column="1" Name="CauchyProblem_StepTextBox"></TextBox>
                             </Grid>
                             <Grid Height="30"  Margin="0 10 0 0" Grid.Row="3">
                                 <Grid.ColumnDefinitions>
@@ -304,7 +304,7 @@
                                     <ColumnDefinition/>
                                 </Grid.ColumnDefinitions>
                                 <Label Grid.Column="0">X</Label>
-                                <TextBox Grid.Column="1" Name="CauchyProblem_InitXTextBox" PreviewTextInput="CauchyProblem_InitXTextBox_PreviewTextInput" TextChanged="CauchyProblem_InitXTextBox_TextChanged"></TextBox>
+                                <TextBox Grid.Column="1" Name="CauchyProblem_InitXTextBox" TextChanged="CauchyProblem_InitXTextBox_TextChanged"></TextBox>
                             </Grid>
                             <Grid Height="110" Grid.Row="4" Margin="0 5 0 0" Name="CauchyProblem_ParentInitFunctionsGrid" Visibility="Collapsed">
                                 <ScrollViewer Background="White">
@@ -324,7 +324,7 @@
                                         <ColumnDefinition/>
                                     </Grid.ColumnDefinitions>
                                     <Label Grid.Column="0">PreCalcCount</Label>
-                                    <TextBox Grid.Column="1" Name="CauchyProblem_PreCalcCount" PreviewTextInput="CauchyProblem_DoubleTextBox_PreviewTextInput"></TextBox>
+                                    <TextBox Grid.Column="1" Name="CauchyProblem_PreCalcCount" ></TextBox>
                                 </Grid>
                                 <Button Name="CauchyProblem_AddOnChartButton" Height="30" Margin="0 10 0 0" Click="CauchyProblem_AddOnChartButton_Click">ADD ON CHART</Button>
                             </StackPanel>
