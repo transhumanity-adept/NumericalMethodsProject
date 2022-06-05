@@ -96,7 +96,39 @@ namespace NumericalMethods.WPFApplication
 			Differentiation_MainChart.Plot.AddScatter(xs, ys, lineWidth: 0, markerShape: MarkerShape.filledCircle, color: System.Drawing.Color.Red, markerSize: 7, label: "nodes");
 			Differentiation_MainChart.Refresh();
 		}
+		private void Differentiation_FunctionTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			Differentiation_AccuracyGrid.Visibility = Visibility.Collapsed;
+			Differentiation_NumberOfMembersGrid.Visibility = Visibility.Collapsed;
+			Differentiation_Accuracy.Text = "";
+			Differentiation_NumberOfMembers.Text = "";
+			DifferentiationFunctionType differentiationFunctionType = (DifferentiationFunctionType)Enum.Parse(typeof(DifferentiationFunctionType), ((ComboBox)sender).SelectedValue.ToString());
+			if(differentiationFunctionType == DifferentiationFunctionType.NewtonPolynomials)
+            {
+				Differentiation_NumberOfMembersGrid.Visibility = Visibility.Visible;
 
+			}
+			if(differentiationFunctionType == DifferentiationFunctionType.Runge || differentiationFunctionType == DifferentiationFunctionType.UndefinedCoefficients)
+            {
+				Differentiation_AccuracyGrid.Visibility = Visibility.Visible;
+			}
+		}
+		private void Differentiation_IntTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+		{
+			if (!(Char.IsDigit(e.Text, 0)))
+			{
+				e.Handled = true;
+			}
+		}
+		private void Differentiation_DoubleTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+		{
+			if (!(Char.IsDigit(e.Text, 0) || (e.Text == ".")
+			   && (!((TextBox)sender).Text.Contains(".")
+			   && ((TextBox)sender).Text.Length != 0)))
+			{
+				e.Handled = true;
+			}
+		}
 		private void Differentiation_AddOnChartInterpolationButton_Click(object sender, RoutedEventArgs e)
 		{
 			string? function_type_string = Differentiation_InterpolationFunctionTypeComboBox.SelectedValue.ToString();
@@ -231,20 +263,96 @@ namespace NumericalMethods.WPFApplication
 
 			Integration_MethodComboBox.SelectedItem = Integration_MethodComboBox.Items[0];
 
-			//Integration_FunctionTextBox.Text = "x^2";
-			//Integration_StartXTextBox.Text = "-5";
-			//Integration_EndXTextBox.Text = "5";
-			//Integration_StepTextBox.Text = "0.1";
+            Integration_FunctionTextBox.Text = "x^2";
+            Integration_StartXTextBox.Text = "-5";
+            Integration_EndXTextBox.Text = "5";
+            Integration_StepTextBox.Text = "0.1";
 
-			Integration_MainChart.Plot.Legend(enable: true);
+            Integration_MainChart.Plot.Legend(enable: true);
 		}
-
+		private void Integration_IntTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+		{
+			if (!(Char.IsDigit(e.Text, 0)))
+			{
+				e.Handled = true;
+			}
+		}
+		private void Integration_DoubleTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+		{
+			if (!(Char.IsDigit(e.Text, 0) || (e.Text == ".")
+			   && (!((TextBox)sender).Text.Contains(".")
+			   && ((TextBox)sender).Text.Length != 0)))
+			{
+				e.Handled = true;
+			}
+		}
+		private void Integration_MethodComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (Enum.IsDefined(typeof(IntegrationMethodsWithConstantStep), ((ComboBox)sender).SelectedValue))
+			{
+				Integration_CountNodesGrid.Visibility = Visibility.Collapsed;
+				Integration_CountPointGrid.Visibility = Visibility.Collapsed;
+			}
+			if (Enum.IsDefined(typeof(IntegrationMethodsWithVariableStep), ((ComboBox)sender).SelectedValue))
+			{
+				Integration_CountNodesGrid.Visibility = Visibility.Visible;
+				Integration_CountPointGrid.Visibility = Visibility.Collapsed;
+			}
+			if (((ComboBox)sender).SelectedValue.ToString() == "MonteCarlo")
+			{
+				Integration_CountNodesGrid.Visibility = Visibility.Collapsed; 
+				Integration_CountPointGrid.Visibility = Visibility.Visible;
+			}
+			Integration_CountPointTextBox.Text = "";
+			Integration_CountNodesTextBox.Text = "";
+		}
 		private void Integration_CalculateButton_Click(object sender, RoutedEventArgs e)
 		{
+			Integration_MainChart.Plot.Clear();
+			if (String.IsNullOrEmpty(Integration_FunctionTextBox.Text)||
+				String.IsNullOrEmpty(Integration_StartXTextBox.Text)||
+				String.IsNullOrEmpty(Integration_EndXTextBox.Text)||
+				String.IsNullOrEmpty(Integration_StepTextBox.Text))
+            {
+				MessageBox.Show("Для начала рассчёта, заполните все поля");
+				return;
+            }
 			Function function = new Function("f(x) = " + Integration_FunctionTextBox.Text.Trim());
 			double start_x = new Expression(Integration_StartXTextBox.Text.Trim()).calculate();
 			double end_x = new Expression(Integration_EndXTextBox.Text.Trim()).calculate();
 			double step = new Expression(Integration_StepTextBox.Text.Trim()).calculate();
+
+			string function_type_string = Integration_MethodComboBox.SelectedValue.ToString();
+			double integration_result = 0;
+			if (Enum.IsDefined(typeof(IntegrationMethodsWithConstantStep), function_type_string))
+			{
+				IntegrationMethodsWithConstantStep method = (IntegrationMethodsWithConstantStep)Enum.Parse(typeof(IntegrationMethodsWithConstantStep), function_type_string);
+				IIntegratorWithConstantStep integrator = new IntegrationBuilder().Build(Integration_FunctionTextBox.Text.Trim(), method);
+				integration_result = integrator.Integrate(start_x, end_x, step);
+			}
+			if (Enum.IsDefined(typeof(IntegrationMethodsWithVariableStep), function_type_string))
+			{
+                if (String.IsNullOrEmpty(Integration_CountNodesTextBox.Text))
+                {
+					MessageBox.Show("Для начала рассчёта, заполните поле count nodes");
+					return;
+                }
+				int countNodes = int.Parse(Integration_CountNodesTextBox.Text);
+				IntegrationMethodsWithVariableStep method = (IntegrationMethodsWithVariableStep)Enum.Parse(typeof(IntegrationMethodsWithVariableStep), function_type_string);
+				IIntegratorWithVariableStep integrator = new IntegrationBuilder().Build(Integration_FunctionTextBox.Text.Trim(), method);
+				integration_result = integrator.Integrate(start_x, end_x, countNodes);
+			}
+			if (function_type_string == "MonteCarlo")
+			{
+				if (String.IsNullOrEmpty(Integration_CountPointTextBox.Text))
+				{
+					MessageBox.Show("Для начала рассчёта, заполните поле count point");
+					return;
+				}
+				int countPoints = int.Parse(Integration_CountPointTextBox.Text);
+				IIntegratorMonteCarloMethod integrator = new IntegrationBuilder().BuildMonteCarlo(Integration_FunctionTextBox.Text.Trim());
+				integration_result = integrator.Integrate(start_x, end_x, countPoints);
+			}
 
 			(double[] xs, double[] ys) = DataGenerate(function, start_x - 5, end_x + 5, step);
 
@@ -264,25 +372,8 @@ namespace NumericalMethods.WPFApplication
 			Integration_MainChart.Plot.AddHorizontalLine(0, color: System.Drawing.Color.Black);
 			Integration_MainChart.Refresh();
 
-			string function_type_string = Integration_MethodComboBox.SelectedValue.ToString();
-            if (Enum.IsDefined(typeof(IntegrationMethodsWithConstantStep), function_type_string))
-            {
-				IntegrationMethodsWithConstantStep method = (IntegrationMethodsWithConstantStep)Enum.Parse(typeof(IntegrationMethodsWithConstantStep), function_type_string);
-				IIntegratorWithConstantStep integrator = new IntegrationBuilder()
-																				.Build(Integration_FunctionTextBox.Text.Trim(), method);
-			}
-			if (Enum.IsDefined(typeof(IntegrationMethodsWithVariableStep), function_type_string))
-            {
-				IIntegratorWithVariableStep integrator = new IntegrationBuilder().Build(Integration_FunctionTextBox.Text.Trim(), IntegrationMethodsWithVariableStep.Chebyshev);
-			}
-			if(function_type_string == "MonteCarlo")
-            {
-				IIntegratorMonteCarloMethod integrator = new IntegrationBuilder().BuildMonteCarlo(Integration_FunctionTextBox.Text.Trim());
-            }
-
-			//double integration_result = integrator.Integrate(start_x, end_x, (int)step);
-			//MessageBox.Show($"Integration result: {integration_result}");
-		}
+            MessageBox.Show($"Integration result: {integration_result}");
+        }
 		#endregion
 
 		#region Tools
@@ -522,6 +613,7 @@ namespace NumericalMethods.WPFApplication
 			GenerateResultTable(res, initialGuess.Select(el => el.Key), (SolvingMethods)Enum.Parse(typeof(SolvingMethods), SNE_methodComboBox.SelectedValue.ToString()));
 		}
 
-		#endregion
+        #endregion
+
     }
 }

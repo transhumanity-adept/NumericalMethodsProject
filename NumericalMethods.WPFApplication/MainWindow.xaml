@@ -29,7 +29,7 @@
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
                             <Label Grid.Column="0">Start X</Label>
-                            <TextBox Grid.Column="1" Name="Differentiation_StartXTextBox"></TextBox>
+                            <TextBox Grid.Column="1" Name="Differentiation_StartXTextBox" PreviewTextInput="Differentiation_DoubleTextBox_PreviewTextInput"></TextBox>
                         </Grid>
                         <Grid Height="30"  Margin="0 10 0 0">
                             <Grid.ColumnDefinitions>
@@ -37,7 +37,7 @@
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
                             <Label Grid.Column="0">End X</Label>
-                            <TextBox Grid.Column="1" Name="Differentiation_EndXTextBox"></TextBox>
+                            <TextBox Grid.Column="1" Name="Differentiation_EndXTextBox" PreviewTextInput="Differentiation_DoubleTextBox_PreviewTextInput"></TextBox>
                         </Grid>
                         <Grid Height="30"  Margin="0 10 0 0">
                             <Grid.ColumnDefinitions>
@@ -45,23 +45,23 @@
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
                             <Label Grid.Column="0">Step</Label>
-                            <TextBox Grid.Column="1" Name="Differentiation_StepTextBox"></TextBox>
+                            <TextBox Grid.Column="1" Name="Differentiation_StepTextBox" PreviewTextInput="Differentiation_DoubleTextBox_PreviewTextInput"></TextBox>
                         </Grid>
-                        <Grid Height="30"  Margin="0 10 0 0">
+                        <Grid Height="30"  Margin="0 10 0 0" Name="Differentiation_NumberOfMembersGrid" Visibility="Collapsed">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="100"/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
                             <Label Grid.Column="0">Members Count</Label>
-                            <TextBox Grid.Column="1" Name="Differentiation_NumberOfMembers"></TextBox>
+                            <TextBox Grid.Column="1" Name="Differentiation_NumberOfMembers" PreviewTextInput="Differentiation_IntTextBox_PreviewTextInput"></TextBox>
                         </Grid>
-                        <Grid Height="30"  Margin="0 10 0 0">
+                        <Grid Height="30"  Margin="0 10 0 0" Name="Differentiation_AccuracyGrid" Visibility="Collapsed">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="100"/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
                             <Label Grid.Column="0">Accuracy</Label>
-                            <TextBox Grid.Column="1" Name="Differentiation_Accuracy"></TextBox>
+                            <TextBox Grid.Column="1" Name="Differentiation_Accuracy" PreviewTextInput="Differentiation_DoubleTextBox_PreviewTextInput"></TextBox>
                         </Grid>
                         <Button Name="Differentiation_AddNodesOnChart" Height="30" Margin="0 10 0 0" Click="Differentiation_AddNodesOnChart_Click">ADD POINTS ON CHART</Button>
                         <Border Margin="0 10 0 0" BorderThickness="1" BorderBrush="Black">
@@ -74,7 +74,7 @@
                         <Border Margin="0 10 0 0" BorderThickness="1" BorderBrush="Black">
                             <StackPanel Margin="5 5 5 5">
                                 <Label Margin="0 10 0 0" HorizontalContentAlignment="Center">Differentiation</Label>
-                                <ComboBox Name="Differentiation_FunctionTypeComboBox" Height="30"  Margin="0 10 0 0"/>
+                                <ComboBox Name="Differentiation_FunctionTypeComboBox" Height="30"  Margin="0 10 0 0" SelectionChanged="Differentiation_FunctionTypeComboBox_SelectionChanged"/>
                                 <Grid Height="30" Margin="0 10 0 0">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="103"/>
@@ -82,14 +82,6 @@
                                     </Grid.ColumnDefinitions>
                                     <Label Grid.Column="0">Derivative degree</Label>
                                     <TextBox Grid.Column="1" Name="DerivativeDegreeTextBox"></TextBox>
-                                </Grid>
-                                <Grid Height="30" Margin="0 10 0 0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="103"/>
-                                        <ColumnDefinition/>
-                                    </Grid.ColumnDefinitions>
-                                    <Label Grid.Column="0">Animate</Label>
-                                    <CheckBox Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Name="Differentiation_Animate"></CheckBox>
                                 </Grid>
                                 <Button Name="Differentiation_AddOnChartButton" Height="30" Margin="0 10 0 0" Click="Differentiation_AddOnChartButton_Click">ADD ON CHART</Button>
                             </StackPanel>
@@ -122,7 +114,7 @@
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
                             <Label Grid.Column="0">Start X</Label>
-                            <TextBox Grid.Column="1" Name="Integration_StartXTextBox"></TextBox>
+                            <TextBox Grid.Column="1" Name="Integration_StartXTextBox" PreviewTextInput="Integration_DoubleTextBox_PreviewTextInput"></TextBox>
                         </Grid>
                         <Grid Height="30"  Margin="0 10 0 0">
                             <Grid.ColumnDefinitions>
@@ -130,7 +122,7 @@
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
                             <Label Grid.Column="0">End X</Label>
-                            <TextBox Grid.Column="1" Name="Integration_EndXTextBox"></TextBox>
+                            <TextBox Grid.Column="1" Name="Integration_EndXTextBox" PreviewTextInput="Integration_DoubleTextBox_PreviewTextInput"></TextBox>
                         </Grid>
                         <Grid Height="30"  Margin="0 10 0 0">
                             <Grid.ColumnDefinitions>
@@ -138,10 +130,26 @@
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
                             <Label Grid.Column="0">Step</Label>
-                            <TextBox Grid.Column="1" Name="Integration_StepTextBox"></TextBox>
+                            <TextBox Grid.Column="1" Name="Integration_StepTextBox" PreviewTextInput="Integration_DoubleTextBox_PreviewTextInput"></TextBox>
+                        </Grid>
+                        <Grid Height="30"  Margin="0 10 0 0" Name="Integration_CountPointGrid" Visibility="Collapsed">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0">Count point</Label>
+                            <TextBox Grid.Column="1" Name="Integration_CountPointTextBox" PreviewTextInput="Integration_IntTextBox_PreviewTextInput"></TextBox>
+                        </Grid>
+                        <Grid Height="30"  Margin="0 10 0 0" Name="Integration_CountNodesGrid"  Visibility="Collapsed">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0">Count nodes</Label>
+                            <TextBox Grid.Column="1" Name="Integration_CountNodesTextBox" PreviewTextInput="Integration_IntTextBox_PreviewTextInput"></TextBox>
                         </Grid>
                         <Label Margin="0 10 0 0" HorizontalContentAlignment="Center">Integration method</Label>
-                        <ComboBox Name="Integration_MethodComboBox" Height="30"  Margin="0 10 0 0"/>
+                        <ComboBox Name="Integration_MethodComboBox" Height="30"  Margin="0 10 0 0" SelectionChanged="Integration_MethodComboBox_SelectionChanged"/>
                         <Button Name="Integration_CalculateButton" Height="30" Margin="0 10 0 0" Click="Integration_CalculateButton_Click">CALCULATE</Button>
                     </StackPanel>
                     <Grid Grid.Column="1">
@@ -220,6 +228,79 @@
                                 <DataGrid x:Name="SNE_ResultDataGrid" IsReadOnly="True"></DataGrid>
                             </ScrollViewer>
                         </Border>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="DerivationEquation">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" VerticalAlignment="Top" Margin="5 15 5 0">
+                        <Grid Height="30">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="70"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0">Derivative</Label>
+                            <TextBox Grid.Column="1" Name="DifferentiationEquation_DerivativeTextBox"></TextBox>
+                        </Grid>
+                        <Grid Height="30">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" Name="DifferentiationEquation_MaxDerivativeFunctionLabel">Y'''</Label>
+                            <TextBox Grid.Column="1" Name="DifferentiationEquation_MaxDerivativeFunctionTextBox"></TextBox>
+                        </Grid>
+                        <Grid Height="30"  Margin="0 10 0 0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0">End X</Label>
+                            <TextBox Grid.Column="1" Name="DifferentiationEquation_EndXTextBox" PreviewTextInput="Differentiation_DoubleTextBox_PreviewTextInput"></TextBox>
+                        </Grid>
+                        <Grid Height="30"  Margin="0 10 0 0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0">Step</Label>
+                            <TextBox Grid.Column="1" Name="DifferentiationEquation_StepTextBox" PreviewTextInput="Differentiation_DoubleTextBox_PreviewTextInput"></TextBox>
+                        </Grid>
+                        <Grid Height="30"  Margin="0 10 0 0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0">X</Label>
+                            <TextBox Grid.Column="1" Name="DifferentiationEquation_XTextBox" PreviewTextInput="Differentiation_DoubleTextBox_PreviewTextInput"></TextBox>
+                        </Grid>
+                        <Grid Height="30"  Margin="0 10 0 0">
+                            <ScrollViewer Background="LightGray">
+                                <Grid Name="DifferentiationEquation_Grid"></Grid>
+                            </ScrollViewer>
+                        </Grid>
+                        <Border Margin="0 10 0 0" BorderThickness="1" BorderBrush="Black">
+                            <StackPanel Margin="5 5 5 5">
+                                <Label Margin="0 10 0 0" HorizontalContentAlignment="Center">Differentiation</Label>
+                                <ComboBox Name="DifferentiationEquation_FunctionTypeComboBox" Height="30"  Margin="0 10 0 0"/>
+                                <Button Name="DifferentiationEquation_AddOnChartButton" Height="30" Margin="0 10 0 0" Click="DifferentiationEquation_AddOnChartButton_Click">ADD ON CHART</Button>
+                            </StackPanel>
+                        </Border>
+                        <Border Margin="0 10 0 0" BorderThickness="1" BorderBrush="Black">
+                            <StackPanel Margin="5 5 5 5">
+                                <Label Margin="0 10 0 0" HorizontalContentAlignment="Center">Interpolation</Label>
+                                <ComboBox Name="DifferentiationEquation_InterpolationFunctionTypeComboBox" Height="30"  Margin="0 10 0 0"/>
+                                <Button Name="DifferentiationEquation_AddOnChartInterpolationButton" Height="30" Margin="0 10 0 0" Click="DifferentiationEquation_AddOnChartInterpolationButton_Click">ADD ON CHART</Button>
+                            </StackPanel>
+                        </Border>
+                        <Button Name="DifferentiationEquation_ClearChartButton" Height="30" Margin="0 10 0 0" Click="DifferentiationEquation_ClearChartButton_Click">CLEAR CHART</Button>
+                    </StackPanel>
+                    <Grid Grid.Column="1">
+                        <WpfPlot Name="DifferentiationEquation_MainChart"/>
                     </Grid>
                 </Grid>
             </TabItem>
