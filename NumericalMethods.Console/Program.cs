@@ -1,26 +1,51 @@
 ﻿using MathNet.Symbolics;
 using NumericalMethods.Console;
+using NumericalMethods.Core.CauchyProblem;
+using NumericalMethods.Core.CauchyProblem.Interfaces;
 
-int _nodes_count = 4;
-int _derrivative_degree = 2;
+Console.WriteLine($"{nameof(OneStepMethods.RungeKuttaFourthOrder)}:");
+CauchyProblemBuilder.BuildWithOneStep("2*x", OneStepMethods.RungeKuttaThridOrder)
+    .Calculate(
+        b: 10,
+        h: 1,
+        initialGuess: (x: 1, ys: new Dictionary<string, double>()
+        {
+            { "y0", 1 }
+        })
+    ).GetRows(..).ForEach(rows =>
+    {
+        rows.ToList().ForEach(row => Console.Write($"{row.Key} : {row.Value}  "));
+        Console.WriteLine();
+    });
 
-SymbolicExpression[] ys = new SymbolicExpression[_nodes_count];
-SymbolicExpression[] ysLastDerivative = new SymbolicExpression[_nodes_count];
-SymbolicExpression[] ysBeforeLastDerivative = new SymbolicExpression[_nodes_count];
-for (int i = 0; i < _nodes_count; i++)
-{
-    ys[i] = $"(x - x0)^{i}";
-}
+Console.WriteLine();
+Console.WriteLine($"{nameof(MultiStepMethods.AdamsBashforth)}:");
+CauchyProblemBuilder.BuildWithMultiStep("2*x", MultiStepMethods.AdamsMoulton, OneStepMethods.RungeKuttaThridOrder, 3)
+    .Calculate(
+        b: 10,
+        h: 1,
+        initialGuess: (x: 1, ys: new Dictionary<string, double>()
+        {
+            { "y0", 1 }
+        })
+    ).GetRows(..).ForEach(rows =>
+    {
+        rows.ToList().ForEach(row => Console.Write($"{row.Key} : {row.Value}  "));
+        Console.WriteLine();
+    });
 
-for (int i = 0; i < _derrivative_degree - 1; i++)
-{
-    ys = ys.Select(y => y.Differentiate("x")).ToArray();
-}
-
-ysBeforeLastDerivative = ys;
-ysLastDerivative = ys.Select(y => y.Differentiate("x")).ToArray();
-
-TestFactorial.Run();
-TestNewtonDerrivative.Run();
-TestIntegration.Run();
-TestDifferentialEquations.Run();
+Console.WriteLine();
+Console.WriteLine($"Adams:");
+CauchyProblemBuilder.CreateAdams("2*x", OneStepMethods.RungeKuttaThridOrder)
+    .Calculate(
+        b: 10,
+        h: 1,
+        initialGuess: (x: 1, ys: new Dictionary<string, double>()
+        {
+            { "y0", 1 }
+        })
+    ).GetRows(..).ForEach(rows =>
+    {
+        rows.ToList().ForEach(row => Console.Write($"{row.Key} : {row.Value}  "));
+        Console.WriteLine();
+    });

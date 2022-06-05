@@ -4,18 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NumericalMethods.Console
+namespace NumericalMethods.Core.CauchyProblem
 {
     public class ResultTable
     {
-        private int _differentialOrder;
-        // TODO: Возвращать неизменяемую коллекцию
         public List<string> Header { get; }
         private List<Dictionary<string, double>> Body { get; }
         public int CountRow => Body.Count;
         public ResultTable(int differentialOrder)
         {
-            _differentialOrder = differentialOrder;
             Header = new List<string>(differentialOrder + 1);
             Header.Add("x");
             for (int i = 0; i < differentialOrder + 1; i++)

@@ -23,6 +23,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NumericalMethods.Infrastruc
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NumericalMethods.Core", "NumericalMethods.Core", "{0C247404-3A5A-4765-8A70-01BCBC80B11E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NumericalMethods.Core.CauchyProblem", "NumericalMethods.Core\NumericalMethods.Core.CauchyProblem\NumericalMethods.Core.CauchyProblem.csproj", "{0D6E083F-0FF1-452C-B3D1-455BDE2D9DCF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{73279C03-EA86-482B-9805-21E97666CD8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{73279C03-EA86-482B-9805-21E97666CD8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{73279C03-EA86-482B-9805-21E97666CD8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D6E083F-0FF1-452C-B3D1-455BDE2D9DCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D6E083F-0FF1-452C-B3D1-455BDE2D9DCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D6E083F-0FF1-452C-B3D1-455BDE2D9DCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D6E083F-0FF1-452C-B3D1-455BDE2D9DCF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -62,6 +68,7 @@ Global
 		{D450C834-6912-428A-B0F2-FF2A8748CEDB} = {0C247404-3A5A-4765-8A70-01BCBC80B11E}
 		{D92E0E07-BBFB-4BF7-87C4-35D0D31BDA10} = {0C247404-3A5A-4765-8A70-01BCBC80B11E}
 		{73279C03-EA86-482B-9805-21E97666CD8F} = {0C247404-3A5A-4765-8A70-01BCBC80B11E}
+		{0D6E083F-0FF1-452C-B3D1-455BDE2D9DCF} = {0C247404-3A5A-4765-8A70-01BCBC80B11E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {85768CA4-0E30-4F4D-A022-F87FAAFD4D2F}
