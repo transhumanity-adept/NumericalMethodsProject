@@ -926,5 +926,35 @@ namespace NumericalMethods.WPFApplication
 			CauchyProblem_MainChart.Plot.Clear();
 			CauchyProblem_MainChart.Refresh();
 		}
+
+        private void CauchyProblem_AddOnChartInterpolationButton_Click(object sender, RoutedEventArgs e)
+        {
+			string? function_type_string = CauchyProblem_InterpolationFunctionTypeComboBox.SelectedValue.ToString();
+			if (function_type_string is null) return;
+            Dictionary<string, double> initialGuess = CauchyProblem_CreateInitialGuess();
+			InterpolationFunctionType interpolation_type = Enum.Parse<InterpolationFunctionType>(function_type_string);
+            foreach (KeyValuePair<string, double> y in initialGuess)
+            {
+                IEnumerable<Point> calculated_ys = _resultTable[y.Key].Select(pair => new Point(pair.x, pair.yi));
+				IInterpolationFunction? interpolation_function = InterpolationBuilder.Build(calculated_ys, interpolation_type);
+				if (interpolation_function is null) return;
+				double start_x = new Expression(CauchyProblem_InitXTextBox.Text.Trim()).calculate();
+				double end_x = new Expression(CauchyProblem_EndXTextBox.Text.Trim()).calculate();
+				double step = new Expression(CauchyProblem_StepTextBox.Text.Trim()).calculate() / 5.0;
+				int roundNumbers = step.ToString().Contains(',') ? step.ToString().Split(',')[1].Length % 16 : 1;
+				var xs = new List<double>();
+				var ys = new List<double>();
+				for (double x = start_x; Math.Round(x, roundNumbers) <= end_x; x += step)
+				{
+                    double? current_y = interpolation_function.Calculate(x);
+					if (current_y is null) continue;
+
+					xs.Add(x);
+					ys.Add((double)current_y);
+				}
+				CauchyProblem_MainChart.Plot.AddScatter(xs.ToArray(), ys.ToArray(), lineWidth: 3, markerSize: 0, label: "i" + y.Key);
+			}
+			CauchyProblem_MainChart.Refresh();
+		}
     }
 }
