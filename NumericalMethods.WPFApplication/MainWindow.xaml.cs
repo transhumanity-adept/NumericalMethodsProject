@@ -436,12 +436,9 @@ namespace NumericalMethods.WPFApplication
 			{
 				SNE_methodComboBox.Items.Add(nameSolvingMethod);
 			});
-			for (int i = 2; i <= 5; i++)
-			{
-				SNE_equationsCountComboBox.Items.Add(i.ToString());
-			};
 			SNE_methodComboBox.SelectedItem = SNE_methodComboBox.Items[0];
-			SNE_equationsCountComboBox.SelectedItem = SNE_equationsCountComboBox.Items[0];
+			if (SNE_systemOfEquationsGrid.RowDefinitions.Count == 0)
+				SNE_RemoveEquationButton.IsEnabled = false;
 		}
 		private void SNE_textBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
 		{
@@ -453,95 +450,92 @@ namespace NumericalMethods.WPFApplication
 			}
 		}
 
-		private void InitialDefaulSystemOfEquations(int equations_count)
+		private void InitialDefaulSystemOfEquations()
 		{
-			SNE_systemOfEquationsGrid.Children.Clear();
-			SNE_systemOfEquationsGrid.RowDefinitions.Clear();
-			Canvas equationsCanvas;
+			Canvas SNE_equationsCanvas;
 			int start_position = 10;
-			for (int i = 0; i < equations_count; i++)
-			{
-				RowDefinition rowDefinition = new RowDefinition();
-				rowDefinition.Height = new GridLength(52, GridUnitType.Pixel);
-				equationsCanvas = new Canvas();
-				SNE_systemOfEquationsGrid.RowDefinitions.Add(rowDefinition);
-				SNE_systemOfEquationsGrid.Children.Add(equationsCanvas);
+			if (SNE_systemOfEquationsGrid.RowDefinitions.Count < 1)
+				start_position = 10;
+			else
+				start_position += 40 * SNE_systemOfEquationsGrid.RowDefinitions.Count;
 
-				Label equationLabel = new Label();
-				equationLabel.Content = "f(x) = ";
-				equationLabel.FontSize = 14;
-				equationLabel.Margin = new Thickness(10, start_position, 0, 0);
-				equationsCanvas.Children.Add(equationLabel);
+			RowDefinition rowDefinition = new RowDefinition();
+			rowDefinition.Height = new GridLength(52, GridUnitType.Pixel);
+			SNE_equationsCanvas = new Canvas();
+			SNE_systemOfEquationsGrid.RowDefinitions.Add(rowDefinition);
+			SNE_systemOfEquationsGrid.Children.Add(SNE_equationsCanvas);
 
-				TextBox equationOfSystem = new TextBox();
-				equationOfSystem.Margin = new Thickness(60, start_position, 20, 0);
-				equationOfSystem.FontSize = 10;
-				equationOfSystem.Width = 150;
-				equationOfSystem.Height = 30;
-				equationsCanvas.Children.Add(equationOfSystem);
-				start_position += 40;
-			}
+			Label equationLabel = new Label();
+			equationLabel.Content = "f(x) = ";
+			equationLabel.FontSize = 14;
+			equationLabel.Margin = new Thickness(10, start_position, 0, 0);
+			SNE_equationsCanvas.Children.Add(equationLabel);
+
+			TextBox equationOfSystem = new TextBox();
+			equationOfSystem.Margin = new Thickness(60, start_position, 20, 0);
+			equationOfSystem.FontSize = 14;
+			equationOfSystem.Width = 200;
+			equationOfSystem.Height = 30;
+			SNE_equationsCanvas.Children.Add(equationOfSystem);
 		}
 
-		private void InitialOtherSystemOfEquations(int equations_count)
+		private void InitialOtherSystemOfEquations()
 		{
-			SNE_systemOfEquationsGrid.Children.Clear();
-			SNE_systemOfEquationsGrid.RowDefinitions.Clear();
-			Canvas equationsCanvas;
+			Canvas SNE_equationsCanvas;
 			int start_position = 10;
-			for (int i = 1; i <= equations_count; i++)
-			{
-				RowDefinition rowDefinition = new RowDefinition();
-				rowDefinition.Height = new GridLength(52, GridUnitType.Pixel);
-				equationsCanvas = new Canvas();
-				SNE_systemOfEquationsGrid.RowDefinitions.Add(rowDefinition);
-				SNE_systemOfEquationsGrid.Children.Add(equationsCanvas);
+			if (SNE_systemOfEquationsGrid.RowDefinitions.Count < 1)
+				start_position = 10;
+			else
+				start_position += 40 * SNE_systemOfEquationsGrid.RowDefinitions.Count;
 
-				Label equationLabel = new Label();
-				equationLabel.Content = $"x{i} = ";
-				equationLabel.FontSize = 14;
-				equationLabel.Margin = new Thickness(10, start_position, 0, 0);
-				equationsCanvas.Children.Add(equationLabel);
+			RowDefinition rowDefinition = new RowDefinition();
+			rowDefinition.Height = new GridLength(52, GridUnitType.Pixel);
+			SNE_equationsCanvas = new Canvas();
+			SNE_systemOfEquationsGrid.RowDefinitions.Add(rowDefinition);
+			SNE_systemOfEquationsGrid.Children.Add(SNE_equationsCanvas);
 
-				TextBox equationOfSystem = new TextBox();
-				equationOfSystem.Margin = new Thickness(60, start_position, 20, 0);
-				equationOfSystem.FontSize = 10;
-				equationOfSystem.Width = 150;
-				equationOfSystem.Height = 30;
-				equationsCanvas.Children.Add(equationOfSystem);
-				start_position += 40;
-			}
+			Label equationLabel = new Label();
+			equationLabel.Content = $"x{SNE_systemOfEquationsGrid.RowDefinitions.Count} = ";
+			equationLabel.FontSize = 14;
+			equationLabel.Margin = new Thickness(10, start_position, 0, 0);
+			SNE_equationsCanvas.Children.Add(equationLabel);
+
+			TextBox equationOfSystem = new TextBox();
+			equationOfSystem.Margin = new Thickness(60, start_position, 20, 0);
+			equationOfSystem.FontSize = 14;
+			equationOfSystem.Width = 200;
+			equationOfSystem.Height = 30;
+			SNE_equationsCanvas.Children.Add(equationOfSystem);
 		}
 
-		private void GenerateInitialApproximation(int equations_count)
+		private void GenerateInitialApproximation()
 		{
-			SNE_initialApproximationGrid.Children.Clear();
-			SNE_initialApproximationGrid.RowDefinitions.Clear();
-			Canvas initialApproximationCanvas;
+			Canvas SNE_initialApproximationCanvas;
 			int start_position = 10;
-			for (int i = 1; i <= equations_count; i++)
-			{
-				RowDefinition rowDefinition = new RowDefinition();
-				rowDefinition.Height = new GridLength(52, GridUnitType.Pixel);
-				initialApproximationCanvas = new Canvas();
-				SNE_initialApproximationGrid.RowDefinitions.Add(rowDefinition);
-				SNE_initialApproximationGrid.Children.Add(initialApproximationCanvas);
+			if (SNE_initialApproximationGrid.RowDefinitions.Count < 1)
+				start_position = 10;
+			else
+				start_position += 40 * SNE_initialApproximationGrid.RowDefinitions.Count;
 
-				Label equationLabel = new Label();
-				equationLabel.Content = $"x{i}";
-				equationLabel.FontSize = 12;
-				equationLabel.Margin = new Thickness(10, start_position, 0, 0);
-				initialApproximationCanvas.Children.Add(equationLabel);
+			RowDefinition rowDefinition = new RowDefinition();
+			rowDefinition.Height = new GridLength(52, GridUnitType.Pixel);
+			SNE_initialApproximationCanvas = new Canvas();
+			SNE_initialApproximationGrid.RowDefinitions.Add(rowDefinition);
+			SNE_initialApproximationGrid.Children.Add(SNE_initialApproximationCanvas);
 
-				TextBox equationOfSystem = new TextBox();
-				equationOfSystem.Margin = new Thickness(60, start_position, 20, 0);
-				equationOfSystem.FontSize = 10;
-				equationOfSystem.Width = 50;
-				equationOfSystem.Height = 30;
-				equationOfSystem.PreviewTextInput += SNE_textBox_PreviewTextInput;
-				initialApproximationCanvas.Children.Add(equationOfSystem);
-				start_position += 40;
-			}
+			Label equationLabel = new Label();
+			equationLabel.Content = $"x{SNE_systemOfEquationsGrid.RowDefinitions.Count}";
+			equationLabel.FontSize = 14;
+			equationLabel.Margin = new Thickness(10, start_position, 0, 0);
+			SNE_initialApproximationCanvas.Children.Add(equationLabel);
+
+			TextBox equationOfSystem = new TextBox();
+			equationOfSystem.Margin = new Thickness(60, start_position, 20, 0);
+			equationOfSystem.FontSize = 14;
+			equationOfSystem.Width = 50;
+			equationOfSystem.Height = 30;
+			equationOfSystem.PreviewTextInput += SNE_textBox_PreviewTextInput;
+			SNE_initialApproximationCanvas.Children.Add(equationOfSystem);
 		}
 
 		private void GenerateResultTable(IEnumerable<IEnumerable<double>> result, IEnumerable<string> variablesNames, SolvingMethods solvingMethod)
@@ -562,7 +556,7 @@ namespace NumericalMethods.WPFApplication
 				row[0] = i;
 				for (int j = 0; j < result.ElementAt(i).Count() - 1; j++)
 				{
-					row[j + 1] = string.Format("{0:F4}",result.ElementAt(i).ElementAt(j));
+					row[j + 1] = string.Format("{0:F4}", result.ElementAt(i).ElementAt(j));
 				}
 				row[row.Length - 1] = result.ElementAt(i).Last() == double.MinValue ? "-" : string.Format("{0:F4}", result.ElementAt(i).Last());
 				dataTable.Rows.Add(row);
@@ -570,23 +564,31 @@ namespace NumericalMethods.WPFApplication
 			SNE_ResultDataGrid.ItemsSource = dataTable.AsDataView();
 		}
 
-		private void SNE_SelectButton_Click(object sender, RoutedEventArgs e)
+		private void SNE_AddEquationButton_Click(object sender, RoutedEventArgs e)
 		{
 			SNE_ResultDataGrid.ItemsSource = null;
-			int equations_count = int.Parse(SNE_equationsCountComboBox.SelectedItem.ToString());
 			string method_type = SNE_methodComboBox.SelectedItem.ToString();
-			if (method_type == SolvingMethods.Seidel.ToString() || method_type == SolvingMethods.SimpleIterations.ToString()) { InitialOtherSystemOfEquations(equations_count); }
-			else { InitialDefaulSystemOfEquations(equations_count); }
-			GenerateInitialApproximation(equations_count);
-
+			if (method_type == SolvingMethods.Seidel.ToString() || method_type == SolvingMethods.SimpleIterations.ToString()) { InitialOtherSystemOfEquations(); }
+			else { InitialDefaulSystemOfEquations(); }
+			GenerateInitialApproximation();
+			SNE_RemoveEquationButton.IsEnabled = true;
+		}
+		private void SNE_RemoveEquationButton_Click(object sender, RoutedEventArgs e)
+		{
+			SNE_systemOfEquationsGrid.RowDefinitions.Remove(SNE_systemOfEquationsGrid.RowDefinitions.Last());
+			SNE_systemOfEquationsGrid.Children.Remove(SNE_systemOfEquationsGrid.Children[SNE_systemOfEquationsGrid.Children.Count - 1]);
+			SNE_initialApproximationGrid.RowDefinitions.Remove(SNE_initialApproximationGrid.RowDefinitions.Last());
+			SNE_initialApproximationGrid.Children.Remove(SNE_initialApproximationGrid.Children[SNE_initialApproximationGrid.Children.Count - 1]);
+			if (SNE_systemOfEquationsGrid.RowDefinitions.Count < 1)
+				SNE_RemoveEquationButton.IsEnabled = false;
 		}
 		private void SNE_CalculateButton_Click(object sender, RoutedEventArgs e)
 		{
-			if(SNE_systemOfEquationsGrid.Children.Count == 0 || SNE_initialApproximationGrid.Children.Count == 0)
-            {
+			if (SNE_systemOfEquationsGrid.Children.Count == 0 || SNE_initialApproximationGrid.Children.Count == 0)
+			{
 				MessageBox.Show("Добавьте уравнения и начальное приближение");
 				return;
-            }
+			}
 			List<string> functions = new List<string>();
 			foreach (var childrenGrid in SNE_systemOfEquationsGrid.Children)
 			{
