@@ -12,9 +12,9 @@ namespace NumericalMethods.Infrastructure.NonLinearEquationsSystems.Methods.Modi
 
 			VectorColumn lastVectorX = new VectorColumn(sortedInitialGuess.Select(el => el.Value.RealValue).ToArray());
 			SquareMatrix minusInternalJacobiMatrix = -SquareMatrix.CreateJacobiMatrix(system.FunctionExpressions, initialGuess).Invert();
-			double delta = double.MaxValue;//Вот тут рофлянка здесь делта максимальное значение double
+			double delta = double.MaxValue;
 			List<List<double>> results = new List<List<double>>() { lastVectorX.ToList() };
-			results.Last().Add(double.MinValue);//А я добавляю минимальное значение первое ))))))
+			results.Last().Add(double.MinValue);
 			while (delta > eps)
 			{
 				Dictionary<string, FloatingPoint> values = new();

@@ -10,10 +10,11 @@ namespace NumericalMethods.Infrastructure.NonLinearEquationsSystems.Methods.Simp
         private double eps;
         private Dictionary<string, FloatingPoint> currentValues;
         private List<double> differences;
-
         public IEnumerable<IEnumerable<double>> SolveWithSteps(NonLinearEquationsSystem system, double eps, Dictionary<string,FloatingPoint> initialGuess)
         {
-            Dictionary<string, FloatingPoint> sortedInitialGuess = initialGuess.OrderBy(x => x.Key).ToDictionary(el => el.Key, el => el.Value);
+            Dictionary<string, FloatingPoint> sortedInitialGuess = initialGuess
+                .OrderBy(x => x.Key)
+                .ToDictionary(el => el.Key, el => el.Value);
 
             if (Math.Abs(SquareMatrix.CreateJacobiMatrix(system.FunctionExpressions,initialGuess).GetNorm()) >= 1)
                 throw new Exception("Данное приближение не подходит под условие сходимости попробуйте дургое");//Заменить message
@@ -49,11 +50,11 @@ namespace NumericalMethods.Infrastructure.NonLinearEquationsSystems.Methods.Simp
             }
             return results;
         }
-        private double FindMaxDifference(List<double> currentValues, List<double> previousValues)
+        private double FindMaxDifference(List<double> nextValues, List<double> currentValues)
         {
-            return currentValues.Zip(previousValues, (currentValue, previousValue) =>
+            return nextValues.Zip(currentValues, (nextValue, currentValue) =>
             {
-                 return currentValue - previousValue;
+                 return Math.Abs(nextValue - currentValue);
             }).Max();
         }
     }
