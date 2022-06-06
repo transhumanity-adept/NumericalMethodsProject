@@ -11,7 +11,6 @@ namespace NumericalMethods.Core.Differentiation.DifferentiationFunctions.NewtonP
 internal class NewtonPolynomialDifferentiationFunction : DifferentiationFunctionBase, INewtonDifferentiationFunction
 {
     private readonly Dictionary<int, int> factorialCache = new Dictionary<int, int>() { { 1, 1 } };
-    private int _derrivative_degree;
     private int _numberOfMembers;
     private SymbolicExpression _functionExpression;
     private List<string> _other_variables;
@@ -21,9 +20,8 @@ internal class NewtonPolynomialDifferentiationFunction : DifferentiationFunction
     public NewtonPolynomialDifferentiationFunction(IEnumerable<IDifferentiationNode> differentiationNodes, double step, int derrivative_degree, int numberOfMembers)
         : base(differentiationNodes, step, derrivative_degree)
     {
-        _derrivative_degree = derrivative_degree; ;
         _numberOfMembers = numberOfMembers;
-        string? function = GetNewtonPolynomialDerrivative(_derrivative_degree, _numberOfMembers);
+        string? function = GetNewtonPolynomialDerrivative(_derivative_degree, _numberOfMembers);
         _functionExpression = SymbolicExpression.Parse(function);
         _other_variables = _functionExpression
             .CollectVariables()
@@ -102,17 +100,17 @@ internal class NewtonPolynomialDifferentiationFunction : DifferentiationFunction
             case FiniteDifferences.Right:
                 variablesValues = _degrees.Select(finiteDifferenceDegree => GetRightFiniteDifference(argument, finiteDifferenceDegree)).ToList();
                 t_value = 0;
-                denominator = Math.Pow(_step, _derrivative_degree);
+                denominator = Math.Pow(_step, _derivative_degree);
                 break;
             case FiniteDifferences.Left:
                 variablesValues = _degrees.Select(finiteDifferenceDegree => GetLeftFiniteDifference(argument, finiteDifferenceDegree)).ToList();
                 t_value = 1;
-                denominator = Math.Pow(_step, _derrivative_degree);
+                denominator = Math.Pow(_step, _derivative_degree);
                 break;
             case FiniteDifferences.Center:
                 variablesValues = _degrees.Select(finiteDifferenceDegree => GetCenterFiniteDifference(argument, finiteDifferenceDegree)).ToList();
                 t_value = 1;
-                denominator = Math.Pow(2 * _step, _derrivative_degree);
+                denominator = Math.Pow(2 * _step, _derivative_degree);
                 break;
         };
         if (variablesValues.Any(variableValue => variableValue is null)) return null;

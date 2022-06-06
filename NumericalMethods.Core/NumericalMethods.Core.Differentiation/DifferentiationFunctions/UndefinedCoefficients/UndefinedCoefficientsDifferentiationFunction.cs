@@ -30,10 +30,9 @@ namespace NumericalMethods.Core.Differentiation.DifferentiationFunctions.Undefin
             }
             _ys_last_derivative_expressions = _ys_before_last_derivative_expressions.Select(y => y.Differentiate("x")).ToArray();
         }
-
         public IEnumerable<IDifferentiationResultNode> Calculate()
         {
-            for (int i = 0; i < _derrivative_degree; i++)
+            for (int i = 0; i < _derivative_degree; i++)
             {
                 List<double> cs = SolveLinearSystem().ToList();
                 int start_new_items_index = 1;
@@ -49,17 +48,14 @@ namespace NumericalMethods.Core.Differentiation.DifferentiationFunctions.Undefin
             }
             return _current_xs.Zip(_current_ys, (x, y) => new DifferentiationResultNode(x, y));
         }
-
         private VectorColumn SolveLinearSystem()
         {
             SquareMatrix matrix = CreateMatrix();
             VectorColumn vectorB = CreateVectorB();
 
             SquareMatrix invertedMatrix = matrix.Invert();
-            var x = invertedMatrix * vectorB;
             return invertedMatrix * vectorB;
         }
-
         private VectorColumn CreateVectorB()
         {
             IDictionary<string, FloatingPoint> values = new Dictionary<string, FloatingPoint>()
@@ -74,7 +70,6 @@ namespace NumericalMethods.Core.Differentiation.DifferentiationFunctions.Undefin
 
             return new VectorColumn(vectorBody);
         }
-
         private SquareMatrix CreateMatrix()
         {
             double[,] matrixBody = new double[_count_coefficients_c, _count_coefficients_c];
@@ -82,8 +77,6 @@ namespace NumericalMethods.Core.Differentiation.DifferentiationFunctions.Undefin
             {
                 for (int j = 0; j < _count_coefficients_c; j++)
                 {
-                    Random random = new Random();
-
                     IDictionary<string, FloatingPoint> values = new Dictionary<string, FloatingPoint>()
                     {
                         { "x", _current_xs[j] },

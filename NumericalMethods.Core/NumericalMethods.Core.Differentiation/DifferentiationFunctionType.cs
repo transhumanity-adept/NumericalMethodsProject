@@ -5,7 +5,6 @@ public enum DifferentiationFunctionType
     Quadratic,
     Cubic,
     NewtonPolynomials,
-    LagrangePolynomials,
     UndefinedCoefficients,
     Runge
 }

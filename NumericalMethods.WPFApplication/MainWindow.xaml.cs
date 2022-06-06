@@ -81,7 +81,6 @@ namespace NumericalMethods.WPFApplication
 
 			Differentiation_MainChart.Plot.Legend(enable: true);
 		}
-
 		private void Differentiation_AddNodesOnChart_Click(object sender, RoutedEventArgs e)
 		{
 			if (String.IsNullOrEmpty(Differentiation_FunctionTextBox.Text) ||
@@ -135,7 +134,7 @@ namespace NumericalMethods.WPFApplication
             }
 			string? function_type_string = Differentiation_InterpolationFunctionTypeComboBox.SelectedValue.ToString();
 			if (function_type_string is null) return;
-			InterpolationFunctionType interpolation_type = (InterpolationFunctionType)Enum.Parse(typeof(InterpolationFunctionType), function_type_string);
+			InterpolationFunctionType interpolation_type = Enum.Parse<InterpolationFunctionType>(function_type_string);
 			IInterpolationFunction? interpolation_function = InterpolationBuilder.Build(_points, interpolation_type);
 			if (interpolation_function is null) return;
 			var xs = new List<double>();
@@ -156,7 +155,6 @@ namespace NumericalMethods.WPFApplication
 			Differentiation_MainChart.Refresh();
 			Differentiation_MainChart.Refresh();
 		}
-
 		private void Differentiation_AddOnChartButton_Click(object sender, RoutedEventArgs e)
 		{
 			if (_points.Count == 0)
@@ -261,7 +259,6 @@ namespace NumericalMethods.WPFApplication
 			Differentiation_MainChart.Plot.AddScatter(xs.ToArray(), ys.ToArray(), lineWidth: 4, markerSize: 0, label: "differentiation");
 			Differentiation_MainChart.Refresh();
 		}
-
 		private void Differentiation_ClearChartButton_Click(object sender, RoutedEventArgs e)
 		{
 			Differentiation_MainChart.Plot.Clear();
@@ -408,7 +405,6 @@ namespace NumericalMethods.WPFApplication
 			if (SNE_systemOfEquationsGrid.RowDefinitions.Count == 0)
 				SNE_RemoveEquationButton.IsEnabled = false;
 		}
-
 		private void InitialDefaulSystemOfEquations()
 		{
 			Canvas SNE_equationsCanvas;
@@ -437,7 +433,6 @@ namespace NumericalMethods.WPFApplication
 			equationOfSystem.Height = 30;
 			SNE_equationsCanvas.Children.Add(equationOfSystem);
 		}
-
 		private void InitialOtherSystemOfEquations()
 		{
 			Canvas SNE_equationsCanvas;
@@ -466,7 +461,6 @@ namespace NumericalMethods.WPFApplication
 			equationOfSystem.Height = 30;
 			SNE_equationsCanvas.Children.Add(equationOfSystem);
 		}
-
 		private void GenerateInitialApproximation()
 		{
 			Canvas SNE_initialApproximationCanvas;
@@ -495,7 +489,6 @@ namespace NumericalMethods.WPFApplication
 			equationOfSystem.Height = 30;
 			SNE_initialApproximationCanvas.Children.Add(equationOfSystem);
 		}
-
 		private void GenerateResultTable(IEnumerable<IEnumerable<double>> result, IEnumerable<string> variablesNames, SolvingMethods solvingMethod)
 		{
 			variablesNames = variablesNames.OrderBy(el => el);
@@ -521,7 +514,6 @@ namespace NumericalMethods.WPFApplication
 			}
 			SNE_ResultDataGrid.ItemsSource = dataTable.AsDataView();
 		}
-
 		private void SNE_AddEquationButton_Click(object sender, RoutedEventArgs e)
 		{
 			SNE_ResultDataGrid.ItemsSource = null;
@@ -860,13 +852,11 @@ namespace NumericalMethods.WPFApplication
 			return result;
 		}
         #endregion
-
         private void CauchyProblem_ClearChartButton_Click(object sender, RoutedEventArgs e)
         {
 			CauchyProblem_MainChart.Plot.Clear();
 			CauchyProblem_MainChart.Refresh();
 		}
-
         private void CauchyProblem_AddOnChartInterpolationButton_Click(object sender, RoutedEventArgs e)
         {
 			string? function_type_string = CauchyProblem_InterpolationFunctionTypeComboBox.SelectedValue.ToString();

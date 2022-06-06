@@ -48,7 +48,6 @@ internal class QuadraticInterpolationFunction : IInterpolationFunction
 		}
 		return quadraticFunction is null ? null : quadraticFunction.Calculate(argument);
 	}
-
 	private List<(QuadraticFunction quadraticFunction, double y)> CreateSystemOfEquations(List<IInterpolationNode> pointsForConstructingQuadraticFunction)
 	{
 		List<(QuadraticFunction quadraticFunction, double y)> quadraticEquations = new List<(QuadraticFunction quadraticFunction, double y)>();
@@ -59,7 +58,6 @@ internal class QuadraticInterpolationFunction : IInterpolationFunction
 
 		return quadraticEquations;
 	}
-
 	private QuadraticFunction MethodKrammer(List<(QuadraticFunction quadraticFunction, double y)> quadraticEquations)
 	{
 		double determinant = FindDeterminantMatrix(FormingMatrix(quadraticEquations, 0));
@@ -69,7 +67,6 @@ internal class QuadraticInterpolationFunction : IInterpolationFunction
 			FindDeterminantMatrix(FormingMatrix(quadraticEquations, 3)) / determinant
 		);
 	}
-
 	private List<List<double>> SplittingMatrix(List<List<double>> matrix, (int i, int j) indexDeleteElement)
 	{
 		List<List<double>> splittingMatrix = new List<List<double>>();
@@ -85,7 +82,6 @@ internal class QuadraticInterpolationFunction : IInterpolationFunction
 		}
 		return splittingMatrix;
 	}
-
 	private double FindDeterminantMatrix(List<List<double>> matrixNDimensions)
 	{
 		if (matrixNDimensions.Count == 2)

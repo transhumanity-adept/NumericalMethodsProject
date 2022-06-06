@@ -33,7 +33,7 @@ namespace NumericalMethods.Core.Differentiation.DifferentiationFunctions.Runge
                 xkh = (f(argument + _step * _number_of_used_points) - f(argument)) / (_step * _number_of_used_points);
             }
             int new_depth = depth + 1;
-            if(depth != _derrivative_degree)
+            if(depth != _derivative_degree)
             {
                 xh = (CalculateRecursive(argument, new_depth) - CalculateRecursive(argument - _step, new_depth)) / _step;
                 xkh = (CalculateRecursive(argument, new_depth) - CalculateRecursive(argument - _step * _number_of_used_points, new_depth)) / (_step * _number_of_used_points);
