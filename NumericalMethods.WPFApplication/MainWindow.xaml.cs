@@ -44,7 +44,6 @@ namespace NumericalMethods.WPFApplication
 		{
             InitializeComponent();
 
-
 			Width = 1300;
 			Height = 750;
 
@@ -120,7 +119,7 @@ namespace NumericalMethods.WPFApplication
 				Differentiation_NumberOfMembersGrid.Visibility = Visibility.Visible;
 
 			}
-			if(differentiationFunctionType == DifferentiationFunctionType.Runge || differentiationFunctionType == DifferentiationFunctionType.UndefinedCoefficients)
+			if (differentiationFunctionType is DifferentiationFunctionType.Runge or DifferentiationFunctionType.UndefinedCoefficients)
             {
 				Differentiation_AccuracyGrid.Visibility = Visibility.Visible;
 			}
@@ -246,7 +245,7 @@ namespace NumericalMethods.WPFApplication
 						IDifferentiationFunction differentiation_function = DifferentiationBuilder.Build(_points, interpolation_type, _step, derivative_degree);
 						for (double x = _start_x; Math.Round(x, roundNumbers) <= _end_x; x += _step)
 						{
-							double? y = differentiation_function.Calculate(x);
+							double? y = differentiation_function?.Calculate(x);
 							if (y is null) continue;
 
 							xs.Add(x);
@@ -509,7 +508,7 @@ namespace NumericalMethods.WPFApplication
 				{
 					row[j + 1] = string.Format("{0:F4}", result.ElementAt(i).ElementAt(j));
 				}
-				row[row.Length - 1] = result.ElementAt(i).Last() == double.MinValue ? "-" : string.Format("{0:F4}", result.ElementAt(i).Last());
+				row[^1] = result.ElementAt(i).Last() == double.MinValue ? "-" : string.Format("{0:F4}", result.ElementAt(i).Last());
 				dataTable.Rows.Add(row);
 			}
 			SNE_ResultDataGrid.ItemsSource = dataTable.AsDataView();
@@ -526,9 +525,9 @@ namespace NumericalMethods.WPFApplication
 		private void SNE_RemoveEquationButton_Click(object sender, RoutedEventArgs e)
 		{
 			SNE_systemOfEquationsGrid.RowDefinitions.Remove(SNE_systemOfEquationsGrid.RowDefinitions.Last());
-			SNE_systemOfEquationsGrid.Children.Remove(SNE_systemOfEquationsGrid.Children[SNE_systemOfEquationsGrid.Children.Count - 1]);
+			SNE_systemOfEquationsGrid.Children.Remove(SNE_systemOfEquationsGrid.Children[^1]);
 			SNE_initialApproximationGrid.RowDefinitions.Remove(SNE_initialApproximationGrid.RowDefinitions.Last());
-			SNE_initialApproximationGrid.Children.Remove(SNE_initialApproximationGrid.Children[SNE_initialApproximationGrid.Children.Count - 1]);
+			SNE_initialApproximationGrid.Children.Remove(SNE_initialApproximationGrid.Children[^1]);
 			if (SNE_systemOfEquationsGrid.RowDefinitions.Count < 1)
 				SNE_RemoveEquationButton.IsEnabled = false;
 		}
@@ -542,8 +541,8 @@ namespace NumericalMethods.WPFApplication
 			List<string> functions = new List<string>();
 			foreach (var childrenGrid in SNE_systemOfEquationsGrid.Children)
 			{
-				Canvas canvas = childrenGrid as Canvas;
-				foreach (var childrenCanvas in canvas.Children)
+				Canvas? canvas = childrenGrid as Canvas;
+				foreach (object? childrenCanvas in canvas.Children)
 				{
 					if (childrenCanvas is TextBox)
 					{
@@ -626,7 +625,7 @@ namespace NumericalMethods.WPFApplication
 			}
 			CauchyProblem_InterpolationFunctionTypeComboBox.SelectedItem = CauchyProblem_InterpolationFunctionTypeComboBox.Items[0];
 			CauchyProblem_FunctionTypeComboBox.SelectedItem = CauchyProblem_FunctionTypeComboBox.Items[0];
-			CauchyProblem_OneStepMethodComboBox.SelectedItem = CauchyProblem_OneStepMethodComboBox.Items[CauchyProblem_OneStepMethodComboBox.Items.Count -1];
+			CauchyProblem_OneStepMethodComboBox.SelectedItem = CauchyProblem_OneStepMethodComboBox.Items[^1];
 			CauchyProblem_OrderTextBox.Text = "3";
 			CauchyProblem_MaxOrderFunctionTextBox.Text = "-3*y2-3*y1-y0";
 			CauchyProblem_EndXTextBox.Text = "10";
@@ -649,10 +648,7 @@ namespace NumericalMethods.WPFApplication
 		}
 		private string FormingContenLabelOrderFunction(int order)
         {
-			if (order <= 3)
-				return new StringBuilder("Y").Append('\'', order).ToString();
-			else
-				return $"Y^({order})";
+			return order <= 3 ? new StringBuilder("Y").Append('\'', order).ToString() : $"Y^({order})";
 		}
 		private void CauchyProblem_FillPropertiesGrid()
         {
@@ -676,8 +672,6 @@ namespace NumericalMethods.WPFApplication
                     }
                 }
             }
-			
-
 		}
 		private void CauchyProblem_FunctionTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
@@ -723,11 +717,11 @@ namespace NumericalMethods.WPFApplication
 				};
 				textBox = new TextBox();
 				grid.Children.Add(label);
-				Grid.SetColumn(grid.Children[grid.Children.Count - 1], 0);
+				Grid.SetColumn(grid.Children[^1], 0);
 				grid.Children.Add(textBox);
-				Grid.SetColumn(grid.Children[grid.Children.Count - 1], 1);
+				Grid.SetColumn(grid.Children[^1], 1);
 				CauchyProblem_InitFunctionsGrid.Children.Add(grid);
-				Grid.SetRow(CauchyProblem_InitFunctionsGrid.Children[CauchyProblem_InitFunctionsGrid.Children.Count - 1], i);
+				Grid.SetRow(CauchyProblem_InitFunctionsGrid.Children[^1], i);
 
 			}
         }
@@ -832,7 +826,7 @@ namespace NumericalMethods.WPFApplication
 			}
 			CauchyProblem_MainChart.Refresh();
 		}
-		private new Dictionary<string, double> CauchyProblem_CreateInitialGuess()
+		private Dictionary<string, double> CauchyProblem_CreateInitialGuess()
         {
 			Dictionary<string, double> result = new Dictionary<string, double>();
 			for (int i = 0; i < CauchyProblem_InitFunctionsGrid.Children.Count; i++)

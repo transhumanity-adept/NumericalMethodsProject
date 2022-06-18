@@ -25,6 +25,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NumericalMethods.Core", "Nu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NumericalMethods.Core.CauchyProblem", "NumericalMethods.Core\NumericalMethods.Core.CauchyProblem\NumericalMethods.Core.CauchyProblem.csproj", "{0D6E083F-0FF1-452C-B3D1-455BDE2D9DCF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{A6429FBF-429E-4547-B940-8BA6D1D95048}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\Desktop\example_de_1.png = ..\..\..\Desktop\example_de_1.png
+		..\..\..\Desktop\example_de_2.png = ..\..\..\Desktop\example_de_2.png
+		..\..\..\Desktop\example_differentiation_1.png = ..\..\..\Desktop\example_differentiation_1.png
+		..\..\..\Desktop\example_differentiation_2.png = ..\..\..\Desktop\example_differentiation_2.png
+		..\..\..\Desktop\example_nls.png = ..\..\..\Desktop\example_nls.png
+		..\..\..\Desktop\representation_de_1.png = ..\..\..\Desktop\representation_de_1.png
+		..\..\..\Desktop\representation_de_2.png = ..\..\..\Desktop\representation_de_2.png
+		..\..\..\Desktop\representation_differentiation_1.png = ..\..\..\Desktop\representation_differentiation_1.png
+		..\..\..\Desktop\representation_differentiation_2.png = ..\..\..\Desktop\representation_differentiation_2.png
+		..\..\..\Desktop\representation_integration.png = ..\..\..\Desktop\representation_integration.png
+		..\..\..\Desktop\representation_nls.png = ..\..\..\Desktop\representation_nls.png
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
